@@ -56,22 +56,41 @@ export function CheckpointPanel({ checkpoint, variant = 'default' }: Props) {
                 </ul>
               </section>
 
-              <section className="space-y-4">
+            <section className="space-y-4">
+              <div className="rounded-3xl border border-white/10 bg-slate-950/55 p-4">
+                <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Stack</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {checkpoint.technologies.map((tech) => (
+                    <span key={tech} className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-xs text-slate-200">
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {checkpoint.links?.length ? (
                 <div className="rounded-3xl border border-white/10 bg-slate-950/55 p-4">
-                  <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Stack</p>
+                  <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Links</p>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {checkpoint.technologies.map((tech) => (
-                      <span key={tech} className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-xs text-slate-200">
-                        {tech}
-                      </span>
+                    {checkpoint.links.map((link) => (
+                      <a
+                        key={link.label}
+                        href={link.href}
+                        target={link.external ? '_blank' : undefined}
+                        rel={link.external ? 'noreferrer' : undefined}
+                        className="rounded-full border border-neon/20 bg-neon/5 px-3 py-1 text-xs text-neon transition hover:border-neon/40 hover:bg-neon/10"
+                      >
+                        {link.label}
+                      </a>
                     ))}
                   </div>
                 </div>
+              ) : null}
 
-                <div className="grid grid-cols-2 gap-3 rounded-3xl border border-white/10 bg-slate-950/55 p-4 text-sm">
-                  <div>
-                    <p className="text-[10px] uppercase tracking-[0.24em] text-slate-500">Graph order</p>
-                    <p className="mt-1 font-medium text-slate-200">{checkpoint.pathOrder ?? checkpoint.order}</p>
+              <div className="grid grid-cols-2 gap-3 rounded-3xl border border-white/10 bg-slate-950/55 p-4 text-sm">
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.24em] text-slate-500">Graph order</p>
+                  <p className="mt-1 font-medium text-slate-200">{checkpoint.pathOrder ?? checkpoint.order}</p>
                   </div>
                   <div>
                     <p className="text-[10px] uppercase tracking-[0.24em] text-slate-500">Radius</p>

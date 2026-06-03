@@ -301,6 +301,11 @@ export const checkpoints: Checkpoint[] = [
       'GitHub, LinkedIn, and email provide immediate verification and contact.',
     ],
     technologies: ['GitHub', 'LinkedIn', 'Email'],
+    links: [
+      { label: 'GitHub', href: 'https://github.com/SomchaiSPB', external: true },
+      { label: 'LinkedIn', href: 'https://www.linkedin.com/in/denis-gaivoronskii/', external: true },
+      { label: 'Email', href: 'mailto:thekrisphuket@gmail.com' },
+    ],
     side: 'right',
     position: { x: 80, y: 90 },
     connectedTo: ['product-launch-gate'],
@@ -309,4 +314,3 @@ export const checkpoints: Checkpoint[] = [
     unlockedByDefault: false,
   },
 ];
-

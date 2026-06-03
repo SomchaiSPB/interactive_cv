@@ -1,9 +1,9 @@
 ---
 import Layout from '../components/Layout.astro';
-import { FullscreenRpgMap } from '../components/FullscreenRpgMap';
+import { GameShell } from '../components/game/GameShell';
 import { profile } from '../content/profile';
 ---
 
 <Layout title={`${profile.name} | Backend Odyssey`} description={profile.pitch}>
-  <FullscreenRpgMap client:load />
+  <GameShell client:load />
 </Layout>

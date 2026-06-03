@@ -19,6 +19,7 @@ export type Checkpoint = {
     x: number;
     y: number;
   };
+  links?: LinkItem[];
   connectedTo?: string[];
   interactionRadius?: number;
   unlockedByDefault?: boolean;

@@ -2,18 +2,19 @@
 
 This repository is a static-first Astro + React + TypeScript portfolio site for Denis Gaivoronskii.
 
-The project presents Denis as a VP of Engineering and Go backend engineer through an RPG-style career map called "Backend Odyssey". Visitors can explore checkpoints that represent career stages, production problems, projects, and technical domains, while still being able to open a classic CV immediately.
+The homepage is a Phaser-powered 2D game portfolio prototype called "Backend Odyssey". Visitors start on a playable space-arcade map, move a ship with the keyboard, approach locations, and press `E` to open portfolio panels. The classic CV, projects, and contact pages stay available as readable static routes.
 
 ## Backend Odyssey
 
-The concept is a dark, cyberpunk-inspired journey map:
+The concept is a dark, cyberpunk-inspired game portfolio:
 
-- each checkpoint is a career node;
-- the desktop experience uses a clickable map;
-- the mobile experience falls back to a readable vertical timeline;
+- each checkpoint becomes a game location;
+- the desktop homepage opens with a playable Phaser scene;
+- the classic pages remain accessible as a fallback for recruiters and clients;
+- the mobile experience falls back to a readable journey/timeline view;
 - the content stays separate from the UI so the story can evolve without rewriting components.
 
-The goal is to make the site understandable in seconds, useful to recruiters without interaction, and expandable into a richer game layer later.
+The goal is to make the site understandable in seconds, useful to recruiters without interaction, and expandable into richer art, sound, and movement layers later.
 
 ## Tech Stack
 
@@ -22,6 +23,7 @@ The goal is to make the site understandable in seconds, useful to recruiters wit
 - TypeScript
 - TailwindCSS
 - Framer Motion
+- Phaser
 
 The site is intentionally static-first and deployable without a backend.
 
@@ -61,7 +63,9 @@ npm run preview
 
 Key interactive files:
 
-- `src/components/RpgMap.tsx`
+- `src/components/game/GameShell.tsx`
+- `src/components/game/PhaserGame.tsx`
+- `src/game/BackendOdysseyScene.ts`
 - `src/components/CheckpointPanel.tsx`
 - `src/components/Timeline.astro`
 
@@ -81,15 +85,13 @@ This separation is deliberate so future content refreshes stay low-risk and the 
 
 ## Current MVP Limitations
 
-The current build is an MVP, not a full game layer.
+The current build is an MVP, not a full game product.
 
 Current limitations:
 
-- checkpoints are clickable only on desktop; there is no keyboard movement yet;
-- there is no Phaser or Three.js game engine layer;
-- the map is visual and interactive, but not a full simulation;
-- guided movement is not implemented yet;
-- full WASD navigation is intentionally deferred;
+- the game layer uses generated placeholder ships, planets, and HUD styling rather than final assets;
+- mobile users still get a readable fallback instead of a joystick or touch controller;
+- 3D/Three.js is deferred;
 - the current CV is a structured web page, not a generated PDF export.
 
 ## Deployment Target
@@ -97,4 +99,3 @@ Current limitations:
 The target deployment is `somchai.dev` on self-hosted infrastructure.
 
 The app is designed to ship as a static build, so deployment should not require a runtime backend.
-

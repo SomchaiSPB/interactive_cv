@@ -44,12 +44,21 @@ This file defines the working rules for AI coding agents in this repository.
 ## Current Project Shape
 
 - Astro pages: `/`, `/cv`, `/projects`, `/contact`
-- Interactive map: `src/components/RpgMap.tsx`
+- Home page game layer: `src/components/game/GameShell.tsx`, `src/components/game/PhaserGame.tsx`, `src/game/BackendOdysseyScene.ts`
+- Legacy interactive map: `src/components/RpgMap.tsx`
 - Checkpoint details: `src/components/CheckpointPanel.tsx`
 - Mobile fallback: `src/components/Timeline.astro`
+- Static content source: `src/content/*.ts`
+
+## Product Direction
+
+- The homepage is now a Phaser-powered 2D game portfolio prototype.
+- `/cv`, `/projects`, and `/contact` remain classic readable static pages.
+- Keep the content model separate from UI and game code.
+- Preserve the mobile fallback; do not replace it with joystick controls unless explicitly requested.
+- 3D / Three.js remains deferred unless the user explicitly asks for it.
 
 ## Documentation Expectations
 
 - Update docs when the MVP scope or roadmap changes.
 - Keep planning docs honest about what is implemented and what is deferred.
-

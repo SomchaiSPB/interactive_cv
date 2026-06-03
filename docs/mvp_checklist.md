@@ -17,22 +17,25 @@
 - [x] Project data is separated from UI
 - [x] Skills data is separated from UI
 - [x] Education data is separated from UI
-- [ ] Final content pass with Denis's exact wording
-- [ ] Replace placeholder external links with final live profiles
+- [x] Final content pass with Denis's exact wording
+- [x] Replace placeholder external links with final live profiles
 
 ## RPG Map MVP
 
-- [x] Desktop map section exists
 - [x] Fullscreen game-first homepage exists
-- [x] Visible hero marker appears in the first viewport
+- [x] Phaser-powered 2D game prototype exists on `/`
+- [x] Start screen appears before entering the game
+- [x] Visible player/ship appears in the first viewport
+- [x] WASD / arrow movement works
+- [x] E opens the checkpoint panel when near a location
 - [x] Checkpoints render from content data
-- [x] Clicking a checkpoint updates the detail panel
-- [x] Side checkpoints are supported
-- [x] Detail panel shows title, summary, details, and technologies
-- [x] Add richer animation polish
-- [x] Add guided hero marker v1
-- [x] Add Next/Previous guided movement
-- [ ] Add keyboard navigation
+- [x] Main and side locations are visually distinct
+- [x] Detail panel shows title, summary, details, stack, and links
+- [x] HUD shows the classic CV and main navigation
+- [ ] Add real sprites, map art, and sound
+- [ ] Add richer planet / station visuals
+- [ ] Add deeper guided travel or dock behaviors
+- [ ] Add keyboard navigation beyond movement and interaction
 
 ## Classic CV
 
@@ -55,7 +58,8 @@
 - [x] Mobile timeline fallback exists
 - [x] Timeline is readable without the map UI
 - [x] Content order remains consistent on mobile
-- [ ] Improve small-screen spacing and density after content finalization
+- [x] Game mode is best on desktop with a readable mobile fallback
+- [ ] Add touch-specific controls only if explicitly requested
 
 ## SEO
 
@@ -73,8 +77,8 @@
 
 ## Future Game Layer
 
-- [ ] Define guided movement rules
-- [ ] Add map pathing between checkpoints
-- [ ] Evaluate Phaser only if interaction requirements grow
+- [ ] Define richer dock / warp / travel rules
+- [ ] Add better ship sprites and location art
+- [ ] Add audio and ambient effects
 - [ ] Evaluate Three.js only if 3D value is proven
-- [ ] Add WASD movement only after the site is already useful as a portfolio
+- [ ] Add mobile controls only after the desktop prototype is already useful
