@@ -23,12 +23,15 @@
 ## RPG Map MVP
 
 - [x] Desktop map section exists
+- [x] Fullscreen game-first homepage exists
+- [x] Visible hero marker appears in the first viewport
 - [x] Checkpoints render from content data
 - [x] Clicking a checkpoint updates the detail panel
 - [x] Side checkpoints are supported
 - [x] Detail panel shows title, summary, details, and technologies
 - [x] Add richer animation polish
 - [x] Add guided hero marker v1
+- [x] Add Next/Previous guided movement
 - [ ] Add keyboard navigation
 
 ## Classic CV

@@ -5,19 +5,21 @@ type Props = {
   checkpoint: Checkpoint;
   active: boolean;
   onSelect: (id: string) => void;
+  variant?: 'default' | 'fullscreen';
 };
 
-export function CheckpointNode({ checkpoint, active, onSelect }: Props) {
+export function CheckpointNode({ checkpoint, active, onSelect, variant = 'default' }: Props) {
   const isBranch = Boolean(checkpoint.branchOf);
+  const isFullscreen = variant === 'fullscreen';
   const offsetClass =
     checkpoint.side === 'left'
       ? '-translate-x-10 md:-translate-x-14'
       : checkpoint.side === 'right'
         ? 'translate-x-10 md:translate-x-14'
         : '';
-  const rootClass = isBranch ? 'max-w-[11rem]' : 'max-w-[14rem]';
-  const orbClass = isBranch ? 'h-8 w-8 text-[10px]' : 'h-10 w-10 text-xs';
-  const cardClass = isBranch ? 'px-3 py-2 text-xs' : 'px-4 py-3 text-sm';
+  const rootClass = isFullscreen ? (isBranch ? 'max-w-[12rem]' : 'max-w-[16rem]') : isBranch ? 'max-w-[11rem]' : 'max-w-[14rem]';
+  const orbClass = isFullscreen ? (isBranch ? 'h-10 w-10 text-[10px]' : 'h-14 w-14 text-sm') : isBranch ? 'h-8 w-8 text-[10px]' : 'h-10 w-10 text-xs';
+  const cardClass = isFullscreen ? (isBranch ? 'px-4 py-3 text-sm' : 'px-5 py-4 text-base') : isBranch ? 'px-3 py-2 text-xs' : 'px-4 py-3 text-sm';
 
   return (
     <motion.button
@@ -55,8 +57,8 @@ export function CheckpointNode({ checkpoint, active, onSelect }: Props) {
               : 'border-white/10 bg-slate-950/80 text-slate-200 group-hover:border-white/20'
         }`}
       >
-        <span className="block text-[10px] uppercase tracking-[0.24em] text-slate-400">{checkpoint.subtitle}</span>
-        <span className={`mt-1 block font-semibold leading-snug ${isBranch ? 'text-[13px]' : 'text-sm'}`}>
+        <span className={`block uppercase tracking-[0.24em] text-slate-400 ${isFullscreen ? 'text-[11px]' : 'text-[10px]'}`}>{checkpoint.subtitle}</span>
+        <span className={`mt-1 block font-semibold leading-snug ${isBranch ? 'text-[13px]' : isFullscreen ? 'text-[15px]' : 'text-sm'}`}>
           {checkpoint.title}
         </span>
         {checkpoint.branchOf ? (

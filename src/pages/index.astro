@@ -1,74 +1,9 @@
 ---
 import Layout from '../components/Layout.astro';
-import Hero from '../components/Hero.astro';
-import RpgMap from '../components/RpgMap';
-import Timeline from '../components/Timeline.astro';
-import ProjectCard from '../components/ProjectCard.astro';
-import SkillBadge from '../components/SkillBadge.astro';
-import { checkpoints } from '../content/checkpoints';
-import { projects } from '../content/projects';
-import { skills } from '../content/skills';
+import { FullscreenRpgMap } from '../components/FullscreenRpgMap';
 import { profile } from '../content/profile';
 ---
 
 <Layout title={`${profile.name} | Backend Odyssey`} description={profile.pitch}>
-  <Hero />
-
-  <section class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-4 md:grid-cols-4">
-      {profile.quickFacts.map((fact) => (
-        <div class="panel-surface rounded-2xl p-4 text-sm text-slate-200">{fact}</div>
-      ))}
-    </div>
-  </section>
-
-  <section id="journey" class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-    <div class="mb-6 flex items-end justify-between gap-4">
-      <div>
-        <p class="mono text-xs uppercase tracking-[0.28em] text-neon">Career Map</p>
-        <h2 class="mt-2 text-2xl font-semibold text-white sm:text-3xl">Explore the RPG-style journey</h2>
-      </div>
-      <a href="/cv" class="hidden rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-200 md:inline-flex">
-        Open classic CV
-      </a>
-    </div>
-    <div class="hidden md:block">
-      <RpgMap client:load />
-    </div>
-    <div class="md:hidden">
-      <Timeline items={checkpoints} />
-    </div>
-  </section>
-
-  <section class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-    <div class="mb-6">
-      <p class="mono text-xs uppercase tracking-[0.28em] text-neon">Featured Projects</p>
-      <h2 class="mt-2 text-2xl font-semibold text-white sm:text-3xl">Selected work from the map</h2>
-    </div>
-    <div class="grid gap-5 lg:grid-cols-2">
-      {projects.slice(0, 4).map((project) => (
-        <ProjectCard project={project} />
-      ))}
-    </div>
-  </section>
-
-  <section class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-    <div class="mb-6">
-      <p class="mono text-xs uppercase tracking-[0.28em] text-neon">Core Skills</p>
-      <h2 class="mt-2 text-2xl font-semibold text-white sm:text-3xl">Capabilities by domain</h2>
-    </div>
-    <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-      {skills.map((group) => (
-        <div class="panel-surface rounded-3xl p-6">
-          <h3 class="text-lg font-semibold text-white">{group.title}</h3>
-          <div class="mt-4 flex flex-wrap gap-2">
-            {group.items.map((item) => (
-              <SkillBadge label={item} />
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
-  </section>
+  <FullscreenRpgMap client:load />
 </Layout>
-

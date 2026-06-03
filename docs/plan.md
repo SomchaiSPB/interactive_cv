@@ -70,6 +70,7 @@ Non-goals:
 Scope:
 
 - deploy the current site as a static portfolio;
+- keep `/` as a game-first fullscreen RPG journey;
 - verify the build and hosting path;
 - ensure the site is useful before adding game features.
 
@@ -111,6 +112,7 @@ Important:
 - guided hero marker v1 is already in place as the first step;
 - guided movement can be added before full WASD;
 - the site must already be useful as a portfolio before movement complexity increases.
+- `/cv` remains the classic readable fallback for recruiters and clients.
 
 ## Phase 5: Optional WASD / Game Mode
 

@@ -3,9 +3,11 @@ import type { Checkpoint } from '../content/types';
 
 type Props = {
   checkpoint: Checkpoint | null;
+  variant?: 'default' | 'hud';
 };
 
-export function CheckpointPanel({ checkpoint }: Props) {
+export function CheckpointPanel({ checkpoint, variant = 'default' }: Props) {
+  const isHud = variant === 'hud';
   return (
     <AnimatePresence mode="wait">
       {checkpoint ? (
@@ -15,16 +17,18 @@ export function CheckpointPanel({ checkpoint }: Props) {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: 24 }}
           transition={{ duration: 0.2 }}
-          className="panel-surface h-full rounded-3xl p-6"
+          className={`panel-surface h-full rounded-3xl ${isHud ? 'max-h-[calc(100vh-10rem)] overflow-y-auto p-4 sm:p-5' : 'p-6'}`}
         >
-          <div className="space-y-4">
+          <div className={isHud ? 'space-y-3' : 'space-y-4'}>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="space-y-2">
                 <p className="mono text-xs uppercase tracking-[0.28em] text-neon">
                   Checkpoint {String(checkpoint.order).padStart(2, '0')}
                 </p>
-                <h3 className="text-2xl font-semibold text-white">{checkpoint.title}</h3>
-                <p className="text-sm uppercase tracking-[0.2em] text-slate-400">{checkpoint.subtitle}</p>
+                <h3 className={`${isHud ? 'text-xl sm:text-2xl' : 'text-2xl'} font-semibold text-white`}>{checkpoint.title}</h3>
+                <p className={`text-sm uppercase tracking-[0.2em] text-slate-400 ${isHud ? 'max-w-[18ch]' : ''}`}>
+                  {checkpoint.subtitle}
+                </p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-right">
                 <p className="text-[10px] uppercase tracking-[0.24em] text-slate-500">Path</p>
@@ -34,12 +38,12 @@ export function CheckpointPanel({ checkpoint }: Props) {
               </div>
             </div>
 
-            <div className="rounded-3xl border border-neon/15 bg-neon/5 p-4">
+            <div className={`rounded-3xl border border-neon/15 bg-neon/5 ${isHud ? 'p-3 sm:p-4' : 'p-4'}`}>
               <p className="text-xs uppercase tracking-[0.24em] text-neon">Summary</p>
-              <p className="mt-3 text-sm leading-7 text-slate-200">{checkpoint.summary}</p>
+              <p className={`mt-3 text-sm leading-7 text-slate-200 ${isHud ? 'sm:text-[0.92rem]' : ''}`}>{checkpoint.summary}</p>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-[1.15fr_0.85fr]">
+            <div className={`grid gap-4 ${isHud ? 'md:grid-cols-1 xl:grid-cols-[1.15fr_0.85fr]' : 'md:grid-cols-[1.15fr_0.85fr]'}`}>
               <section className="rounded-3xl border border-white/10 bg-slate-950/55 p-4">
                 <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Journey notes</p>
                 <ul className="mt-3 space-y-3">
