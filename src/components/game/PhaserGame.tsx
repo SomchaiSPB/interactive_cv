@@ -14,16 +14,34 @@ type Props = {
 
 export function PhaserGame({ checkpoints, onReady, onNearestLocation, onOpenCheckpoint, onClosePanel }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const gameRef = useRef<import('phaser').Game | null>(null);
+  const callbacksRef = useRef({
+    onReady,
+    onNearestLocation,
+    onOpenCheckpoint,
+    onClosePanel,
+  });
+
+  useEffect(() => {
+    callbacksRef.current = {
+      onReady,
+      onNearestLocation,
+      onOpenCheckpoint,
+      onClosePanel,
+    };
+  }, [onClosePanel, onNearestLocation, onOpenCheckpoint, onReady]);
 
   useEffect(() => {
     let cancelled = false;
-    let game: import('phaser').Game | null = null;
     let resizeObserver: ResizeObserver | null = null;
 
-    const handleReady = () => onReady?.();
+    // Keep the Phaser lifecycle tied to the mount lifecycle only.
+    // HUD updates re-render this React shell frequently, so callback identity
+    // changes must not recreate the game instance.
+    const handleReady = () => callbacksRef.current.onReady?.();
     const handleNearest = (event: Event) => {
       const detail = (event as CustomEvent<OdysseyNearestEventDetail>).detail;
-      onNearestLocation(
+      callbacksRef.current.onNearestLocation(
         detail ?? {
           location: null,
           prompt: null,
@@ -34,10 +52,10 @@ export function PhaserGame({ checkpoints, onReady, onNearestLocation, onOpenChec
     const handleOpen = (event: Event) => {
       const detail = (event as CustomEvent<{ checkpointId: string }>).detail;
       if (detail?.checkpointId) {
-        onOpenCheckpoint(detail.checkpointId);
+        callbacksRef.current.onOpenCheckpoint(detail.checkpointId);
       }
     };
-    const handleClose = () => onClosePanel();
+    const handleClose = () => callbacksRef.current.onClosePanel();
 
     window.addEventListener(ODYSSEY_EVENT_READY, handleReady as EventListener);
     window.addEventListener(ODYSSEY_EVENT_NEAREST, handleNearest as EventListener);
@@ -55,7 +73,7 @@ export function PhaserGame({ checkpoints, onReady, onNearestLocation, onOpenChec
       const { BackendOdysseyScene } = sceneModule;
       const locations = mapCheckpointsToGameLocations(checkpoints);
 
-      game = new Phaser.Game({
+      gameRef.current = new Phaser.Game({
         type: Phaser.AUTO,
         parent: containerRef.current,
         backgroundColor: '#050811',
@@ -79,13 +97,13 @@ export function PhaserGame({ checkpoints, onReady, onNearestLocation, onOpenChec
 
       resizeObserver = new ResizeObserver((entries) => {
         const entry = entries[0];
-        if (!entry || !game) {
+        if (!entry || !gameRef.current) {
           return;
         }
 
         const width = Math.max(1, Math.floor(entry.contentRect.width));
         const height = Math.max(1, Math.floor(entry.contentRect.height));
-        game.scale.resize(width, height);
+        gameRef.current.scale.resize(width, height);
       });
 
       resizeObserver.observe(containerRef.current);
@@ -100,9 +118,10 @@ export function PhaserGame({ checkpoints, onReady, onNearestLocation, onOpenChec
       window.removeEventListener(ODYSSEY_EVENT_NEAREST, handleNearest as EventListener);
       window.removeEventListener(ODYSSEY_EVENT_OPEN, handleOpen as EventListener);
       window.removeEventListener(ODYSSEY_EVENT_CLOSE, handleClose as EventListener);
-      game?.destroy(true);
+      gameRef.current?.destroy(true);
+      gameRef.current = null;
     };
-  }, [checkpoints, onClosePanel, onNearestLocation, onOpenCheckpoint, onReady]);
+  }, [checkpoints]);
 
   return <div ref={containerRef} className="absolute inset-0" aria-label="Backend Odyssey game canvas" />;
 }

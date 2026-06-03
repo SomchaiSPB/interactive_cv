@@ -31,6 +31,9 @@
 - [x] Clicking a location opens the checkpoint panel
 - [x] Checkpoints render from content data
 - [x] Town, buildings, roads, and side locations are visually distinct
+- [x] Phaser.Game mounts once per game session without remount flicker
+- [x] Town map composition is readable at desktop scale
+- [x] Default site navbar stays off the game page
 - [x] Detail panel shows title, summary, details, stack, and links
 - [x] HUD shows the classic CV and main navigation
 - [ ] Add real sprites, map art, and sound

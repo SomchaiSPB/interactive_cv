@@ -51,6 +51,7 @@ Scope:
 - improve spacing, hierarchy, and emphasis;
 - refine the RPG town feel while keeping it professional;
 - improve readability on both desktop and mobile.
+- stabilize the mounted Phaser scene and recomposed town so the homepage stays readable before any new gameplay is added.
 
 Deliverables:
 

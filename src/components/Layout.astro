@@ -13,6 +13,7 @@ const {
 } = Astro.props satisfies Props;
 
 const pathname = Astro.url.pathname;
+const isHome = pathname === '/';
 
 const navItems = [
   { label: 'Home', href: '/' },
@@ -32,43 +33,47 @@ const navItems = [
   </head>
   <body>
     <div class="page-shell min-h-screen">
-      <header class="sticky top-0 z-40 border-b border-white/5 bg-slate-950/75 backdrop-blur-xl">
-        <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
-          <a href="/" class="group flex items-center gap-3">
-            <span class="pixel-border flex h-10 w-10 items-center justify-center rounded-lg bg-slate-900/90 text-sm font-bold text-neon">
-              BG
-            </span>
-            <span>
-              <span class="block text-sm font-semibold tracking-[0.24em] text-neon">BACKEND ODYSSEY</span>
-              <span class="block text-xs uppercase tracking-[0.28em] text-slate-400">{profile.name}</span>
-            </span>
-          </a>
-          <nav class="hidden items-center gap-2 md:flex">
-            {navItems.map((item) => (
-              <a
-                href={item.href}
-                class:list={[
-                  'rounded-full border px-4 py-2 text-sm transition',
-                  pathname === item.href || pathname === `${item.href}/`
-                    ? 'border-neon/50 bg-neon/10 text-neon'
-                    : 'border-white/10 text-slate-300 hover:border-neon/30 hover:text-white',
-                ]}
-              >
-                {item.label}
-              </a>
-            ))}
-          </nav>
-        </div>
-      </header>
+      {!isHome ? (
+        <header class="sticky top-0 z-40 border-b border-white/5 bg-slate-950/75 backdrop-blur-xl">
+          <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
+            <a href="/" class="group flex items-center gap-3">
+              <span class="pixel-border flex h-10 w-10 items-center justify-center rounded-lg bg-slate-900/90 text-sm font-bold text-neon">
+                BG
+              </span>
+              <span>
+                <span class="block text-sm font-semibold tracking-[0.24em] text-neon">BACKEND ODYSSEY</span>
+                <span class="block text-xs uppercase tracking-[0.28em] text-slate-400">{profile.name}</span>
+              </span>
+            </a>
+            <nav class="hidden items-center gap-2 md:flex">
+              {navItems.map((item) => (
+                <a
+                  href={item.href}
+                  class:list={[
+                    'rounded-full border px-4 py-2 text-sm transition',
+                    pathname === item.href || pathname === `${item.href}/`
+                      ? 'border-neon/50 bg-neon/10 text-neon'
+                      : 'border-white/10 text-slate-300 hover:border-neon/30 hover:text-white',
+                  ]}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </nav>
+          </div>
+        </header>
+      ) : null}
       <main>
         <slot />
       </main>
-      <footer class="border-t border-white/5 bg-black/20">
-        <div class="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-8 text-sm text-slate-400 sm:px-6 lg:px-8 md:flex-row md:items-center md:justify-between">
-          <p>Interactive CV skeleton for {profile.name}.</p>
-          <p class="mono uppercase tracking-[0.24em]">Fast, deployable, content-first.</p>
-        </div>
-      </footer>
+      {!isHome ? (
+        <footer class="border-t border-white/5 bg-black/20">
+          <div class="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-8 text-sm text-slate-400 sm:px-6 lg:px-8 md:flex-row md:items-center md:justify-between">
+            <p>Interactive CV skeleton for {profile.name}.</p>
+            <p class="mono uppercase tracking-[0.24em]">Fast, deployable, content-first.</p>
+          </div>
+        </footer>
+      ) : null}
     </div>
   </body>
 </html>

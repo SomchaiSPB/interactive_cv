@@ -36,6 +36,7 @@ export class BackendOdysseyScene extends Phaser.Scene {
   private locations: GameLocation[] = [];
   private nodes = new Map<string, LocationNode>();
   private player!: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+  private playerShadow!: Phaser.GameObjects.Ellipse;
   private keys!: KeyboardBundle;
   private nearestLocationId: string | null = null;
   private nearestInteractable = false;
@@ -69,18 +70,20 @@ export class BackendOdysseyScene extends Phaser.Scene {
     this.drawLanterns();
 
     const spawn = this.locations.find((location) => location.id === 'spawn-point') ?? this.locations[0];
-    this.player = this.physics.add.sprite(spawn?.worldX ?? GAME_WORLD.width / 2, (spawn?.worldY ?? GAME_WORLD.height / 2) + 88, 'odyssey-hero');
+    this.player = this.physics.add.sprite(spawn?.worldX ?? GAME_WORLD.width / 2, spawn?.worldY ?? GAME_WORLD.height / 2, 'odyssey-hero');
     this.player.setDepth(1000);
     this.player.setCollideWorldBounds(true);
     this.player.setDrag(0, 0);
-    this.player.body.setSize(28, 26, true);
-    this.player.body.setOffset(18, 20);
+    this.player.body.setSize(20, 28, true);
+    this.player.body.setOffset(14, 18);
+    this.playerShadow = this.add.ellipse(this.player.x, this.player.y + 20, 24, 8, 0x000000, 0.34).setDepth(999);
 
     this.currentTarget = new Phaser.Math.Vector2(this.player.x, this.player.y);
 
     this.keys = this.input.keyboard?.addKeys('E,ESC') as KeyboardBundle;
+    this.cameras.main.centerOn(this.player.x, this.player.y);
     this.cameras.main.startFollow(this.player, true, 0.08, 0.08);
-    this.cameras.main.setZoom(1.02);
+    this.cameras.main.setZoom(0.98);
 
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer, currentlyOver: Phaser.GameObjects.GameObject[]) => {
       if (currentlyOver.length > 0) {
@@ -114,7 +117,7 @@ export class BackendOdysseyScene extends Phaser.Scene {
         const speedX = (dx / distance) * this.heroSpeed;
         const speedY = (dy / distance) * this.heroSpeed;
         this.player.setVelocity(speedX, speedY);
-        this.player.setRotation(0);
+        this.player.setFlipX(speedX < 0);
 
         if (distance < step) {
           this.player.setPosition(target.x, target.y);
@@ -125,6 +128,8 @@ export class BackendOdysseyScene extends Phaser.Scene {
     } else {
       this.player.setVelocity(0, 0);
     }
+
+    this.playerShadow.setPosition(this.player.x, this.player.y + 20);
 
     const nearest = this.findNearestLocation(this.player.x, this.player.y);
     const interactable = Boolean(nearest && nearest.distance <= nearest.location.promptRadius);
@@ -218,11 +223,11 @@ export class BackendOdysseyScene extends Phaser.Scene {
   }
 
   private drawRoadSegment(graphics: Phaser.GameObjects.Graphics, from: GameLocation, to: GameLocation, main: boolean) {
-    const shadowWidth = main ? 40 : 24;
-    const roadWidth = main ? 22 : 12;
-    const shadowColor = main ? 0x2b2217 : 0x1f1b15;
-    const roadColor = main ? 0x7d6546 : 0x5d4f39;
-    const highlightColor = main ? 0xb39a73 : 0x8f7a59;
+    const shadowWidth = main ? 20 : 12;
+    const roadWidth = main ? 10 : 6;
+    const shadowColor = main ? 0x2a2117 : 0x1d1a16;
+    const roadColor = main ? 0x7a6244 : 0x5a4d37;
+    const highlightColor = main ? 0xb8a179 : 0x897256;
 
     graphics.lineStyle(shadowWidth, shadowColor, 0.94);
     graphics.lineBetween(from.worldX, from.worldY, to.worldX, to.worldY);
@@ -239,34 +244,39 @@ export class BackendOdysseyScene extends Phaser.Scene {
     }
 
     const plaza = this.add.graphics().setDepth(1);
-    plaza.fillStyle(0x4b5b40, 1);
-    plaza.fillRoundedRect(square.worldX - 160, square.worldY - 150, 320, 300, 34);
-    plaza.lineStyle(4, 0xc0b497, 0.38);
-    plaza.strokeRoundedRect(square.worldX - 160, square.worldY - 150, 320, 300, 34);
-    plaza.fillStyle(0x8fa1b3, 0.82);
-    plaza.fillCircle(square.worldX, square.worldY + 2, 28);
-    plaza.fillStyle(0xd8c48d, 0.88);
-    plaza.fillTriangle(square.worldX - 60, square.worldY + 20, square.worldX - 36, square.worldY + 54, square.worldX - 84, square.worldY + 54);
-    plaza.fillTriangle(square.worldX + 60, square.worldY + 20, square.worldX + 84, square.worldY + 54, square.worldX + 36, square.worldY + 54);
+    plaza.fillStyle(0x3d4a36, 1);
+    plaza.fillRoundedRect(square.worldX - 122, square.worldY - 118, 244, 236, 30);
+    plaza.lineStyle(3, 0xc0b497, 0.32);
+    plaza.strokeRoundedRect(square.worldX - 122, square.worldY - 118, 244, 236, 30);
+    plaza.fillStyle(0x95a5b7, 0.86);
+    plaza.fillCircle(square.worldX, square.worldY + 2, 22);
+    plaza.fillStyle(0xd8c48d, 0.76);
+    plaza.fillRect(square.worldX - 58, square.worldY - 6, 116, 12);
+    plaza.fillRect(square.worldX - 6, square.worldY - 58, 12, 116);
+    plaza.fillStyle(0x7b6748, 0.72);
+    plaza.fillCircle(square.worldX - 58, square.worldY - 58, 8);
+    plaza.fillCircle(square.worldX + 58, square.worldY - 58, 8);
+    plaza.fillCircle(square.worldX - 58, square.worldY + 58, 8);
+    plaza.fillCircle(square.worldX + 58, square.worldY + 58, 8);
   }
 
   private drawFogs() {
-    this.add.ellipse(640, 430, 760, 320, 0x69a7ff, 0.05).setDepth(-8);
-    this.add.ellipse(1780, 480, 820, 340, 0x7cf7d4, 0.045).setDepth(-8);
-    this.add.ellipse(1560, 1180, 760, 280, 0xf6b74c, 0.04).setDepth(-8);
-    this.add.ellipse(1110, 920, 620, 250, 0x9a7cff, 0.035).setDepth(-8);
+    this.add.ellipse(560, 420, 520, 220, 0x69a7ff, 0.045).setDepth(-8);
+    this.add.ellipse(1720, 460, 620, 240, 0x7cf7d4, 0.035).setDepth(-8);
+    this.add.ellipse(1520, 1120, 520, 220, 0xf6b74c, 0.032).setDepth(-8);
+    this.add.ellipse(1080, 860, 420, 180, 0x9a7cff, 0.03).setDepth(-8);
   }
 
   private drawLanterns() {
     const lanternPositions = [
-      [1150, 870],
-      [1450, 870],
-      [1150, 1010],
-      [1450, 1010],
-      [970, 640],
-      [1760, 640],
-      [850, 1280],
-      [2100, 1280],
+      [1130, 820],
+      [1370, 820],
+      [1120, 960],
+      [1380, 960],
+      [900, 620],
+      [1660, 620],
+      [860, 1260],
+      [2050, 1260],
     ] as const;
 
     lanternPositions.forEach(([x, y], index) => {
@@ -280,22 +290,25 @@ export class BackendOdysseyScene extends Phaser.Scene {
   private drawLocations() {
     for (const location of this.locations) {
       const container = this.add.container(location.worldX, location.worldY).setDepth(location.worldY);
+      const visualScale = location.displayScale;
+      const visuals = this.add.container(0, 0).setScale(visualScale);
 
       const halo = this.add.ellipse(
         0,
-        26,
-        location.footprintWidth * 1.25,
-        location.footprintHeight * 0.55,
+        18,
+        location.footprintWidth * 1.12,
+        location.footprintHeight * 0.42,
         location.accentColor,
         location.branchOf ? 0.08 : 0.12,
       );
-      halo.setScale(1, 1);
 
       const body = this.createLocationBody(location);
+      visuals.add([halo, body]);
+
       const label = this.add
         .text(location.labelOffsetX, location.labelOffsetY, location.displayName, {
           fontFamily: '"IBM Plex Sans", sans-serif',
-          fontSize: location.branchOf ? '13px' : '16px',
+          fontSize: location.branchOf ? '12px' : '14px',
           color: '#f2f6ff',
           align: 'center',
         })
@@ -306,13 +319,13 @@ export class BackendOdysseyScene extends Phaser.Scene {
       const subtitle = this.add
         .text(location.labelOffsetX, location.labelOffsetY + 20, location.subtitle, {
           fontFamily: '"IBM Plex Mono", monospace',
-          fontSize: '10px',
+          fontSize: '9px',
           color: '#9ab0c7',
           align: 'center',
         })
         .setOrigin(0.5, 0);
 
-      container.add([halo, body, label, subtitle]);
+      container.add([visuals, label, subtitle]);
 
       const zone = this.add.zone(0, 0, location.footprintWidth, location.footprintHeight).setInteractive({
         useHandCursor: true,
@@ -341,10 +354,10 @@ export class BackendOdysseyScene extends Phaser.Scene {
 
       this.tweens.add({
         targets: halo,
-        scaleX: 1.08,
-        scaleY: 1.08,
-        alpha: location.branchOf ? 0.06 : 0.1,
-        duration: 2400 + location.order * 40,
+        scaleX: 1.04,
+        scaleY: 1.04,
+        alpha: location.branchOf ? 0.05 : 0.08,
+        duration: 3000 + location.order * 30,
         yoyo: true,
         repeat: -1,
         ease: 'Sine.easeInOut',
@@ -563,19 +576,22 @@ export class BackendOdysseyScene extends Phaser.Scene {
     noise.destroy();
 
     const hero = this.add.graphics();
-    hero.fillStyle(0x17212b, 1);
-    hero.fillCircle(32, 28, 11);
-    hero.fillStyle(0x2f3e52, 1);
-    hero.fillTriangle(32, 10, 51, 42, 13, 42);
+    hero.fillStyle(0x000000, 0.32);
+    hero.fillEllipse(32, 50, 20, 8);
+    hero.fillStyle(0x1b2432, 1);
+    hero.fillCircle(32, 16, 9);
+    hero.fillStyle(0x2f4056, 1);
+    hero.fillRoundedRect(22, 24, 20, 18, 5);
     hero.fillStyle(0x7cf7d4, 1);
-    hero.fillCircle(25, 28, 3);
-    hero.fillCircle(39, 28, 3);
+    hero.fillRect(26, 28, 4, 4);
+    hero.fillRect(34, 28, 4, 4);
     hero.fillStyle(0xc9d6ea, 1);
-    hero.fillRect(28, 39, 8, 16);
+    hero.fillRect(24, 42, 7, 10);
+    hero.fillRect(33, 42, 7, 10);
     hero.fillStyle(0xf6b74c, 1);
-    hero.fillRect(25, 49, 14, 6);
-    hero.lineStyle(2, 0xdbe7ff, 0.28);
-    hero.strokeTriangle(32, 10, 51, 42, 13, 42);
+    hero.fillRect(24, 36, 16, 4);
+    hero.lineStyle(2, 0xdbe7ff, 0.2);
+    hero.strokeCircle(32, 16, 9);
     hero.generateTexture('odyssey-hero', 64, 64);
     hero.destroy();
   }

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { checkpoints } from '../../content/checkpoints';
 import { profile } from '../../content/profile';
@@ -63,10 +63,22 @@ export function GameShell() {
     }
   }, [started]);
 
-  const openCheckpoint = (checkpointId: string) => {
+  const openCheckpoint = useCallback((checkpointId: string) => {
     const checkpoint = checkpoints.find((item) => item.id === checkpointId) ?? null;
     setSelectedCheckpointId(checkpoint?.id ?? null);
-  };
+  }, []);
+
+  const handleGameReady = useCallback(() => {
+    setGameReady(true);
+  }, []);
+
+  const handleNearestLocation = useCallback((detail: OdysseyNearestEventDetail) => {
+    setNearestDetail(detail);
+  }, []);
+
+  const handleClosePanel = useCallback(() => {
+    setSelectedCheckpointId(null);
+  }, []);
 
   if (!isDesktop) {
     return (
@@ -180,10 +192,10 @@ export function GameShell() {
         <div className="relative min-h-screen">
           <PhaserGame
             checkpoints={checkpoints}
-            onReady={() => setGameReady(true)}
-            onNearestLocation={(detail) => setNearestDetail(detail)}
+            onReady={handleGameReady}
+            onNearestLocation={handleNearestLocation}
             onOpenCheckpoint={openCheckpoint}
-            onClosePanel={() => setSelectedCheckpointId(null)}
+            onClosePanel={handleClosePanel}
           />
 
           <div className="pointer-events-none absolute inset-0 z-10 flex flex-col">
