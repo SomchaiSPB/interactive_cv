@@ -3,23 +3,35 @@ import type { SkillGroup } from './types';
 export const skills: SkillGroup[] = [
   {
     title: 'Backend',
-    items: ['Go', 'gRPC', 'REST APIs', 'Microservices', 'Domain modeling'],
+    items: ['Go', 'gRPC', 'REST APIs', 'Microservices', 'PHP', 'Laravel', 'Java'],
   },
   {
-    title: 'Data',
-    items: ['PostgreSQL', 'Redis', 'Reporting models', 'Reconciliation', 'Batch jobs'],
+    title: 'Databases & Reporting',
+    items: ['PostgreSQL', 'MSSQL', 'Redis', 'Materialized views', 'SQL reporting', 'Ledgers', 'Batch jobs'],
   },
   {
-    title: 'Cloud',
-    items: ['AWS', 'Docker', 'Observability', 'Retry design', 'Operational tooling'],
+    title: 'Integrations',
+    items: ['HubSpot', 'Xero', 'CCH', 'NetSuite', 'GoCardless', 'iCal', 'XML templates'],
   },
   {
-    title: 'Leadership',
-    items: ['Team lead', 'Hiring', 'Delivery planning', 'Mentoring', 'Architecture review'],
+    title: 'Infrastructure',
+    items: ['Docker', 'AWS', 'RabbitMQ', 'Kafka', 'Jenkins', 'Ansible', 'Linux', 'VPN'],
   },
   {
-    title: 'Applied AI',
-    items: ['AI-assisted development', 'Summaries', 'Automation', 'Prompting', 'Review workflows'],
+    title: 'Observability',
+    items: ['Prometheus', 'Grafana', 'ELK', 'Logging', 'Metrics', 'Operational debugging'],
+  },
+  {
+    title: 'Security & Policy',
+    items: ['OPA', 'Rego', 'Dynamic access control', 'Authorization', 'Policy as code'],
+  },
+  {
+    title: 'AI-assisted Engineering',
+    items: ['Analysis', 'Debugging', 'Task decomposition', 'Test planning', 'Documentation', 'Implementation acceleration'],
+  },
+  {
+    title: 'Frontend / Mobile',
+    items: ['Astro', 'React', 'TypeScript', 'TailwindCSS', 'Flutter', 'Brotli', 'Meilisearch', 'Sphinx'],
   },
 ];
 

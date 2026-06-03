@@ -11,23 +11,30 @@ const { project } = Astro.props satisfies Props;
 <article class="panel-surface flex h-full flex-col rounded-3xl p-6">
   <div class="flex items-center justify-between gap-3">
     <h3 class="text-xl font-semibold text-white">{project.title}</h3>
-    {project.checkpointId && (
+    <div class="flex flex-wrap justify-end gap-2">
       <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-slate-400">
-        RPG node
+        {project.visibility}
       </span>
-    )}
+      <span class="rounded-full border border-neon/30 bg-neon/10 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-neon">
+        {project.status}
+      </span>
+    </div>
   </div>
   <p class="mt-4 text-sm leading-7 text-slate-300">{project.summary}</p>
   <div class="mt-5 space-y-3 text-sm text-slate-400">
     <p><span class="font-semibold text-slate-200">Problem:</span> {project.problem}</p>
-    <p><span class="font-semibold text-slate-200">Impact:</span> {project.impact}</p>
+    <p><span class="font-semibold text-slate-200">What was built:</span> {project.whatBuilt}</p>
   </div>
   <div class="mt-5 flex flex-wrap gap-2">
-    {project.technologies.map((tech) => (
+    {project.stack.map((tech) => (
       <span class="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-xs text-slate-200">
         {tech}
       </span>
     ))}
   </div>
+  {project.checkpointId && (
+    <div class="mt-5 text-xs uppercase tracking-[0.24em] text-slate-500">
+      Linked checkpoint: {project.checkpointId}
+    </div>
+  )}
 </article>
-

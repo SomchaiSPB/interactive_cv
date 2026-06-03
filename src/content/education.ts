@@ -3,27 +3,33 @@ import type { EducationItem } from './types';
 export const education: EducationItem[] = [
   {
     institution: 'OTUS',
-    program: 'Advanced backend and systems courses',
+    program: 'Advanced Golang Developer',
     period: 'Professional development',
-    notes: ['Focused on backend reliability, architecture, and delivery discipline.'],
+    notes: ['Focused on backend design, production-grade Go, and practical delivery patterns.'],
+  },
+  {
+    institution: 'OTUS',
+    program: 'Data Modelling, Warehousing, and Database Administration',
+    period: 'Professional development',
+    notes: ['Strengthened SQL, reporting architecture, and database operations.'],
   },
   {
     institution: 'ITMO University',
-    program: 'Computer science studies',
-    period: 'Academic training',
-    notes: ['Built a foundation in algorithms, systems thinking, and software engineering.'],
+    program: 'Java Development',
+    period: 'Professional / academic training',
+    notes: ['Built a strong base in application development and backend engineering discipline.'],
   },
   {
-    institution: 'Saint Petersburg Polytechnic University',
-    program: 'Engineering education',
-    period: 'Academic training',
-    notes: ['Strengthened technical depth and structured problem-solving habits.'],
+    institution: 'Peter the Great St.Petersburg Polytechnic University',
+    program: "Master's Degree in Web Development",
+    period: 'Graduate degree',
+    notes: ['Advanced web engineering study supporting modern product delivery and platform work.'],
   },
   {
-    institution: 'Bachelor degree',
-    program: 'Technical higher education',
-    period: 'Completed',
-    notes: ['Supports a long-running career in software engineering and backend systems.'],
+    institution: 'Baltic International Institute of Tourism',
+    program: "Bachelor's Degree in Information Technology",
+    period: 'Undergraduate degree',
+    notes: ['Provided the formal technical foundation for a long-term software engineering career.'],
   },
 ];
 

@@ -5,25 +5,27 @@ export const profile = {
   role: 'VP of Engineering / Go Backend Engineer / Team Lead',
   headline: 'Backend Odyssey',
   pitch:
-    'I build backend systems that survive production pressure: payments, integrations, reconciliation, observability, and the team structures that keep delivery moving.',
+    'Engineering leader and Go backend engineer focused on backend systems, data pipelines, complex integrations, financial reconciliation, and production debugging at SUPO.',
   summary:
-    'A hands-on engineering leader with a Go-first backend background, production incident experience, and a track record of improving reliability in data-heavy systems.',
-  cvLink: '/cv',
+    'Hands-on VP Engineering building resilient backend platforms, SQL-heavy reporting systems, and vendor integrations where correctness and operability matter more than architecture theater.',
+  company: 'SUPO',
+  targetDomain: 'somchai.dev',
   links: {
-    github: 'https://github.com/denis-gaivoronskii',
+    github: 'https://github.com/SomchaiSPB',
     linkedin: 'https://www.linkedin.com/in/denis-gaivoronskii/',
-    email: 'mailto:denis.gaivoronskii@example.com',
-  } satisfies Record<'github' | 'linkedin' | 'email', string>,
+    email: 'mailto:thekrisphuket@gmail.com',
+    website: 'https://somchai.dev',
+  } satisfies Record<'github' | 'linkedin' | 'email' | 'website', string>,
   quickFacts: [
-    'Go backend systems',
-    'Distributed integrations',
-    'PostgreSQL / Redis / AWS',
-    'Reconciliation and reliability',
+    'SUPO backend systems',
+    'CCH + NetSuite integrations',
+    'MSSQL reporting and reconciliation',
+    'Go, PostgreSQL, AWS, gRPC',
   ],
   ctaLinks: [
     { label: 'Explore Journey', href: '/#journey' },
     { label: 'View Classic CV', href: '/cv' },
-    { label: 'GitHub', href: 'https://github.com/denis-gaivoronskii', external: true },
+    { label: 'GitHub', href: 'https://github.com/SomchaiSPB', external: true },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/denis-gaivoronskii/', external: true },
   ] satisfies LinkItem[],
 };

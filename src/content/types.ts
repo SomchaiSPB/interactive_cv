@@ -19,16 +19,22 @@ export type Checkpoint = {
     x: number;
     y: number;
   };
+  connectedTo?: string[];
+  interactionRadius?: number;
+  unlockedByDefault?: boolean;
+  pathOrder?: number;
+  branchOf?: string;
 };
 
 export type Project = {
   title: string;
   summary: string;
   problem: string;
-  impact: string;
-  technologies: string[];
+  whatBuilt: string;
+  stack: string[];
+  status: string;
+  visibility: 'public' | 'private' | 'internal';
   checkpointId?: string;
-  link?: string;
 };
 
 export type SkillGroup = {
@@ -42,4 +48,3 @@ export type EducationItem = {
   period: string;
   notes: string[];
 };
-
