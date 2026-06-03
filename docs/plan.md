@@ -108,6 +108,7 @@ Non-goals:
 Important:
 
 - clickable checkpoints remain the MVP baseline;
+- guided hero marker v1 is already in place as the first step;
 - guided movement can be added before full WASD;
 - the site must already be useful as a portfolio before movement complexity increases.
 
@@ -130,4 +131,3 @@ Non-goals:
 - do not replace the portfolio with a game;
 - do not add game-engine complexity unless it improves the user experience materially;
 - do not compromise readability or recruiter usability.
-

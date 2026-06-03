@@ -27,8 +27,8 @@
 - [x] Clicking a checkpoint updates the detail panel
 - [x] Side checkpoints are supported
 - [x] Detail panel shows title, summary, details, and technologies
-- [ ] Add richer animation polish
-- [ ] Add optional guided movement
+- [x] Add richer animation polish
+- [x] Add guided hero marker v1
 - [ ] Add keyboard navigation
 
 ## Classic CV
@@ -75,4 +75,3 @@
 - [ ] Evaluate Phaser only if interaction requirements grow
 - [ ] Evaluate Three.js only if 3D value is proven
 - [ ] Add WASD movement only after the site is already useful as a portfolio
-
