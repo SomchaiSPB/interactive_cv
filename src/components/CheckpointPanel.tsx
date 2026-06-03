@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import type { Checkpoint } from '../content/types';
 
 type Props = {
@@ -8,6 +8,7 @@ type Props = {
 
 export function CheckpointPanel({ checkpoint, variant = 'default' }: Props) {
   const isHud = variant === 'hud';
+
   return (
     <AnimatePresence mode="wait">
       {checkpoint ? (
@@ -31,21 +32,21 @@ export function CheckpointPanel({ checkpoint, variant = 'default' }: Props) {
                 </p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-right">
-                <p className="text-[10px] uppercase tracking-[0.24em] text-slate-500">Path</p>
+                <p className="text-[10px] uppercase tracking-[0.24em] text-slate-500">Route</p>
                 <p className="mt-1 text-sm font-medium text-slate-200">
-                  {checkpoint.branchOf ? 'Side branch' : 'Main path'}
+                  {checkpoint.branchOf ? 'Side quest' : 'Main quest'}
                 </p>
               </div>
             </div>
 
             <div className={`rounded-3xl border border-neon/15 bg-neon/5 ${isHud ? 'p-3 sm:p-4' : 'p-4'}`}>
-              <p className="text-xs uppercase tracking-[0.24em] text-neon">Summary</p>
+              <p className="text-xs uppercase tracking-[0.24em] text-neon">Quest summary</p>
               <p className={`mt-3 text-sm leading-7 text-slate-200 ${isHud ? 'sm:text-[0.92rem]' : ''}`}>{checkpoint.summary}</p>
             </div>
 
             <div className={`grid gap-4 ${isHud ? 'md:grid-cols-1 xl:grid-cols-[1.15fr_0.85fr]' : 'md:grid-cols-[1.15fr_0.85fr]'}`}>
               <section className="rounded-3xl border border-white/10 bg-slate-950/55 p-4">
-                <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Journey notes</p>
+                <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Quest notes</p>
                 <ul className="mt-3 space-y-3">
                   {checkpoint.details.map((detail) => (
                     <li key={detail} className="flex gap-3 text-sm leading-7 text-slate-300">
@@ -56,51 +57,54 @@ export function CheckpointPanel({ checkpoint, variant = 'default' }: Props) {
                 </ul>
               </section>
 
-            <section className="space-y-4">
-              <div className="rounded-3xl border border-white/10 bg-slate-950/55 p-4">
-                <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Stack</p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {checkpoint.technologies.map((tech) => (
-                    <span key={tech} className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-xs text-slate-200">
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {checkpoint.links?.length ? (
+              <section className="space-y-4">
                 <div className="rounded-3xl border border-white/10 bg-slate-950/55 p-4">
-                  <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Links</p>
+                  <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Stack</p>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {checkpoint.links.map((link) => (
-                      <a
-                        key={link.label}
-                        href={link.href}
-                        target={link.external ? '_blank' : undefined}
-                        rel={link.external ? 'noreferrer' : undefined}
-                        className="rounded-full border border-neon/20 bg-neon/5 px-3 py-1 text-xs text-neon transition hover:border-neon/40 hover:bg-neon/10"
-                      >
-                        {link.label}
-                      </a>
+                    {checkpoint.technologies.map((tech) => (
+                      <span key={tech} className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-xs text-slate-200">
+                        {tech}
+                      </span>
                     ))}
                   </div>
                 </div>
-              ) : null}
 
-              <div className="grid grid-cols-2 gap-3 rounded-3xl border border-white/10 bg-slate-950/55 p-4 text-sm">
-                <div>
-                  <p className="text-[10px] uppercase tracking-[0.24em] text-slate-500">Graph order</p>
-                  <p className="mt-1 font-medium text-slate-200">{checkpoint.pathOrder ?? checkpoint.order}</p>
+                {checkpoint.links?.length ? (
+                  <div className="rounded-3xl border border-white/10 bg-slate-950/55 p-4">
+                    <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Links</p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {checkpoint.links.map((link) => (
+                        <a
+                          key={link.label}
+                          href={link.href}
+                          target={link.external ? '_blank' : undefined}
+                          rel={link.external ? 'noreferrer' : undefined}
+                          className="rounded-full border border-neon/20 bg-neon/5 px-3 py-1 text-xs text-neon transition hover:border-neon/40 hover:bg-neon/10"
+                        >
+                          {link.label}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+
+                <div className="grid grid-cols-2 gap-3 rounded-3xl border border-white/10 bg-slate-950/55 p-4 text-sm">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-[0.24em] text-slate-500">Graph order</p>
+                    <p className="mt-1 font-medium text-slate-200">{checkpoint.pathOrder ?? checkpoint.order}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] uppercase tracking-[0.24em] text-slate-500">Radius</p>
+                    <p className="text-[10px] uppercase tracking-[0.24em] text-slate-500">Reach</p>
                     <p className="mt-1 font-medium text-slate-200">{checkpoint.interactionRadius ?? 0}</p>
                   </div>
                   <div className="col-span-2">
                     <p className="text-[10px] uppercase tracking-[0.24em] text-slate-500">Connections</p>
                     <div className="mt-2 flex flex-wrap gap-2">
                       {(checkpoint.connectedTo ?? []).map((target) => (
-                        <span key={target} className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] uppercase tracking-[0.18em] text-slate-300">
+                        <span
+                          key={target}
+                          className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] uppercase tracking-[0.18em] text-slate-300"
+                        >
                           {target.replace(/-/g, ' ')}
                         </span>
                       ))}

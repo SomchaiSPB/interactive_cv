@@ -1,6 +1,6 @@
 # Backend Odyssey Plan
 
-This plan keeps the project centered on a useful portfolio first, with a Phaser-powered 2D game homepage layered on top of the static career story. The classic CV remains available as the fallback route for recruiters and clients.
+This plan keeps the project centered on a useful portfolio first, with a Phaser-powered 2D RPG quest homepage layered on top of the static career story. The classic CV remains available as the fallback route for recruiters and clients.
 
 ## Phase 0: Documentation and Content Cleanup
 
@@ -49,20 +49,19 @@ Non-goals:
 Scope:
 
 - improve spacing, hierarchy, and emphasis;
-- refine the RPG map feel while keeping it professional;
+- refine the RPG town feel while keeping it professional;
 - improve readability on both desktop and mobile.
 
 Deliverables:
 
 - stronger visual hierarchy;
-- better glows, panels, and map legibility;
+- better buildings, roads, panels, and map legibility;
 - tighter responsive polish.
 
 Non-goals:
 
-- no Phaser;
 - no Three.js;
-- no WASD movement;
+- no 3D direction;
 - no motion-heavy game mechanics.
 
 ## Phase 3: MVP Deployment
@@ -70,7 +69,7 @@ Non-goals:
 Scope:
 
 - deploy the current site as a static portfolio;
-- keep `/` as a game-first Phaser 2D portfolio prototype;
+- keep `/` as a game-first Phaser 2D RPG quest prototype;
 - verify the build and hosting path;
 - ensure the site is useful before adding game features.
 
@@ -92,7 +91,7 @@ Non-goals:
 Scope:
 
 - refine guided travel and interaction flow beyond the current Phaser prototype;
-- preserve the game loop, E-to-interact pattern, and readable HUD structure;
+- preserve click-to-move, E-to-interact, and readable HUD structure;
 - keep navigation readable and controlled.
 
 Deliverables:
@@ -105,6 +104,7 @@ Non-goals:
 
 - no 3D / Three.js;
 - no joystick/mobile controller in the default build;
+- no pathfinding-heavy traversal layer;
 - no replacement of the static CV fallback.
 
 Important:
@@ -114,22 +114,24 @@ Important:
 - the next work should improve art, sound, and clarity before any bigger interaction change.
 - `/cv` remains the classic readable fallback for recruiters and clients.
 
-## Phase 5: Optional WASD / Game Mode
+## Phase 5: Optional Advanced Movement
 
 Scope:
 
 - evaluate whether richer interaction, art, or sound adds real value;
+- expand movement only if it improves the quest experience;
 - improve the asset pipeline, real sprites, map art, and audio only if they increase clarity;
 - keep the existing CV experience intact.
 
 Deliverables:
 
 - optional game expansion plan;
-- better planets, stations, and HUD polish;
+- better towns, buildings, NPCs, and HUD polish;
 - feature separation so the portfolio remains stable.
 
 Non-goals:
 
 - do not replace the portfolio with a game-first-only experience;
 - do not add 3D unless it is explicitly requested and justified;
+- do not make WASD the default unless it is explicitly requested and clearly beneficial;
 - do not compromise readability or recruiter usability.

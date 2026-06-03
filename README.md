@@ -2,14 +2,14 @@
 
 This repository is a static-first Astro + React + TypeScript portfolio site for Denis Gaivoronskii.
 
-The homepage is a Phaser-powered 2D game portfolio prototype called "Backend Odyssey". Visitors start on a playable space-arcade map, move a ship with the keyboard, approach locations, and press `E` to open portfolio panels. The classic CV, projects, and contact pages stay available as readable static routes.
+The homepage is a Phaser-powered 2D RPG quest portfolio prototype called "Backend Odyssey". Visitors start on a playable town map, click to move a hero, approach buildings and NPCs, and press `E` or click to open portfolio panels. The classic CV, projects, and contact pages stay available as readable static routes.
 
 ## Backend Odyssey
 
-The concept is a dark, cyberpunk-inspired game portfolio:
+The concept is a dark, cyberpunk-inspired RPG quest:
 
-- each checkpoint becomes a game location;
-- the desktop homepage opens with a playable Phaser scene;
+- each checkpoint becomes a town location, building, gate, or NPC interaction;
+- the desktop homepage opens with a playable Phaser town scene;
 - the classic pages remain accessible as a fallback for recruiters and clients;
 - the mobile experience falls back to a readable journey/timeline view;
 - the content stays separate from the UI so the story can evolve without rewriting components.
@@ -89,8 +89,10 @@ The current build is an MVP, not a full game product.
 
 Current limitations:
 
-- the game layer uses generated placeholder ships, planets, and HUD styling rather than final assets;
-- mobile users still get a readable fallback instead of a joystick or touch controller;
+- the game layer uses generated placeholder buildings, roads, and hero sprites rather than final art;
+- the tilemap / asset pipeline is not finalized yet;
+- mobile users still get a readable fallback instead of joystick or touch controls;
+- WASD movement, pathfinding, and richer traversal are deferred;
 - 3D/Three.js is deferred;
 - the current CV is a structured web page, not a generated PDF export.
 

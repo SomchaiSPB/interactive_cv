@@ -23,19 +23,20 @@
 ## RPG Map MVP
 
 - [x] Fullscreen game-first homepage exists
-- [x] Phaser-powered 2D game prototype exists on `/`
+- [x] Phaser-powered 2D RPG quest prototype exists on `/`
 - [x] Start screen appears before entering the game
-- [x] Visible player/ship appears in the first viewport
-- [x] WASD / arrow movement works
+- [x] Visible hero character appears in the first viewport
+- [x] Click-to-move hero movement works
 - [x] E opens the checkpoint panel when near a location
+- [x] Clicking a location opens the checkpoint panel
 - [x] Checkpoints render from content data
-- [x] Main and side locations are visually distinct
+- [x] Town, buildings, roads, and side locations are visually distinct
 - [x] Detail panel shows title, summary, details, stack, and links
 - [x] HUD shows the classic CV and main navigation
 - [ ] Add real sprites, map art, and sound
-- [ ] Add richer planet / station visuals
-- [ ] Add deeper guided travel or dock behaviors
-- [ ] Add keyboard navigation beyond movement and interaction
+- [ ] Add richer town / building visuals
+- [ ] Add deeper guided travel or interaction behaviors
+- [ ] Add WASD / keyboard movement only if it becomes useful
 
 ## Classic CV
 
@@ -77,8 +78,8 @@
 
 ## Future Game Layer
 
-- [ ] Define richer dock / warp / travel rules
-- [ ] Add better ship sprites and location art
+- [ ] Define richer quest / movement rules
+- [ ] Add better sprites, buildings, and map art
 - [ ] Add audio and ambient effects
 - [ ] Evaluate Three.js only if 3D value is proven
 - [ ] Add mobile controls only after the desktop prototype is already useful

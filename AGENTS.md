@@ -52,10 +52,12 @@ This file defines the working rules for AI coding agents in this repository.
 
 ## Product Direction
 
-- The homepage is now a Phaser-powered 2D game portfolio prototype.
+- The homepage is now a Phaser-powered 2D RPG quest portfolio.
 - `/cv`, `/projects`, and `/contact` remain classic readable static pages.
 - Keep the content model separate from UI and game code.
 - Preserve the mobile fallback; do not replace it with joystick controls unless explicitly requested.
+- The quest prototype should use click-to-move, inspectable buildings/NPCs, and a town-style map.
+- Reject any return to space/cockpit metaphors, planet maps, or 3D-style direction unless explicitly requested later.
 - 3D / Three.js remains deferred unless the user explicitly asks for it.
 
 ## Documentation Expectations

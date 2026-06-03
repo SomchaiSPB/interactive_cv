@@ -1,93 +1,327 @@
 import type { Checkpoint } from '../content/types';
 import type { GameLocation, LocationKind } from './types';
 
-const WORLD_WIDTH = 3200;
-const WORLD_HEIGHT = 2200;
+export const GAME_WORLD = {
+  width: 2600,
+  height: 1800,
+} as const;
 
-function resolveKind(checkpoint: Checkpoint): LocationKind {
-  if (checkpoint.id === 'spawn-point') {
-    return 'spawn';
-  }
+type Layout = {
+  displayName: string;
+  kind: LocationKind;
+  worldX: number;
+  worldY: number;
+  footprintWidth: number;
+  footprintHeight: number;
+  promptRadius: number;
+  displayScale: number;
+  labelOffsetX: number;
+  labelOffsetY: number;
+  baseColor: number;
+  roofColor: number;
+  accentColor: number;
+};
 
-  if (checkpoint.id === 'contact-portal') {
-    return 'dock';
-  }
+const LAYOUTS: Record<string, Layout> = {
+  'spawn-point': {
+    displayName: 'Town Square',
+    kind: 'town_square',
+    worldX: 1300,
+    worldY: 930,
+    footprintWidth: 250,
+    footprintHeight: 250,
+    promptRadius: 160,
+    displayScale: 1.25,
+    labelOffsetX: 0,
+    labelOffsetY: 164,
+    baseColor: 0x29462b,
+    roofColor: 0xcfd7ba,
+    accentColor: 0x7cf7d4,
+  },
+  'legacy-forest': {
+    displayName: 'Old Library',
+    kind: 'library',
+    worldX: 770,
+    worldY: 560,
+    footprintWidth: 180,
+    footprintHeight: 160,
+    promptRadius: 120,
+    displayScale: 1.12,
+    labelOffsetX: 0,
+    labelOffsetY: 118,
+    baseColor: 0x38415a,
+    roofColor: 0xc7cedf,
+    accentColor: 0x69a7ff,
+  },
+  'backend-forge': {
+    displayName: 'Backend Forge',
+    kind: 'forge',
+    worldX: 1070,
+    worldY: 600,
+    footprintWidth: 190,
+    footprintHeight: 160,
+    promptRadius: 128,
+    displayScale: 1.16,
+    labelOffsetX: 0,
+    labelOffsetY: 120,
+    baseColor: 0x523225,
+    roofColor: 0xd7a06f,
+    accentColor: 0xf6b74c,
+  },
+  'data-citadel': {
+    displayName: 'Data Tower',
+    kind: 'tower',
+    worldX: 1360,
+    worldY: 420,
+    footprintWidth: 150,
+    footprintHeight: 280,
+    promptRadius: 132,
+    displayScale: 1.18,
+    labelOffsetX: 0,
+    labelOffsetY: 188,
+    baseColor: 0x2d4663,
+    roofColor: 0xaed0ff,
+    accentColor: 0x69a7ff,
+  },
+  'integration-swamp': {
+    displayName: 'Integration Market',
+    kind: 'market',
+    worldX: 1910,
+    worldY: 830,
+    footprintWidth: 230,
+    footprintHeight: 150,
+    promptRadius: 128,
+    displayScale: 1.05,
+    labelOffsetX: 0,
+    labelOffsetY: 122,
+    baseColor: 0x5b4d2e,
+    roofColor: 0xe8b86c,
+    accentColor: 0xf6b74c,
+  },
+  'production-black-hole': {
+    displayName: 'Bug Pit',
+    kind: 'pit',
+    worldX: 970,
+    worldY: 1220,
+    footprintWidth: 170,
+    footprintHeight: 120,
+    promptRadius: 120,
+    displayScale: 1.06,
+    labelOffsetX: 0,
+    labelOffsetY: 104,
+    baseColor: 0x2d2333,
+    roofColor: 0x885e9b,
+    accentColor: 0xb06eff,
+  },
+  'leadership-tower': {
+    displayName: 'Command Hall',
+    kind: 'hall',
+    worldX: 1760,
+    worldY: 470,
+    footprintWidth: 240,
+    footprintHeight: 170,
+    promptRadius: 138,
+    displayScale: 1.15,
+    labelOffsetX: 0,
+    labelOffsetY: 124,
+    baseColor: 0x3f4f3a,
+    roofColor: 0xc3d1a8,
+    accentColor: 0x7cf7d4,
+  },
+  'product-launch-gate': {
+    displayName: 'Product Gate',
+    kind: 'gate',
+    worldX: 2100,
+    worldY: 960,
+    footprintWidth: 180,
+    footprintHeight: 180,
+    promptRadius: 132,
+    displayScale: 1.08,
+    labelOffsetX: 0,
+    labelOffsetY: 132,
+    baseColor: 0x655042,
+    roofColor: 0xd7c1aa,
+    accentColor: 0xf6b74c,
+  },
+  'ai-workshop': {
+    displayName: 'AI Lab',
+    kind: 'lab',
+    worldX: 1100,
+    worldY: 340,
+    footprintWidth: 170,
+    footprintHeight: 150,
+    promptRadius: 114,
+    displayScale: 0.98,
+    labelOffsetX: 0,
+    labelOffsetY: 114,
+    baseColor: 0x2f5361,
+    roofColor: 0xa7e6ff,
+    accentColor: 0x7cf7d4,
+  },
+  'webrtc-signal-tower': {
+    displayName: 'Signal Tower',
+    kind: 'tower',
+    worldX: 460,
+    worldY: 820,
+    footprintWidth: 130,
+    footprintHeight: 260,
+    promptRadius: 118,
+    displayScale: 1,
+    labelOffsetX: 0,
+    labelOffsetY: 180,
+    baseColor: 0x37535f,
+    roofColor: 0x8fc1d1,
+    accentColor: 0x69a7ff,
+  },
+  'video-observatory': {
+    displayName: 'Archive House',
+    kind: 'archive',
+    worldX: 1140,
+    worldY: 660,
+    footprintWidth: 170,
+    footprintHeight: 150,
+    promptRadius: 116,
+    displayScale: 0.94,
+    labelOffsetX: 0,
+    labelOffsetY: 118,
+    baseColor: 0x4c3f5c,
+    roofColor: 0xc3a6df,
+    accentColor: 0xb07cff,
+  },
+  'policy-temple': {
+    displayName: 'Policy Temple',
+    kind: 'temple',
+    worldX: 1820,
+    worldY: 650,
+    footprintWidth: 180,
+    footprintHeight: 160,
+    promptRadius: 118,
+    displayScale: 1,
+    labelOffsetX: 0,
+    labelOffsetY: 122,
+    baseColor: 0x57484b,
+    roofColor: 0xd9b2b6,
+    accentColor: 0xffc9c9,
+  },
+  'report-lab': {
+    displayName: 'Report Lab',
+    kind: 'lab',
+    worldX: 1480,
+    worldY: 580,
+    footprintWidth: 170,
+    footprintHeight: 150,
+    promptRadius: 114,
+    displayScale: 0.98,
+    labelOffsetX: 0,
+    labelOffsetY: 114,
+    baseColor: 0x304c58,
+    roofColor: 0xa8d6e6,
+    accentColor: 0x7cf7d4,
+  },
+  'xml-foundry': {
+    displayName: 'XML Workshop',
+    kind: 'workshop',
+    worldX: 1970,
+    worldY: 1090,
+    footprintWidth: 160,
+    footprintHeight: 140,
+    promptRadius: 112,
+    displayScale: 0.92,
+    labelOffsetX: 0,
+    labelOffsetY: 112,
+    baseColor: 0x5c4c3a,
+    roofColor: 0xd0b79b,
+    accentColor: 0xf6b74c,
+  },
+  'calendar-gate': {
+    displayName: 'Calendar Office',
+    kind: 'office',
+    worldX: 2260,
+    worldY: 1110,
+    footprintWidth: 170,
+    footprintHeight: 150,
+    promptRadius: 116,
+    displayScale: 0.96,
+    labelOffsetX: 0,
+    labelOffsetY: 114,
+    baseColor: 0x40505e,
+    roofColor: 0xbfd2e0,
+    accentColor: 0x69a7ff,
+  },
+  'education-trail': {
+    displayName: 'Academy',
+    kind: 'academy',
+    worldX: 690,
+    worldY: 1430,
+    footprintWidth: 210,
+    footprintHeight: 170,
+    promptRadius: 128,
+    displayScale: 1.08,
+    labelOffsetX: 0,
+    labelOffsetY: 130,
+    baseColor: 0x47555e,
+    roofColor: 0xd1dee8,
+    accentColor: 0x7cf7d4,
+  },
+  'contact-portal': {
+    displayName: 'Contact Gate',
+    kind: 'gate',
+    worldX: 2240,
+    worldY: 1410,
+    footprintWidth: 190,
+    footprintHeight: 180,
+    promptRadius: 128,
+    displayScale: 1.02,
+    labelOffsetX: 0,
+    labelOffsetY: 132,
+    baseColor: 0x61524a,
+    roofColor: 0xd8cabf,
+    accentColor: 0xf6b74c,
+  },
+};
 
-  if (checkpoint.id === 'product-launch-gate') {
-    return 'gate';
-  }
+function getFallbackLayout(checkpoint: Checkpoint): Layout {
+  const isBranch = Boolean(checkpoint.branchOf);
+  const centerX = 1280 + (checkpoint.position.x - 50) * 10;
+  const centerY = 900 + (checkpoint.position.y - 50) * 8;
 
-  if (checkpoint.branchOf) {
-    return 'branch';
-  }
-
-  return 'main';
+  return {
+    displayName: checkpoint.subtitle || checkpoint.title,
+    kind: isBranch ? 'npc' : 'hall',
+    worldX: Math.round(centerX),
+    worldY: Math.round(centerY),
+    footprintWidth: isBranch ? 120 : 180,
+    footprintHeight: isBranch ? 100 : 140,
+    promptRadius: isBranch ? 100 : 118,
+    displayScale: isBranch ? 0.84 : 1,
+    labelOffsetX: 0,
+    labelOffsetY: isBranch ? 96 : 116,
+    baseColor: isBranch ? 0x3c3f4f : 0x40505e,
+    roofColor: isBranch ? 0xb3bbd6 : 0xc8d4e2,
+    accentColor: isBranch ? 0x8ea1c7 : 0x69a7ff,
+  };
 }
 
 export function mapCheckpointsToGameLocations(checkpoints: Checkpoint[]): GameLocation[] {
   return checkpoints.map((checkpoint) => {
-    const kind = resolveKind(checkpoint);
-    const x = 220 + (checkpoint.position.x / 100) * (WORLD_WIDTH - 440);
-    const y = 170 + (checkpoint.position.y / 100) * (WORLD_HEIGHT - 340);
-    const branch = Boolean(checkpoint.branchOf);
-    const radius =
-      kind === 'spawn'
-        ? 96
-        : kind === 'dock'
-          ? 72
-          : kind === 'gate'
-            ? 78
-            : branch
-              ? 58
-              : 78;
-
-    const labelOffsetY = branch ? radius + 48 : radius + 60;
+    const layout = LAYOUTS[checkpoint.id] ?? getFallbackLayout(checkpoint);
 
     return {
       ...checkpoint,
-      kind,
-      worldX: Math.round(x),
-      worldY: Math.round(y),
-      radius,
-      promptRadius: checkpoint.interactionRadius ?? Math.round(radius + (branch ? 92 : 124)),
-      labelOffsetX: checkpoint.side === 'left' ? -8 : checkpoint.side === 'right' ? 8 : 0,
-      labelOffsetY,
-      glowColor:
-        kind === 'spawn'
-          ? 0x7cf7d4
-          : kind === 'dock'
-            ? 0x69a7ff
-            : kind === 'gate'
-              ? 0xf6b74c
-              : branch
-                ? 0x8ea1c7
-                : 0x69a7ff,
-      coreColor:
-        kind === 'spawn'
-          ? 0x0d1423
-          : kind === 'dock'
-            ? 0x14243d
-            : kind === 'gate'
-              ? 0x2c1d09
-              : branch
-                ? 0x111827
-                : 0x0c1d33,
-      ringColor:
-        kind === 'spawn'
-          ? 0x7cf7d4
-          : kind === 'dock'
-            ? 0x69a7ff
-            : kind === 'gate'
-              ? 0xf6b74c
-              : branch
-                ? 0x93a2cb
-                : 0x7cf7d4,
-      displayScale: branch ? 0.76 : kind === 'spawn' ? 1.15 : kind === 'gate' ? 1.04 : 1,
+      displayName: layout.displayName,
+      kind: layout.kind,
+      worldX: layout.worldX,
+      worldY: layout.worldY,
+      footprintWidth: layout.footprintWidth,
+      footprintHeight: layout.footprintHeight,
+      promptRadius: checkpoint.interactionRadius ?? layout.promptRadius,
+      displayScale: layout.displayScale,
+      labelOffsetX: layout.labelOffsetX,
+      labelOffsetY: layout.labelOffsetY,
+      baseColor: layout.baseColor,
+      roofColor: layout.roofColor,
+      accentColor: layout.accentColor,
+      links: checkpoint.links,
     };
   });
 }
-
-export const GAME_WORLD = {
-  width: WORLD_WIDTH,
-  height: WORLD_HEIGHT,
-} as const;

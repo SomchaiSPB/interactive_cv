@@ -1,23 +1,26 @@
 import Phaser from 'phaser';
 import type { GameLocation, OdysseyNearestEventDetail } from './types';
-import { ODYSSEY_EVENT_CLOSE, ODYSSEY_EVENT_NEAREST, ODYSSEY_EVENT_OPEN, ODYSSEY_EVENT_READY } from './types';
 import { GAME_WORLD } from './locationMapper';
+import {
+  ODYSSEY_EVENT_CLOSE,
+  ODYSSEY_EVENT_NEAREST,
+  ODYSSEY_EVENT_OPEN,
+  ODYSSEY_EVENT_READY,
+} from './types';
 
 type BootConfig = {
   locations: GameLocation[];
 };
 
 type KeyboardBundle = {
-  W?: Phaser.Input.Keyboard.Key;
-  A?: Phaser.Input.Keyboard.Key;
-  S?: Phaser.Input.Keyboard.Key;
-  D?: Phaser.Input.Keyboard.Key;
-  UP?: Phaser.Input.Keyboard.Key;
-  DOWN?: Phaser.Input.Keyboard.Key;
-  LEFT?: Phaser.Input.Keyboard.Key;
-  RIGHT?: Phaser.Input.Keyboard.Key;
   E?: Phaser.Input.Keyboard.Key;
   ESC?: Phaser.Input.Keyboard.Key;
+};
+
+type LocationNode = {
+  location: GameLocation;
+  halo: Phaser.GameObjects.Ellipse;
+  zone: Phaser.GameObjects.Zone;
 };
 
 function emitEvent<T>(name: string, detail?: T) {
@@ -31,11 +34,13 @@ function emitEvent<T>(name: string, detail?: T) {
 export class BackendOdysseyScene extends Phaser.Scene {
   private readonly bootConfig: BootConfig;
   private locations: GameLocation[] = [];
+  private nodes = new Map<string, LocationNode>();
   private player!: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
   private keys!: KeyboardBundle;
   private nearestLocationId: string | null = null;
   private nearestInteractable = false;
-  private loadingLabel?: Phaser.GameObjects.Text;
+  private currentTarget: Phaser.Math.Vector2 | null = null;
+  private heroSpeed = 210;
 
   constructor(config: BootConfig) {
     super('BackendOdysseyScene');
@@ -49,105 +54,94 @@ export class BackendOdysseyScene extends Phaser.Scene {
   create() {
     this.locations = this.bootConfig.locations;
 
-    this.cameras.main.setBackgroundColor('#050811');
+    this.cameras.main.setBackgroundColor('#08110a');
     this.cameras.main.setBounds(0, 0, GAME_WORLD.width, GAME_WORLD.height);
     this.physics.world.setBounds(0, 0, GAME_WORLD.width, GAME_WORLD.height);
 
-    this.add.tileSprite(0, 0, GAME_WORLD.width, GAME_WORLD.height, 'odyssey-starfield').setOrigin(0).setDepth(-20);
-    this.add.tileSprite(0, 0, GAME_WORLD.width, GAME_WORLD.height, 'odyssey-grid').setOrigin(0).setAlpha(0.12).setDepth(-19);
+    this.add.tileSprite(0, 0, GAME_WORLD.width, GAME_WORLD.height, 'odyssey-ground').setOrigin(0).setDepth(-30);
+    this.add.tileSprite(0, 0, GAME_WORLD.width, GAME_WORLD.height, 'odyssey-noise').setOrigin(0).setAlpha(0.16).setDepth(-29);
+    this.add.rectangle(GAME_WORLD.width / 2, GAME_WORLD.height / 2, GAME_WORLD.width, GAME_WORLD.height, 0x0b170d, 0.16).setDepth(-28);
 
-    this.add
-      .ellipse(GAME_WORLD.width * 0.26, GAME_WORLD.height * 0.26, 820, 520, 0x69a7ff, 0.08)
-      .setDepth(-18);
-    this.add
-      .ellipse(GAME_WORLD.width * 0.72, GAME_WORLD.height * 0.2, 700, 400, 0x7cf7d4, 0.07)
-      .setDepth(-18);
-    this.add
-      .ellipse(GAME_WORLD.width * 0.58, GAME_WORLD.height * 0.76, 640, 420, 0xf6b74c, 0.05)
-      .setDepth(-18);
-
+    this.drawFogs();
+    this.drawTownSquare();
+    this.drawRoads();
     this.drawLocations();
-    this.player = this.physics.add.sprite(this.locations[0]?.worldX ?? 300, this.locations[0]?.worldY ?? 300, 'odyssey-ship');
-    this.player.setDepth(20);
+    this.drawLanterns();
+
+    const spawn = this.locations.find((location) => location.id === 'spawn-point') ?? this.locations[0];
+    this.player = this.physics.add.sprite(spawn?.worldX ?? GAME_WORLD.width / 2, (spawn?.worldY ?? GAME_WORLD.height / 2) + 88, 'odyssey-hero');
+    this.player.setDepth(1000);
     this.player.setCollideWorldBounds(true);
-    this.player.setMaxVelocity(360, 360);
-    this.player.setDrag(520, 520);
-    this.player.setDamping(true);
-    this.player.setSize(36, 36);
-    this.player.setOffset(14, 14);
+    this.player.setDrag(0, 0);
+    this.player.body.setSize(28, 26, true);
+    this.player.body.setOffset(18, 20);
 
-    this.keys = this.input.keyboard?.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT,E,ESC') as KeyboardBundle;
+    this.currentTarget = new Phaser.Math.Vector2(this.player.x, this.player.y);
 
+    this.keys = this.input.keyboard?.addKeys('E,ESC') as KeyboardBundle;
     this.cameras.main.startFollow(this.player, true, 0.08, 0.08);
-    this.cameras.main.setZoom(0.92);
+    this.cameras.main.setZoom(1.02);
 
-    this.loadingLabel = this.add
-      .text(GAME_WORLD.width / 2, GAME_WORLD.height / 2, 'Initializing Backend Odyssey...', {
-        fontFamily: '"IBM Plex Mono", monospace',
-        fontSize: '28px',
-        color: '#7cf7d4',
-        align: 'center',
-      })
-      .setOrigin(0.5)
-      .setDepth(50);
+    this.input.on('pointerdown', (pointer: Phaser.Input.Pointer, currentlyOver: Phaser.GameObjects.GameObject[]) => {
+      if (currentlyOver.length > 0) {
+        return;
+      }
 
-    this.time.delayedCall(120, () => {
-      this.loadingLabel?.destroy();
-      this.loadingLabel = undefined;
-      emitEvent(ODYSSEY_EVENT_READY);
+      this.setMoveTarget(pointer.worldX, pointer.worldY);
     });
+
+    this.time.delayedCall(60, () => emitEvent(ODYSSEY_EVENT_READY));
+
+    this.emitNearestState();
   }
 
-  update() {
-    if (!this.player || !this.keys) {
+  update(_time: number, delta: number) {
+    if (!this.player) {
       return;
     }
 
-    const acceleration = 760;
-    const velocity = this.player.body.velocity;
-    let ax = 0;
-    let ay = 0;
+    const target = this.currentTarget;
+    if (target) {
+      const dx = target.x - this.player.x;
+      const dy = target.y - this.player.y;
+      const distance = Math.hypot(dx, dy);
 
-    if (this.keys.W?.isDown || this.keys.UP?.isDown) {
-      ay -= acceleration;
-    }
-    if (this.keys.S?.isDown || this.keys.DOWN?.isDown) {
-      ay += acceleration;
-    }
-    if (this.keys.A?.isDown || this.keys.LEFT?.isDown) {
-      ax -= acceleration;
-    }
-    if (this.keys.D?.isDown || this.keys.RIGHT?.isDown) {
-      ax += acceleration;
-    }
+      if (distance <= 6) {
+        this.player.setVelocity(0, 0);
+        this.currentTarget = null;
+      } else {
+        const step = (this.heroSpeed * delta) / 1000;
+        const speedX = (dx / distance) * this.heroSpeed;
+        const speedY = (dy / distance) * this.heroSpeed;
+        this.player.setVelocity(speedX, speedY);
+        this.player.setRotation(0);
 
-    this.player.setAcceleration(ax, ay);
-
-    const speed = Math.hypot(velocity.x, velocity.y);
-    if (speed > 24) {
-      this.player.rotation = Phaser.Math.Angle.Between(0, 0, velocity.x, velocity.y) + Math.PI / 2;
-    }
-
-    const nearest = this.getNearestLocation(this.player.x, this.player.y);
-    if (nearest) {
-      const interactable = nearest.distance <= nearest.location.promptRadius;
-      if (this.nearestLocationId !== nearest.location.id || this.nearestInteractable !== interactable) {
-        this.nearestLocationId = nearest.location.id;
-        this.nearestInteractable = interactable;
-        const prompt = interactable ? `Press E to enter ${nearest.location.title}` : null;
-        const detail: OdysseyNearestEventDetail = {
-          location: nearest.location,
-          prompt,
-          interactable,
-        };
-        emitEvent(ODYSSEY_EVENT_NEAREST, detail);
+        if (distance < step) {
+          this.player.setPosition(target.x, target.y);
+          this.player.setVelocity(0, 0);
+          this.currentTarget = null;
+        }
       }
+    } else {
+      this.player.setVelocity(0, 0);
+    }
+
+    const nearest = this.findNearestLocation(this.player.x, this.player.y);
+    const interactable = Boolean(nearest && nearest.distance <= nearest.location.promptRadius);
+    if (nearest && (nearest.location.id !== this.nearestLocationId || interactable !== this.nearestInteractable)) {
+      this.nearestLocationId = nearest.location.id;
+      this.nearestInteractable = interactable;
+      this.emitNearestState(nearest);
+    } else if (!nearest && this.nearestLocationId !== null) {
+      this.nearestLocationId = null;
+      this.nearestInteractable = false;
+      this.emitNearestState(null);
     }
 
     const interactKey = this.keys.E;
     if (interactKey && Phaser.Input.Keyboard.JustDown(interactKey)) {
       if (nearest && nearest.distance <= nearest.location.promptRadius) {
-        emitEvent(ODYSSEY_EVENT_OPEN, { checkpointId: nearest.location.id });
+        this.openCheckpoint(nearest.location);
       }
     }
 
@@ -157,12 +151,42 @@ export class BackendOdysseyScene extends Phaser.Scene {
     }
   }
 
-  private getNearestLocation(x: number, y: number) {
+  private setMoveTarget(worldX: number, worldY: number) {
+    this.currentTarget = new Phaser.Math.Vector2(
+      Phaser.Math.Clamp(worldX, 0, GAME_WORLD.width),
+      Phaser.Math.Clamp(worldY, 0, GAME_WORLD.height),
+    );
+  }
+
+  private openCheckpoint(location: GameLocation) {
+    emitEvent(ODYSSEY_EVENT_OPEN, { checkpointId: location.id });
+  }
+
+  private emitNearestState(nearest?: { location: GameLocation; distance: number } | null) {
+    const selected = nearest ?? this.findNearestLocation(this.player.x, this.player.y);
+    const interactable = Boolean(selected && selected.distance <= selected.location.promptRadius);
+
+    if (selected && interactable) {
+      emitEvent<OdysseyNearestEventDetail>(ODYSSEY_EVENT_NEAREST, {
+        location: selected.location,
+        prompt: `Press E or click to inspect ${selected.location.displayName}`,
+        interactable: true,
+      });
+      return;
+    }
+
+    emitEvent<OdysseyNearestEventDetail>(ODYSSEY_EVENT_NEAREST, {
+      location: selected?.location ?? null,
+      prompt: null,
+      interactable: false,
+    });
+  }
+
+  private findNearestLocation(x: number, y: number) {
     let nearest: { location: GameLocation; distance: number } | null = null;
 
     for (const location of this.locations) {
       const distance = Phaser.Math.Distance.Between(x, y, location.worldX, location.worldY);
-
       if (!nearest || distance < nearest.distance) {
         nearest = { location, distance };
       }
@@ -171,75 +195,388 @@ export class BackendOdysseyScene extends Phaser.Scene {
     return nearest;
   }
 
+  private drawRoads() {
+    const road = this.add.graphics().setDepth(2);
+    const pathLocations = [...this.locations].filter((location) => !location.branchOf).sort(
+      (left, right) => (left.pathOrder ?? left.order) - (right.pathOrder ?? right.order),
+    );
+
+    for (let index = 0; index < pathLocations.length - 1; index += 1) {
+      this.drawRoadSegment(road, pathLocations[index], pathLocations[index + 1], true);
+    }
+
+    for (const location of this.locations) {
+      if (!location.branchOf) {
+        continue;
+      }
+
+      const parent = this.locations.find((candidate) => candidate.id === location.branchOf);
+      if (parent) {
+        this.drawRoadSegment(road, parent, location, false);
+      }
+    }
+  }
+
+  private drawRoadSegment(graphics: Phaser.GameObjects.Graphics, from: GameLocation, to: GameLocation, main: boolean) {
+    const shadowWidth = main ? 40 : 24;
+    const roadWidth = main ? 22 : 12;
+    const shadowColor = main ? 0x2b2217 : 0x1f1b15;
+    const roadColor = main ? 0x7d6546 : 0x5d4f39;
+    const highlightColor = main ? 0xb39a73 : 0x8f7a59;
+
+    graphics.lineStyle(shadowWidth, shadowColor, 0.94);
+    graphics.lineBetween(from.worldX, from.worldY, to.worldX, to.worldY);
+    graphics.lineStyle(roadWidth, roadColor, 1);
+    graphics.lineBetween(from.worldX, from.worldY, to.worldX, to.worldY);
+    graphics.lineStyle(main ? 6 : 4, highlightColor, 0.45);
+    graphics.lineBetween(from.worldX, from.worldY, to.worldX, to.worldY);
+  }
+
+  private drawTownSquare() {
+    const square = this.locations.find((location) => location.id === 'spawn-point');
+    if (!square) {
+      return;
+    }
+
+    const plaza = this.add.graphics().setDepth(1);
+    plaza.fillStyle(0x4b5b40, 1);
+    plaza.fillRoundedRect(square.worldX - 160, square.worldY - 150, 320, 300, 34);
+    plaza.lineStyle(4, 0xc0b497, 0.38);
+    plaza.strokeRoundedRect(square.worldX - 160, square.worldY - 150, 320, 300, 34);
+    plaza.fillStyle(0x8fa1b3, 0.82);
+    plaza.fillCircle(square.worldX, square.worldY + 2, 28);
+    plaza.fillStyle(0xd8c48d, 0.88);
+    plaza.fillTriangle(square.worldX - 60, square.worldY + 20, square.worldX - 36, square.worldY + 54, square.worldX - 84, square.worldY + 54);
+    plaza.fillTriangle(square.worldX + 60, square.worldY + 20, square.worldX + 84, square.worldY + 54, square.worldX + 36, square.worldY + 54);
+  }
+
+  private drawFogs() {
+    this.add.ellipse(640, 430, 760, 320, 0x69a7ff, 0.05).setDepth(-8);
+    this.add.ellipse(1780, 480, 820, 340, 0x7cf7d4, 0.045).setDepth(-8);
+    this.add.ellipse(1560, 1180, 760, 280, 0xf6b74c, 0.04).setDepth(-8);
+    this.add.ellipse(1110, 920, 620, 250, 0x9a7cff, 0.035).setDepth(-8);
+  }
+
+  private drawLanterns() {
+    const lanternPositions = [
+      [1150, 870],
+      [1450, 870],
+      [1150, 1010],
+      [1450, 1010],
+      [970, 640],
+      [1760, 640],
+      [850, 1280],
+      [2100, 1280],
+    ] as const;
+
+    lanternPositions.forEach(([x, y], index) => {
+      const lantern = this.add.container(x, y).setDepth(12 + index);
+      lantern.add(this.add.rectangle(0, 8, 6, 18, 0x2e2419, 1));
+      lantern.add(this.add.circle(0, -2, 7, index % 2 === 0 ? 0xf6b74c : 0x7cf7d4, 0.34));
+      lantern.add(this.add.circle(0, -2, 3, 0xfff2cf, 0.82));
+    });
+  }
+
   private drawLocations() {
     for (const location of this.locations) {
-      const container = this.add.container(location.worldX, location.worldY);
-      container.setDepth(location.branchOf ? 8 : 12);
+      const container = this.add.container(location.worldX, location.worldY).setDepth(location.worldY);
 
-      const glow = this.add.circle(0, 0, location.radius * 2.4, location.glowColor, location.branchOf ? 0.08 : 0.12);
-      const outer = this.add.circle(0, 0, location.radius, location.coreColor, 0.98);
-      outer.setStrokeStyle(location.branchOf ? 2 : 4, location.ringColor, location.branchOf ? 0.55 : 0.75);
-      const core = this.add.circle(0, 0, Math.max(10, location.radius * 0.5), location.ringColor, 0.72);
-      core.setStrokeStyle(2, 0xdbe7ff, 0.12);
-      const inner = this.add.circle(0, 0, Math.max(5, location.radius * 0.28), 0x050811, 1);
+      const halo = this.add.ellipse(
+        0,
+        26,
+        location.footprintWidth * 1.25,
+        location.footprintHeight * 0.55,
+        location.accentColor,
+        location.branchOf ? 0.08 : 0.12,
+      );
+      halo.setScale(1, 1);
+
+      const body = this.createLocationBody(location);
       const label = this.add
-        .text(location.labelOffsetX, location.labelOffsetY, location.title, {
+        .text(location.labelOffsetX, location.labelOffsetY, location.displayName, {
           fontFamily: '"IBM Plex Sans", sans-serif',
-          fontSize: location.branchOf ? '15px' : '19px',
-          color: location.branchOf ? '#c8d3ec' : '#f4f8ff',
+          fontSize: location.branchOf ? '13px' : '16px',
+          color: '#f2f6ff',
           align: 'center',
         })
         .setOrigin(0.5, 0)
-        .setShadow(0, 0, '#050811', 10, true, true);
-      const subtitle = this.add
-        .text(location.labelOffsetX, location.labelOffsetY + 24, location.subtitle, {
-          fontFamily: '"IBM Plex Mono", monospace',
-          fontSize: '11px',
-          color: location.branchOf ? '#8ea1c7' : '#7cf7d4',
-          align: 'center',
-        })
-        .setOrigin(0.5, 0)
-        .setAlpha(0.92);
+        .setStroke('#08110a', 8)
+        .setShadow(0, 0, '#08110a', 12, true, true);
 
-      container.add([glow, outer, core, inner, label, subtitle]);
+      const subtitle = this.add
+        .text(location.labelOffsetX, location.labelOffsetY + 20, location.subtitle, {
+          fontFamily: '"IBM Plex Mono", monospace',
+          fontSize: '10px',
+          color: '#9ab0c7',
+          align: 'center',
+        })
+        .setOrigin(0.5, 0);
+
+      container.add([halo, body, label, subtitle]);
+
+      const zone = this.add.zone(0, 0, location.footprintWidth, location.footprintHeight).setInteractive({
+        useHandCursor: true,
+      });
+      zone.on('pointerdown', (_pointer: Phaser.Input.Pointer, _lx: number, _ly: number, event: Phaser.Types.Input.EventData) => {
+        event.stopPropagation();
+        this.openCheckpoint(location);
+      });
+      zone.on('pointerover', () => {
+        this.tweens.add({
+          targets: halo,
+          alpha: location.branchOf ? 0.2 : 0.28,
+          duration: 120,
+        });
+      });
+      zone.on('pointerout', () => {
+        this.tweens.add({
+          targets: halo,
+          alpha: location.branchOf ? 0.08 : 0.12,
+          duration: 120,
+        });
+      });
+
+      this.add.existing(zone);
+      this.nodes.set(location.id, { location, halo, zone });
+
+      this.tweens.add({
+        targets: halo,
+        scaleX: 1.08,
+        scaleY: 1.08,
+        alpha: location.branchOf ? 0.06 : 0.1,
+        duration: 2400 + location.order * 40,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut',
+      });
+    }
+  }
+
+  private createLocationBody(location: GameLocation) {
+    const graphics = this.add.graphics();
+    const w = location.footprintWidth;
+    const h = location.footprintHeight;
+    const light = location.baseColor;
+    const roof = location.roofColor;
+    const accent = location.accentColor;
+
+    switch (location.kind) {
+      case 'town_square':
+        graphics.fillStyle(0x5a6750, 1);
+        graphics.fillRoundedRect(-w / 2, -h / 2, w, h, 28);
+        graphics.lineStyle(4, 0xd0c39b, 0.54);
+        graphics.strokeRoundedRect(-w / 2, -h / 2, w, h, 28);
+        graphics.fillStyle(0x93a6b4, 0.92);
+        graphics.fillCircle(0, 0, 28);
+        graphics.fillStyle(0xd8c48d, 0.92);
+        graphics.fillCircle(-58, -18, 10);
+        graphics.fillCircle(58, -18, 10);
+        graphics.fillCircle(-58, 18, 10);
+        graphics.fillCircle(58, 18, 10);
+        break;
+
+      case 'forge':
+        this.drawHouseBase(graphics, w, h, light, roof);
+        graphics.fillStyle(0x2b1d14, 1);
+        graphics.fillRect(w / 2 - 18, -h / 2 - 28, 12, 34);
+        graphics.fillStyle(0xf6b74c, 0.92);
+        graphics.fillTriangle(w / 2 - 14, -h / 2 - 4, w / 2 + 6, -h / 2 - 4, w / 2 - 4, 22);
+        break;
+
+      case 'tower':
+        graphics.fillStyle(light, 1);
+        graphics.fillRoundedRect(-w * 0.26, -h / 2, w * 0.52, h, 18);
+        graphics.lineStyle(4, roof, 0.82);
+        graphics.strokeRoundedRect(-w * 0.26, -h / 2, w * 0.52, h, 18);
+        graphics.fillStyle(roof, 1);
+        graphics.fillTriangle(-w * 0.32, -h / 2 + 8, 0, -h / 2 - 50, w * 0.32, -h / 2 + 8);
+        graphics.fillStyle(accent, 0.8);
+        graphics.fillRect(-8, -28, 16, h * 0.5);
+        break;
+
+      case 'market':
+        graphics.fillStyle(0x4a3e2b, 1);
+        graphics.fillRoundedRect(-w / 2, 10, w, h * 0.44, 18);
+        graphics.fillStyle(roof, 1);
+        graphics.fillTriangle(-w / 2 + 8, 10, -w * 0.15, -h / 2 + 18, w * 0.15, 10);
+        graphics.fillTriangle(-w * 0.15, 10, 0, -h / 2 + 10, w * 0.28, 10);
+        graphics.fillTriangle(w * 0.08, 10, w * 0.22, -h / 2 + 14, w / 2 - 8, 10);
+        graphics.fillStyle(accent, 0.7);
+        graphics.fillRect(-w / 2 + 12, 28, w - 24, 12);
+        break;
+
+      case 'pit':
+        graphics.fillStyle(0x1c1420, 1);
+        graphics.fillEllipse(0, 0, w * 0.84, h * 0.72);
+        graphics.lineStyle(4, accent, 0.5);
+        graphics.strokeEllipse(0, 0, w * 0.84, h * 0.72);
+        graphics.fillStyle(0x34223f, 1);
+        graphics.fillTriangle(-34, -14, 0, 20, 34, -14);
+        graphics.fillStyle(0x0d0a12, 1);
+        graphics.fillCircle(0, 0, 22);
+        break;
+
+      case 'hall':
+        graphics.fillStyle(light, 1);
+        graphics.fillRoundedRect(-w / 2, -h / 2 + 14, w, h - 14, 24);
+        graphics.lineStyle(4, roof, 0.8);
+        graphics.strokeRoundedRect(-w / 2, -h / 2 + 14, w, h - 14, 24);
+        graphics.fillStyle(roof, 1);
+        graphics.fillTriangle(-w / 2 + 8, -h / 2 + 16, 0, -h / 2 - 34, w / 2 - 8, -h / 2 + 16);
+        this.addColumnSet(graphics, w, h);
+        break;
+
+      case 'gate':
+        graphics.fillStyle(0x5d4c3d, 1);
+        graphics.fillRect(-w / 2 + 18, -h / 2 + 20, 22, h - 40);
+        graphics.fillRect(w / 2 - 40, -h / 2 + 20, 22, h - 40);
+        graphics.fillStyle(roof, 1);
+        graphics.fillRoundedRect(-w / 2 + 10, -h / 2 + 10, w - 20, 34, 12);
+        graphics.fillStyle(0x20160f, 1);
+        graphics.fillEllipse(0, h * 0.02, w * 0.36, h * 0.42);
+        graphics.fillStyle(accent, 0.4);
+        graphics.fillCircle(0, -h / 2 + 6, 12);
+        break;
+
+      case 'lab':
+        this.drawHouseBase(graphics, w, h, light, roof);
+        graphics.fillStyle(0x9fdfff, 0.55);
+        graphics.fillRoundedRect(-w * 0.18, -h * 0.08, w * 0.36, h * 0.4, 16);
+        graphics.fillStyle(accent, 0.8);
+        graphics.fillCircle(0, -h * 0.08, 12);
+        break;
+
+      case 'archive':
+        this.drawHouseBase(graphics, w, h, light, roof);
+        graphics.fillStyle(0xd9e2f0, 0.86);
+        graphics.fillRect(-w * 0.22, -h * 0.12, 18, h * 0.42);
+        graphics.fillRect(-w * 0.02, -h * 0.12, 18, h * 0.42);
+        graphics.fillRect(w * 0.18, -h * 0.12, 18, h * 0.42);
+        break;
+
+      case 'temple':
+        graphics.fillStyle(0x63555a, 1);
+        graphics.fillRoundedRect(-w / 2 + 18, -h / 2 + 24, w - 36, h - 24, 18);
+        graphics.fillStyle(roof, 1);
+        graphics.fillTriangle(-w / 2 + 16, -h / 2 + 22, 0, -h / 2 - 24, w / 2 - 16, -h / 2 + 22);
+        this.addColumnSet(graphics, w, h * 0.78);
+        break;
+
+      case 'workshop':
+        this.drawHouseBase(graphics, w, h, light, roof);
+        graphics.fillStyle(accent, 0.86);
+        graphics.fillRect(-w * 0.26, -h * 0.02, w * 0.52, 10);
+        graphics.fillRect(-8, -h / 2 - 18, 16, 22);
+        break;
+
+      case 'office':
+        graphics.fillStyle(light, 1);
+        graphics.fillRoundedRect(-w / 2, -h / 2, w, h, 18);
+        graphics.lineStyle(4, roof, 0.84);
+        graphics.strokeRoundedRect(-w / 2, -h / 2, w, h, 18);
+        graphics.fillStyle(roof, 1);
+        graphics.fillRect(-w / 2 + 10, -h / 2 + 8, w - 20, 18);
+        this.addWindowGrid(graphics, w, h);
+        break;
+
+      case 'academy':
+        this.drawHouseBase(graphics, w, h, light, roof);
+        graphics.fillStyle(accent, 0.86);
+        graphics.fillRect(-w * 0.14, -h / 2 - 30, 12, 30);
+        graphics.fillTriangle(-w * 0.14 + 2, -h / 2 - 30, w * 0.04, -h / 2 - 20, -w * 0.14 + 14, -h / 2 - 10);
+        break;
+
+      case 'library':
+      default:
+        this.drawHouseBase(graphics, w, h, light, roof);
+        graphics.fillStyle(0xe8f3ff, 0.72);
+        graphics.fillRect(-w * 0.2, -h * 0.08, 18, h * 0.34);
+        graphics.fillRect(4, -h * 0.08, 18, h * 0.34);
+        graphics.fillRect(w * 0.18 - 18, -h * 0.08, 18, h * 0.34);
+        break;
+    }
+
+    graphics.fillStyle(0x0a110b, 0.16);
+    graphics.fillEllipse(0, h * 0.46, w * 0.74, h * 0.16);
+    return graphics;
+  }
+
+  private drawHouseBase(graphics: Phaser.GameObjects.Graphics, width: number, height: number, baseColor: number, roofColor: number) {
+    graphics.fillStyle(baseColor, 1);
+    graphics.fillRoundedRect(-width / 2, -height / 2 + 6, width, height - 6, 18);
+    graphics.lineStyle(4, roofColor, 0.82);
+    graphics.strokeRoundedRect(-width / 2, -height / 2 + 6, width, height - 6, 18);
+    graphics.fillStyle(roofColor, 1);
+    graphics.fillTriangle(-width / 2 + 8, -height / 2 + 10, 0, -height / 2 - 28, width / 2 - 8, -height / 2 + 10);
+    graphics.fillStyle(0x1d150f, 1);
+    graphics.fillRoundedRect(-10, height * 0.02, 20, height * 0.32, 6);
+  }
+
+  private addColumnSet(graphics: Phaser.GameObjects.Graphics, width: number, height: number) {
+    const columnY = -height * 0.06;
+    const spacing = width / 5;
+    for (let index = -2; index <= 2; index += 1) {
+      graphics.fillStyle(0xe4e9ea, 0.86);
+      graphics.fillRect(index * spacing - 6, columnY, 12, height * 0.45);
+    }
+  }
+
+  private addWindowGrid(graphics: Phaser.GameObjects.Graphics, width: number, height: number) {
+    graphics.fillStyle(0xb9d5ff, 0.48);
+    for (let row = -1; row <= 1; row += 1) {
+      for (let col = -1; col <= 1; col += 1) {
+        graphics.fillRect(col * (width * 0.18) - 8, row * 18 - 12, 16, 12);
+      }
     }
   }
 
   private createTextures() {
-    const ship = this.add.graphics();
-    ship.fillStyle(0x7cf7d4, 1);
-    ship.fillTriangle(32, 4, 60, 30, 32, 56);
-    ship.fillStyle(0x0d1423, 1);
-    ship.fillTriangle(18, 18, 48, 32, 18, 46);
-    ship.lineStyle(2, 0xdbe7ff, 0.4);
-    ship.strokeTriangle(32, 4, 60, 30, 32, 56);
-    ship.fillStyle(0xf6b74c, 1);
-    ship.fillCircle(24, 30, 4);
-    ship.generateTexture('odyssey-ship', 64, 64);
-    ship.destroy();
-
-    const starfield = this.add.graphics();
-    starfield.fillStyle(0xffffff, 1);
-    for (let index = 0; index < 420; index += 1) {
-      const x = Phaser.Math.Between(0, 512);
-      const y = Phaser.Math.Between(0, 512);
+    const ground = this.add.graphics();
+    ground.fillStyle(0x18261a, 1);
+    ground.fillRect(0, 0, 256, 256);
+    for (let index = 0; index < 520; index += 1) {
+      const x = Phaser.Math.Between(0, 255);
+      const y = Phaser.Math.Between(0, 255);
       const size = Phaser.Math.Between(1, 3);
-      const alpha = Phaser.Math.FloatBetween(0.35, 1);
-      starfield.fillStyle(index % 7 === 0 ? 0x69a7ff : index % 11 === 0 ? 0xf6b74c : 0xffffff, alpha);
-      starfield.fillCircle(x, y, size);
+      const alpha = Phaser.Math.FloatBetween(0.08, 0.22);
+      const color = index % 11 === 0 ? 0x31482f : index % 7 === 0 ? 0x243620 : 0x1f3121;
+      ground.fillStyle(color, alpha);
+      ground.fillCircle(x, y, size);
     }
-    starfield.generateTexture('odyssey-starfield', 512, 512);
-    starfield.destroy();
+    for (let index = 0; index < 20; index += 1) {
+      ground.fillStyle(0x40563b, 0.09);
+      ground.fillCircle(Phaser.Math.Between(0, 255), Phaser.Math.Between(0, 255), Phaser.Math.Between(4, 10));
+    }
+    ground.generateTexture('odyssey-ground', 256, 256);
+    ground.destroy();
 
-    const grid = this.add.graphics();
-    grid.lineStyle(1, 0x7cf7d4, 0.14);
-    for (let x = 0; x <= 512; x += 48) {
-      grid.lineBetween(x, 0, x, 512);
+    const noise = this.add.graphics();
+    noise.fillStyle(0xffffff, 1);
+    for (let index = 0; index < 900; index += 1) {
+      const x = Phaser.Math.Between(0, 255);
+      const y = Phaser.Math.Between(0, 255);
+      const alpha = Phaser.Math.FloatBetween(0.02, 0.08);
+      noise.fillStyle(index % 5 === 0 ? 0x9ab0c7 : 0x7cf7d4, alpha);
+      noise.fillCircle(x, y, Phaser.Math.Between(1, 2));
     }
-    for (let y = 0; y <= 512; y += 48) {
-      grid.lineBetween(0, y, 512, y);
-    }
-    grid.generateTexture('odyssey-grid', 512, 512);
-    grid.destroy();
+    noise.generateTexture('odyssey-noise', 256, 256);
+    noise.destroy();
+
+    const hero = this.add.graphics();
+    hero.fillStyle(0x17212b, 1);
+    hero.fillCircle(32, 28, 11);
+    hero.fillStyle(0x2f3e52, 1);
+    hero.fillTriangle(32, 10, 51, 42, 13, 42);
+    hero.fillStyle(0x7cf7d4, 1);
+    hero.fillCircle(25, 28, 3);
+    hero.fillCircle(39, 28, 3);
+    hero.fillStyle(0xc9d6ea, 1);
+    hero.fillRect(28, 39, 8, 16);
+    hero.fillStyle(0xf6b74c, 1);
+    hero.fillRect(25, 49, 14, 6);
+    hero.lineStyle(2, 0xdbe7ff, 0.28);
+    hero.strokeTriangle(32, 10, 51, 42, 13, 42);
+    hero.generateTexture('odyssey-hero', 64, 64);
+    hero.destroy();
   }
 }

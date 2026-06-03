@@ -1,19 +1,36 @@
 import type { Checkpoint, LinkItem } from '../content/types';
 
-export type LocationKind = 'spawn' | 'main' | 'branch' | 'gate' | 'dock';
+export type LocationKind =
+  | 'town_square'
+  | 'library'
+  | 'forge'
+  | 'tower'
+  | 'market'
+  | 'pit'
+  | 'hall'
+  | 'gate'
+  | 'lab'
+  | 'archive'
+  | 'temple'
+  | 'workshop'
+  | 'office'
+  | 'academy'
+  | 'npc';
 
 export type GameLocation = Checkpoint & {
+  displayName: string;
   kind: LocationKind;
   worldX: number;
   worldY: number;
-  radius: number;
+  footprintWidth: number;
+  footprintHeight: number;
   promptRadius: number;
+  displayScale: number;
   labelOffsetX: number;
   labelOffsetY: number;
-  glowColor: number;
-  coreColor: number;
-  ringColor: number;
-  displayScale: number;
+  baseColor: number;
+  roofColor: number;
+  accentColor: number;
   links?: LinkItem[];
 };
 

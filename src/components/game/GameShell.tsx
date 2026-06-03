@@ -72,19 +72,19 @@ export function GameShell() {
     return (
       <section className="relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top,rgba(105,167,255,0.12),transparent_30%),linear-gradient(180deg,#050811_0%,#070b14_100%)] px-4 py-6 text-slate-100 sm:px-6 lg:px-8">
         <div className="absolute inset-0 map-noise opacity-20" />
-        <div className="relative mx-auto flex min-h-[calc(100vh-3rem)] max-w-3xl flex-col justify-between gap-6 rounded-[2rem] border border-white/10 bg-slate-950/70 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:p-7">
+        <div className="relative mx-auto flex min-h-[calc(100vh-3rem)] max-w-3xl flex-col justify-between gap-6 rounded-[2rem] border border-white/10 bg-slate-950/72 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:p-7">
           <div>
             <p className="mono text-xs uppercase tracking-[0.34em] text-neon">Backend Odyssey</p>
             <h1 className="mt-3 text-3xl font-semibold text-white">{profile.name}</h1>
             <p className="mt-2 text-sm uppercase tracking-[0.18em] text-slate-400">{profile.role}</p>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
-              Game mode is best on desktop. Use the classic pages below for a readable CV, projects, and contact routes.
+              Game mode is desktop-first. Open the classic pages below for a readable CV, projects, and contact routes.
             </p>
           </div>
 
           <div className="space-y-4">
             <div className="rounded-3xl border border-neon/15 bg-neon/5 p-4">
-              <p className="text-xs uppercase tracking-[0.24em] text-neon">Readable journey</p>
+              <p className="text-xs uppercase tracking-[0.24em] text-neon">Quest path</p>
               <div className="mt-4 space-y-3">
                 {mainPath.map((checkpoint) => (
                   <div key={checkpoint.id} className="rounded-2xl border border-white/10 bg-slate-950/65 px-4 py-3">
@@ -116,7 +116,7 @@ export function GameShell() {
   }
 
   return (
-    <section className="relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top,rgba(105,167,255,0.16),transparent_26%),radial-gradient(circle_at_20%_20%,rgba(124,247,212,0.1),transparent_22%),linear-gradient(180deg,#050811_0%,#070b14_100%)] text-slate-100">
+    <section className="relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top,rgba(105,167,255,0.14),transparent_26%),radial-gradient(circle_at_20%_20%,rgba(124,247,212,0.08),transparent_22%),linear-gradient(180deg,#050811_0%,#070b14_100%)] text-slate-100">
       <div className="absolute inset-0 map-noise opacity-20" />
       <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(124,247,212,0.04)_1px,transparent_1px),linear-gradient(rgba(124,247,212,0.04)_1px,transparent_1px)] bg-[size:56px_56px]" />
       <div className="absolute left-0 top-0 h-96 w-96 rounded-full bg-neon/10 blur-3xl" />
@@ -131,11 +131,11 @@ export function GameShell() {
               <div className="relative max-w-2xl">
                 <p className="mono text-xs uppercase tracking-[0.38em] text-neon">Backend Odyssey</p>
                 <h1 className="mt-5 text-5xl font-semibold tracking-tight text-white sm:text-6xl">
-                  A portfolio you play, not scroll.
+                  A portfolio you explore, not scroll.
                 </h1>
                 <p className="mt-4 text-sm uppercase tracking-[0.24em] text-slate-400">{profile.name}</p>
                 <p className="mt-6 max-w-xl text-lg leading-8 text-slate-300">
-                  VP of Engineering and Go backend engineer focused on backend systems, data pipelines, complex integrations, financial reconciliation, and production debugging.
+                  Top-down RPG quest portfolio for backend systems, data pipelines, complex integrations, financial reconciliation, and production debugging.
                 </p>
                 <div className="mt-8 flex flex-wrap gap-3">
                   <button
@@ -143,7 +143,7 @@ export function GameShell() {
                     onClick={() => setStarted(true)}
                     className="rounded-full border border-neon/40 bg-neon/15 px-5 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-neon transition hover:bg-neon/20"
                   >
-                    Start Playing
+                    Begin Quest
                   </button>
                   {navLinks.map((link) => (
                     <a
@@ -162,15 +162,15 @@ export function GameShell() {
               <div>
                 <p className="text-xs uppercase tracking-[0.28em] text-slate-500">Controls</p>
                 <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-300">
-                  <li>WASD / arrows to move</li>
-                  <li>E to interact</li>
+                  <li>Click to move</li>
+                  <li>E to inspect</li>
                   <li>ESC to close panel</li>
                 </ul>
               </div>
               <div className="rounded-3xl border border-white/10 bg-slate-950/60 p-4">
                 <p className="text-xs uppercase tracking-[0.24em] text-neon">Classic CV available</p>
                 <p className="mt-3 text-sm leading-7 text-slate-300">
-                  Recruiters and clients can always open the readable CV route. Game mode is the first screen, not the only path.
+                  Recruiters and clients can open the readable CV route at any time. The game is the first view, not the only path.
                 </p>
               </div>
             </div>
@@ -188,7 +188,7 @@ export function GameShell() {
 
           <div className="pointer-events-none absolute inset-0 z-10 flex flex-col">
             <header className="pointer-events-none flex items-start justify-between gap-4 px-4 pt-4 sm:px-6 lg:px-8">
-              <div className="pointer-events-auto max-w-xl rounded-2xl border border-white/10 bg-slate-950/72 px-4 py-3 backdrop-blur-xl">
+              <div className="pointer-events-auto max-w-xl rounded-2xl border border-white/10 bg-slate-950/74 px-4 py-3 backdrop-blur-xl">
                 <p className="mono text-[10px] uppercase tracking-[0.34em] text-neon">Backend Odyssey</p>
                 <p className="mt-1 text-sm font-medium text-white">{profile.name}</p>
                 <p className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-400">{profile.role}</p>
@@ -198,7 +198,7 @@ export function GameShell() {
                   <a
                     key={link.href}
                     href={link.href}
-                    className="rounded-full border border-white/10 bg-slate-950/72 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.22em] text-slate-200 backdrop-blur-xl transition hover:border-neon/30 hover:bg-neon/10"
+                    className="rounded-full border border-white/10 bg-slate-950/74 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.22em] text-slate-200 backdrop-blur-xl transition hover:border-neon/30 hover:bg-neon/10"
                   >
                     {link.label}
                   </a>
@@ -208,40 +208,36 @@ export function GameShell() {
 
             <div className="mt-auto grid gap-4 px-4 pb-4 sm:px-6 sm:pb-6 lg:grid-cols-[minmax(0,1fr)_24rem] lg:px-8">
               <div className="pointer-events-auto space-y-4">
-                <div className="rounded-3xl border border-white/10 bg-slate-950/72 px-4 py-3 backdrop-blur-xl">
-                  <p className="text-[10px] uppercase tracking-[0.28em] text-slate-500">Status</p>
-                  <div className="mt-2 flex flex-wrap items-center gap-3">
-                    <span className={`h-2.5 w-2.5 rounded-full ${gameReady ? 'bg-neon shadow-[0_0_16px_rgba(124,247,212,0.8)]' : 'bg-amber-400'}`} />
-                    <p className="text-sm text-slate-200">
-                      {gameReady ? 'Game online' : 'Loading orbit...'}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="rounded-3xl border border-white/10 bg-slate-950/72 px-4 py-3 backdrop-blur-xl">
+                <div className="rounded-3xl border border-white/10 bg-slate-950/74 px-4 py-3 backdrop-blur-xl">
                   <p className="text-[10px] uppercase tracking-[0.28em] text-slate-500">Controls</p>
                   <p className="mt-2 text-sm leading-6 text-slate-300">
-                    {nearestDetail.prompt ?? 'Move with WASD or arrow keys'}. Classic CV remains one click away.
+                    Click to move. {nearestDetail.prompt ?? 'Walk up to a building or NPC to inspect it.'}
                   </p>
+                </div>
+
+                <div className="rounded-3xl border border-white/10 bg-slate-950/74 px-4 py-3 backdrop-blur-xl">
+                  <p className="text-[10px] uppercase tracking-[0.28em] text-slate-500">Quest state</p>
+                  <div className="mt-2 flex flex-wrap items-center gap-3">
+                    <span className={`h-2.5 w-2.5 rounded-full ${gameReady ? 'bg-neon shadow-[0_0_16px_rgba(124,247,212,0.8)]' : 'bg-amber-400'}`} />
+                    <p className="text-sm text-slate-200">{gameReady ? 'Quest map ready' : 'Building the town...'}</p>
+                  </div>
                 </div>
               </div>
 
               <div className="pointer-events-auto space-y-4">
-                <div className="rounded-3xl border border-white/10 bg-slate-950/72 px-4 py-3 backdrop-blur-xl">
+                <div className="rounded-3xl border border-white/10 bg-slate-950/74 px-4 py-3 backdrop-blur-xl">
                   <p className="text-[10px] uppercase tracking-[0.28em] text-slate-500">Nearest location</p>
                   <p className="mt-2 text-base font-semibold text-white">
-                    {nearestDetail.location ? nearestDetail.location.title : 'Searching the map'}
+                    {nearestDetail.location ? nearestDetail.location.displayName : 'Town Square'}
                   </p>
                   <p className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-400">
-                    {nearestDetail.location ? nearestDetail.location.subtitle : 'Move toward a location'}
+                    {nearestDetail.location ? nearestDetail.location.subtitle : 'Explore the town to find checkpoints'}
                   </p>
                 </div>
 
-                <div className="pointer-events-auto rounded-3xl border border-white/10 bg-slate-950/72 p-3 backdrop-blur-xl">
+                <div className="pointer-events-auto rounded-3xl border border-white/10 bg-slate-950/74 p-3 backdrop-blur-xl">
                   <p className="text-[10px] uppercase tracking-[0.28em] text-slate-500">Hint</p>
-                  <p className="mt-2 text-sm leading-6 text-slate-300">
-                    Press E when you are near a location to open the portfolio panel.
-                  </p>
+                  <p className="mt-2 text-sm leading-6 text-slate-300">Press E or click a location to inspect its checkpoint panel.</p>
                 </div>
               </div>
             </div>
@@ -258,8 +254,8 @@ export function GameShell() {
               <div className="rounded-[1.75rem] border border-white/10 bg-slate-950/92 p-3 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl">
                 <div className="mb-3 flex items-center justify-between gap-3 px-1">
                   <div>
-                    <p className="mono text-[10px] uppercase tracking-[0.28em] text-neon">Docked checkpoint</p>
-                    <p className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-500">ESC closes panel</p>
+                    <p className="mono text-[10px] uppercase tracking-[0.28em] text-neon">Inspected checkpoint</p>
+                    <p className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-500">ESC closes this panel</p>
                   </div>
                   <button
                     type="button"
