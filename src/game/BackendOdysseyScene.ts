@@ -7,6 +7,7 @@ import {
   ODYSSEY_EVENT_OPEN,
   ODYSSEY_EVENT_READY,
 } from './types';
+import { generateAllTextures } from './spriteDefs';
 
 type BootConfig = {
   locations: GameLocation[];
@@ -49,7 +50,7 @@ export class BackendOdysseyScene extends Phaser.Scene {
   }
 
   preload() {
-    this.createTextures();
+    generateAllTextures(this);
   }
 
   create() {
@@ -74,8 +75,8 @@ export class BackendOdysseyScene extends Phaser.Scene {
     this.player.setDepth(1000);
     this.player.setCollideWorldBounds(true);
     this.player.setDrag(0, 0);
-    this.player.body.setSize(20, 28, true);
-    this.player.body.setOffset(14, 18);
+    this.player.body.setSize(14, 10, true);
+    this.player.body.setOffset(0, 30);
     this.playerShadow = this.add.ellipse(this.player.x, this.player.y + 20, 24, 8, 0x000000, 0.34).setDepth(999);
 
     this.currentTarget = new Phaser.Math.Vector2(this.player.x, this.player.y);
@@ -366,233 +367,25 @@ export class BackendOdysseyScene extends Phaser.Scene {
   }
 
   private createLocationBody(location: GameLocation) {
-    const graphics = this.add.graphics();
+    const textureKey = `building-${location.kind}`;
+    if (this.textures.exists(textureKey)) {
+      return this.add.image(0, 0, textureKey);
+    }
+
+    const fallback = this.add.graphics();
     const w = location.footprintWidth;
     const h = location.footprintHeight;
     const light = location.baseColor;
     const roof = location.roofColor;
     const accent = location.accentColor;
 
-    switch (location.kind) {
-      case 'town_square':
-        graphics.fillStyle(0x5a6750, 1);
-        graphics.fillRoundedRect(-w / 2, -h / 2, w, h, 28);
-        graphics.lineStyle(4, 0xd0c39b, 0.54);
-        graphics.strokeRoundedRect(-w / 2, -h / 2, w, h, 28);
-        graphics.fillStyle(0x93a6b4, 0.92);
-        graphics.fillCircle(0, 0, 28);
-        graphics.fillStyle(0xd8c48d, 0.92);
-        graphics.fillCircle(-58, -18, 10);
-        graphics.fillCircle(58, -18, 10);
-        graphics.fillCircle(-58, 18, 10);
-        graphics.fillCircle(58, 18, 10);
-        break;
+    fallback.fillStyle(light, 1);
+    fallback.fillRoundedRect(-w / 2, -h / 2, w, h, 12);
+    fallback.lineStyle(3, roof, 0.8);
+    fallback.strokeRoundedRect(-w / 2, -h / 2, w, h, 12);
+    fallback.fillStyle(accent, 0.6);
+    fallback.fillCircle(0, 0, 14);
 
-      case 'forge':
-        this.drawHouseBase(graphics, w, h, light, roof);
-        graphics.fillStyle(0x2b1d14, 1);
-        graphics.fillRect(w / 2 - 18, -h / 2 - 28, 12, 34);
-        graphics.fillStyle(0xf6b74c, 0.92);
-        graphics.fillTriangle(w / 2 - 14, -h / 2 - 4, w / 2 + 6, -h / 2 - 4, w / 2 - 4, 22);
-        break;
-
-      case 'tower':
-        graphics.fillStyle(light, 1);
-        graphics.fillRoundedRect(-w * 0.26, -h / 2, w * 0.52, h, 18);
-        graphics.lineStyle(4, roof, 0.82);
-        graphics.strokeRoundedRect(-w * 0.26, -h / 2, w * 0.52, h, 18);
-        graphics.fillStyle(roof, 1);
-        graphics.fillTriangle(-w * 0.32, -h / 2 + 8, 0, -h / 2 - 50, w * 0.32, -h / 2 + 8);
-        graphics.fillStyle(accent, 0.8);
-        graphics.fillRect(-8, -28, 16, h * 0.5);
-        break;
-
-      case 'market':
-        graphics.fillStyle(0x4a3e2b, 1);
-        graphics.fillRoundedRect(-w / 2, 10, w, h * 0.44, 18);
-        graphics.fillStyle(roof, 1);
-        graphics.fillTriangle(-w / 2 + 8, 10, -w * 0.15, -h / 2 + 18, w * 0.15, 10);
-        graphics.fillTriangle(-w * 0.15, 10, 0, -h / 2 + 10, w * 0.28, 10);
-        graphics.fillTriangle(w * 0.08, 10, w * 0.22, -h / 2 + 14, w / 2 - 8, 10);
-        graphics.fillStyle(accent, 0.7);
-        graphics.fillRect(-w / 2 + 12, 28, w - 24, 12);
-        break;
-
-      case 'pit':
-        graphics.fillStyle(0x1c1420, 1);
-        graphics.fillEllipse(0, 0, w * 0.84, h * 0.72);
-        graphics.lineStyle(4, accent, 0.5);
-        graphics.strokeEllipse(0, 0, w * 0.84, h * 0.72);
-        graphics.fillStyle(0x34223f, 1);
-        graphics.fillTriangle(-34, -14, 0, 20, 34, -14);
-        graphics.fillStyle(0x0d0a12, 1);
-        graphics.fillCircle(0, 0, 22);
-        break;
-
-      case 'hall':
-        graphics.fillStyle(light, 1);
-        graphics.fillRoundedRect(-w / 2, -h / 2 + 14, w, h - 14, 24);
-        graphics.lineStyle(4, roof, 0.8);
-        graphics.strokeRoundedRect(-w / 2, -h / 2 + 14, w, h - 14, 24);
-        graphics.fillStyle(roof, 1);
-        graphics.fillTriangle(-w / 2 + 8, -h / 2 + 16, 0, -h / 2 - 34, w / 2 - 8, -h / 2 + 16);
-        this.addColumnSet(graphics, w, h);
-        break;
-
-      case 'gate':
-        graphics.fillStyle(0x5d4c3d, 1);
-        graphics.fillRect(-w / 2 + 18, -h / 2 + 20, 22, h - 40);
-        graphics.fillRect(w / 2 - 40, -h / 2 + 20, 22, h - 40);
-        graphics.fillStyle(roof, 1);
-        graphics.fillRoundedRect(-w / 2 + 10, -h / 2 + 10, w - 20, 34, 12);
-        graphics.fillStyle(0x20160f, 1);
-        graphics.fillEllipse(0, h * 0.02, w * 0.36, h * 0.42);
-        graphics.fillStyle(accent, 0.4);
-        graphics.fillCircle(0, -h / 2 + 6, 12);
-        break;
-
-      case 'lab':
-        this.drawHouseBase(graphics, w, h, light, roof);
-        graphics.fillStyle(0x9fdfff, 0.55);
-        graphics.fillRoundedRect(-w * 0.18, -h * 0.08, w * 0.36, h * 0.4, 16);
-        graphics.fillStyle(accent, 0.8);
-        graphics.fillCircle(0, -h * 0.08, 12);
-        break;
-
-      case 'archive':
-        this.drawHouseBase(graphics, w, h, light, roof);
-        graphics.fillStyle(0xd9e2f0, 0.86);
-        graphics.fillRect(-w * 0.22, -h * 0.12, 18, h * 0.42);
-        graphics.fillRect(-w * 0.02, -h * 0.12, 18, h * 0.42);
-        graphics.fillRect(w * 0.18, -h * 0.12, 18, h * 0.42);
-        break;
-
-      case 'temple':
-        graphics.fillStyle(0x63555a, 1);
-        graphics.fillRoundedRect(-w / 2 + 18, -h / 2 + 24, w - 36, h - 24, 18);
-        graphics.fillStyle(roof, 1);
-        graphics.fillTriangle(-w / 2 + 16, -h / 2 + 22, 0, -h / 2 - 24, w / 2 - 16, -h / 2 + 22);
-        this.addColumnSet(graphics, w, h * 0.78);
-        break;
-
-      case 'workshop':
-        this.drawHouseBase(graphics, w, h, light, roof);
-        graphics.fillStyle(accent, 0.86);
-        graphics.fillRect(-w * 0.26, -h * 0.02, w * 0.52, 10);
-        graphics.fillRect(-8, -h / 2 - 18, 16, 22);
-        break;
-
-      case 'office':
-        graphics.fillStyle(light, 1);
-        graphics.fillRoundedRect(-w / 2, -h / 2, w, h, 18);
-        graphics.lineStyle(4, roof, 0.84);
-        graphics.strokeRoundedRect(-w / 2, -h / 2, w, h, 18);
-        graphics.fillStyle(roof, 1);
-        graphics.fillRect(-w / 2 + 10, -h / 2 + 8, w - 20, 18);
-        this.addWindowGrid(graphics, w, h);
-        break;
-
-      case 'academy':
-        this.drawHouseBase(graphics, w, h, light, roof);
-        graphics.fillStyle(accent, 0.86);
-        graphics.fillRect(-w * 0.14, -h / 2 - 30, 12, 30);
-        graphics.fillTriangle(-w * 0.14 + 2, -h / 2 - 30, w * 0.04, -h / 2 - 20, -w * 0.14 + 14, -h / 2 - 10);
-        break;
-
-      case 'library':
-      default:
-        this.drawHouseBase(graphics, w, h, light, roof);
-        graphics.fillStyle(0xe8f3ff, 0.72);
-        graphics.fillRect(-w * 0.2, -h * 0.08, 18, h * 0.34);
-        graphics.fillRect(4, -h * 0.08, 18, h * 0.34);
-        graphics.fillRect(w * 0.18 - 18, -h * 0.08, 18, h * 0.34);
-        break;
-    }
-
-    graphics.fillStyle(0x0a110b, 0.16);
-    graphics.fillEllipse(0, h * 0.46, w * 0.74, h * 0.16);
-    return graphics;
-  }
-
-  private drawHouseBase(graphics: Phaser.GameObjects.Graphics, width: number, height: number, baseColor: number, roofColor: number) {
-    graphics.fillStyle(baseColor, 1);
-    graphics.fillRoundedRect(-width / 2, -height / 2 + 6, width, height - 6, 18);
-    graphics.lineStyle(4, roofColor, 0.82);
-    graphics.strokeRoundedRect(-width / 2, -height / 2 + 6, width, height - 6, 18);
-    graphics.fillStyle(roofColor, 1);
-    graphics.fillTriangle(-width / 2 + 8, -height / 2 + 10, 0, -height / 2 - 28, width / 2 - 8, -height / 2 + 10);
-    graphics.fillStyle(0x1d150f, 1);
-    graphics.fillRoundedRect(-10, height * 0.02, 20, height * 0.32, 6);
-  }
-
-  private addColumnSet(graphics: Phaser.GameObjects.Graphics, width: number, height: number) {
-    const columnY = -height * 0.06;
-    const spacing = width / 5;
-    for (let index = -2; index <= 2; index += 1) {
-      graphics.fillStyle(0xe4e9ea, 0.86);
-      graphics.fillRect(index * spacing - 6, columnY, 12, height * 0.45);
-    }
-  }
-
-  private addWindowGrid(graphics: Phaser.GameObjects.Graphics, width: number, height: number) {
-    graphics.fillStyle(0xb9d5ff, 0.48);
-    for (let row = -1; row <= 1; row += 1) {
-      for (let col = -1; col <= 1; col += 1) {
-        graphics.fillRect(col * (width * 0.18) - 8, row * 18 - 12, 16, 12);
-      }
-    }
-  }
-
-  private createTextures() {
-    const ground = this.add.graphics();
-    ground.fillStyle(0x18261a, 1);
-    ground.fillRect(0, 0, 256, 256);
-    for (let index = 0; index < 520; index += 1) {
-      const x = Phaser.Math.Between(0, 255);
-      const y = Phaser.Math.Between(0, 255);
-      const size = Phaser.Math.Between(1, 3);
-      const alpha = Phaser.Math.FloatBetween(0.08, 0.22);
-      const color = index % 11 === 0 ? 0x31482f : index % 7 === 0 ? 0x243620 : 0x1f3121;
-      ground.fillStyle(color, alpha);
-      ground.fillCircle(x, y, size);
-    }
-    for (let index = 0; index < 20; index += 1) {
-      ground.fillStyle(0x40563b, 0.09);
-      ground.fillCircle(Phaser.Math.Between(0, 255), Phaser.Math.Between(0, 255), Phaser.Math.Between(4, 10));
-    }
-    ground.generateTexture('odyssey-ground', 256, 256);
-    ground.destroy();
-
-    const noise = this.add.graphics();
-    noise.fillStyle(0xffffff, 1);
-    for (let index = 0; index < 900; index += 1) {
-      const x = Phaser.Math.Between(0, 255);
-      const y = Phaser.Math.Between(0, 255);
-      const alpha = Phaser.Math.FloatBetween(0.02, 0.08);
-      noise.fillStyle(index % 5 === 0 ? 0x9ab0c7 : 0x7cf7d4, alpha);
-      noise.fillCircle(x, y, Phaser.Math.Between(1, 2));
-    }
-    noise.generateTexture('odyssey-noise', 256, 256);
-    noise.destroy();
-
-    const hero = this.add.graphics();
-    hero.fillStyle(0x000000, 0.32);
-    hero.fillEllipse(32, 50, 20, 8);
-    hero.fillStyle(0x1b2432, 1);
-    hero.fillCircle(32, 16, 9);
-    hero.fillStyle(0x2f4056, 1);
-    hero.fillRoundedRect(22, 24, 20, 18, 5);
-    hero.fillStyle(0x7cf7d4, 1);
-    hero.fillRect(26, 28, 4, 4);
-    hero.fillRect(34, 28, 4, 4);
-    hero.fillStyle(0xc9d6ea, 1);
-    hero.fillRect(24, 42, 7, 10);
-    hero.fillRect(33, 42, 7, 10);
-    hero.fillStyle(0xf6b74c, 1);
-    hero.fillRect(24, 36, 16, 4);
-    hero.lineStyle(2, 0xdbe7ff, 0.2);
-    hero.strokeCircle(32, 16, 9);
-    hero.generateTexture('odyssey-hero', 64, 64);
-    hero.destroy();
+    return fallback;
   }
 }
