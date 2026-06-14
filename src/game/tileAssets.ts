@@ -7,6 +7,14 @@ export const TILESET_GRASS_COLUMNS = 12;
 export const TILESET_GRASS_TOTAL_TILES = 252;
 export const TILESET_GRASS_TERRAIN_SCALE = 2;
 
+export const TILESET_GRASS_TILES = {
+  grassBase: 1,
+  grassVariants: [0, 2, 3, 4, 13, 14, 24, 25, 26, 36, 37, 38] as const,
+  trees: [69, 70, 71, 81, 82, 83, 92, 93, 94, 95] as const,
+  bushes: [104, 105, 106, 107] as const,
+  flowers: [24, 36, 37, 38] as const,
+} as const;
+
 export type TileArea = {
   x: number;
   y: number;
@@ -17,6 +25,7 @@ export type TileArea = {
 export type TileSurface = {
   texture: Phaser.Textures.CanvasTexture;
   drawTile: (tileIndex: number, x: number, y: number, scale?: number) => void;
+  drawTileCentered: (tileIndex: number, centerX: number, centerY: number, scale?: number) => void;
   drawTileRect: (tileIndex: number, x: number, y: number, widthTiles: number, heightTiles: number, scale?: number) => void;
   drawTilePattern: (tileIndexes: number[], area: TileArea, scale?: number) => void;
   refresh: () => void;
@@ -66,6 +75,11 @@ export function createTileSurface(scene: Phaser.Scene, textureKey: string, width
     context.drawImage(sourceImage, frame.x, frame.y, frame.width, frame.height, Math.round(x), Math.round(y), size, size);
   };
 
+  const drawTileCentered = (tileIndex: number, centerX: number, centerY: number, scale = 1) => {
+    const size = TILESET_GRASS_TILE_SIZE * scale;
+    drawTile(tileIndex, centerX - size / 2, centerY - size / 2, scale);
+  };
+
   const drawTileRect = (tileIndex: number, x: number, y: number, widthTiles: number, heightTiles: number, scale = 1) => {
     const size = TILESET_GRASS_TILE_SIZE * scale;
     for (let row = 0; row < heightTiles; row += 1) {
@@ -95,6 +109,7 @@ export function createTileSurface(scene: Phaser.Scene, textureKey: string, width
   return {
     texture: canvasTexture,
     drawTile,
+    drawTileCentered,
     drawTileRect,
     drawTilePattern,
     refresh: () => canvasTexture.refresh(),

@@ -1,8 +1,12 @@
 # TilesetGrass Runtime Asset
 
-Source: user-provided downloaded asset pack copied from `assets/TilesetGrass`.
+Source: `https://beast-pixels.itch.io/overworld-tileset-grass-biome`
 
-License: **TODO verify**. No license, credits, author, source URL, or README was included in the provided files. Do not describe this pack as CC0 or deploy it publicly until the original download source confirms the license.
+Author: Beast Pixels
+
+License: CC0 / Public Domain according to the source page. Attribution is not required by CC0, but the source is recorded here for traceability.
+
+Downloaded archive: `TilesetGrass.zip`
 
 Runtime file:
 

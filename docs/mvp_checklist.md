@@ -42,9 +42,10 @@
 - [x] Clean up map UX with unobstructed labels and simplified dirt-road geometry
 - [x] Audit and stage the TilesetGrass runtime image with source and license notes
 - [x] Integrate TilesetGrass as a local prototype terrain pass
+- [x] Generate a tile index contact sheet for TilesetGrass
+- [x] Verify the TilesetGrass source and license before production use
 - [ ] Add final real sprites, map art, and sound
 - [ ] Replace generated placeholders with a final production asset pack
-- [ ] Verify the TilesetGrass source and license before production use
 - [ ] Add deeper guided travel or interaction behaviors
 - [ ] Add WASD / keyboard movement only if it becomes useful
 

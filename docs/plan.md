@@ -121,8 +121,8 @@ Important:
 - the current direction is a tile-like 2D RPG town; a full tileset and asset pipeline remain pending.
 - Art Pass 1 intentionally uses source-generated placeholder sprites; final production sprites, tiles, and sound remain future work.
 - after this generated-map UX cleanup, the next visual phase is a deliberate production asset pipeline rather than more placeholder complexity.
-- TilesetGrass is prepared as a candidate 16 x 16 tileset, but integration is blocked on source/license verification and a deliberate Tiled JSON versus code-defined map decision.
-- TilesetGrass is now being used only as a local prototype terrain layer; it must stay blocked from production claims until the license is verified and the final asset pipeline is chosen.
+- TilesetGrass is a verified CC0 / Public Domain source asset for the prototype terrain layer, but the final Tiled JSON versus code-defined map decision remains open.
+- TilesetGrass is now being used only as a local prototype terrain layer while the final asset pipeline is still being chosen.
 - `/cv` remains the classic readable fallback for recruiters and clients.
 
 ## Phase 5: Optional Advanced Movement
