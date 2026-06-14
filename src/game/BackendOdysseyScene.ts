@@ -39,6 +39,7 @@ type LocationNode = {
 };
 
 const PROXIMITY_EXIT_BUFFER = 36;
+const LOCATION_LABEL_DEPTH = 100_000;
 
 function emitEvent<T>(name: string, detail?: T) {
   if (typeof window === 'undefined') {
@@ -315,42 +316,34 @@ export class BackendOdysseyScene extends Phaser.Scene {
         ...(route.via ?? []),
         { x: to.worldX, y: to.worldY },
       ];
-      const width = route.width ?? 42;
-      for (let index = 0; index < points.length - 1; index += 1) {
-        this.drawOrthogonalPath(paths, points[index], points[index + 1], width);
-      }
+      this.drawPath(paths, points, route.width ?? 36);
     }
   }
 
-  private drawOrthogonalPath(graphics: Phaser.GameObjects.Graphics, from: MapPoint, to: MapPoint, width: number) {
-    const corner = { x: to.x, y: from.y };
-    this.drawPathSegment(graphics, from, corner, width);
-    this.drawPathSegment(graphics, corner, to, width);
-    this.drawPathJoint(graphics, corner, width);
-  }
-
-  private drawPathSegment(graphics: Phaser.GameObjects.Graphics, from: MapPoint, to: MapPoint, width: number) {
-    if (from.x === to.x && from.y === to.y) {
+  private drawPath(graphics: Phaser.GameObjects.Graphics, points: MapPoint[], width: number) {
+    if (points.length < 2) {
       return;
     }
 
-    graphics.lineStyle(width + 12, 0x765332, 0.78);
-    graphics.lineBetween(from.x, from.y, to.x, to.y);
-    graphics.lineStyle(width, 0xb58a50, 1);
-    graphics.lineBetween(from.x, from.y, to.x, to.y);
-    graphics.lineStyle(3, 0xe0bd7a, 0.42);
-    graphics.lineBetween(from.x, from.y, to.x, to.y);
-    this.drawPathJoint(graphics, from, width);
-    this.drawPathJoint(graphics, to, width);
+    this.strokePath(graphics, points, width + 8, 0x765332, 0.66);
+    this.strokePath(graphics, points, width, 0xb58a50, 1);
+    this.strokePath(graphics, points, 2, 0xe0bd7a, 0.34);
   }
 
-  private drawPathJoint(graphics: Phaser.GameObjects.Graphics, point: MapPoint, width: number) {
-    graphics.fillStyle(0x765332, 0.78);
-    graphics.fillCircle(point.x, point.y, (width + 12) / 2);
-    graphics.fillStyle(0xb58a50, 1);
-    graphics.fillCircle(point.x, point.y, width / 2);
-    graphics.fillStyle(0xe0bd7a, 0.2);
-    graphics.fillCircle(point.x - width * 0.08, point.y - width * 0.08, width * 0.24);
+  private strokePath(
+    graphics: Phaser.GameObjects.Graphics,
+    points: MapPoint[],
+    width: number,
+    color: number,
+    alpha: number,
+  ) {
+    graphics.lineStyle(width, color, alpha);
+    graphics.beginPath();
+    graphics.moveTo(points[0].x, points[0].y);
+    for (const point of points.slice(1)) {
+      graphics.lineTo(point.x, point.y);
+    }
+    graphics.strokePath();
   }
 
   private drawTownSquare() {
@@ -384,6 +377,10 @@ export class BackendOdysseyScene extends Phaser.Scene {
 
   private drawFoliage() {
     for (const position of TREE_POSITIONS) {
+      if (!this.isDecorationClear(position, 44)) {
+        continue;
+      }
+
       const tree = this.add.container(position.x, position.y).setDepth(position.y);
       tree.add(this.add.ellipse(0, 22, 34, 10, 0x315b31, 0.3));
       tree.add(this.add.rectangle(0, 12, 10, 28, 0x704627, 1));
@@ -394,6 +391,10 @@ export class BackendOdysseyScene extends Phaser.Scene {
     }
 
     for (const position of BUSH_POSITIONS) {
+      if (!this.isDecorationClear(position, 20)) {
+        continue;
+      }
+
       const bush = this.add.container(position.x, position.y).setDepth(position.y);
       bush.add(this.add.circle(-8, 0, 11, 0x377a3b, 1));
       bush.add(this.add.circle(7, -2, 13, 0x489347, 1));
@@ -423,6 +424,10 @@ export class BackendOdysseyScene extends Phaser.Scene {
 
   private drawTownDetails() {
     for (const [index, position] of ROCK_POSITIONS.entries()) {
+      if (!this.isDecorationClear(position, 16)) {
+        continue;
+      }
+
       const rock = this.add.container(position.x, position.y).setDepth(position.y - 1);
       rock.add(this.add.ellipse(0, 8, 28, 9, 0x315b31, 0.24));
       rock.add(this.add.ellipse(0, 0, 24 + index % 3 * 3, 15, 0x777b6b, 1));
@@ -430,6 +435,10 @@ export class BackendOdysseyScene extends Phaser.Scene {
     }
 
     for (const [index, position] of FLOWER_POSITIONS.entries()) {
+      if (!this.isDecorationClear(position, 8)) {
+        continue;
+      }
+
       const flowers = this.add.graphics().setDepth(position.y);
       const color = index % 3 === 0 ? 0xf4d15f : index % 3 === 1 ? 0xf29b7f : 0xece2c2;
       flowers.fillStyle(0x3c7d3d, 1);
@@ -451,6 +460,26 @@ export class BackendOdysseyScene extends Phaser.Scene {
         align: 'center',
       }).setOrigin(0.5));
     }
+  }
+
+  private isDecorationClear(position: MapPoint, margin: number) {
+    return this.locations.every((location) => {
+      const halfWidth = location.footprintWidth / 2 + margin;
+      const halfHeight = location.footprintHeight / 2 + margin;
+      const insideFootprint =
+        Math.abs(position.x - location.worldX) < halfWidth &&
+        Math.abs(position.y - location.worldY) < halfHeight;
+      if (insideFootprint) {
+        return false;
+      }
+
+      const labelY = location.worldY + Math.max(location.labelOffsetY, location.footprintHeight / 2 + 18);
+      return !(
+        Math.abs(position.x - (location.worldX + location.labelOffsetX)) < location.footprintWidth / 2 + 56 &&
+        position.y > labelY - margin &&
+        position.y < labelY + 54 + margin
+      );
+    });
   }
 
   private drawNpcMarkers() {
@@ -498,6 +527,9 @@ export class BackendOdysseyScene extends Phaser.Scene {
   private drawLocations() {
     for (const location of this.locations) {
       const container = this.add.container(location.worldX, location.worldY).setDepth(location.worldY);
+      const labelContainer = this.add
+        .container(location.worldX, location.worldY)
+        .setDepth(LOCATION_LABEL_DEPTH + location.order);
       const visualScale = location.displayScale;
       const visuals = this.add.container(0, 0).setScale(visualScale);
 
@@ -538,7 +570,8 @@ export class BackendOdysseyScene extends Phaser.Scene {
         })
         .setOrigin(0.5, 0);
 
-      container.add([visuals, label, subtitle]);
+      container.add(visuals);
+      labelContainer.add([label, subtitle]);
 
       const zone = this.add.zone(location.worldX, location.worldY, location.footprintWidth, location.footprintHeight).setInteractive({
         useHandCursor: true,

@@ -24,7 +24,7 @@
 
 - [x] Fullscreen game-first homepage exists
 - [x] Phaser-powered 2D RPG quest prototype exists on `/`
-- [x] Start screen appears before entering the game
+- [x] Desktop homepage opens directly into the playable quest map
 - [x] Visible hero character appears in the first viewport
 - [x] Click-to-move hero movement works
 - [x] Checkpoint panel opens automatically when the hero enters interaction range
@@ -39,6 +39,7 @@
 - [x] Add generated placeholder sprite system
 - [x] Add tile-like generated terrain, districts, paths, foliage, and fences
 - [x] Complete Art Pass 1 with recognizable generated buildings and a warmer RPG town palette
+- [x] Clean up map UX with unobstructed labels and simplified dirt-road geometry
 - [ ] Add final real sprites, map art, and sound
 - [ ] Replace generated placeholders with a final production asset pack
 - [ ] Add deeper guided travel or interaction behaviors

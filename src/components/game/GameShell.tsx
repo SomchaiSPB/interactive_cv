@@ -35,7 +35,6 @@ function useDesktopBreakpoint() {
 
 export function GameShell() {
   const isDesktop = useDesktopBreakpoint();
-  const [started, setStarted] = useState(false);
   const [selectedCheckpointId, setSelectedCheckpointId] = useState<string | null>(null);
   const [nearestDetail, setNearestDetail] = useState<OdysseyNearestEventDetail>({
     location: null,
@@ -56,12 +55,6 @@ export function GameShell() {
     () => checkpoints.find((checkpoint) => checkpoint.id === selectedCheckpointId) ?? null,
     [selectedCheckpointId],
   );
-
-  useEffect(() => {
-    if (!started) {
-      setSelectedCheckpointId(null);
-    }
-  }, [started]);
 
   const openCheckpoint = useCallback((checkpointId: string) => {
     const checkpoint = checkpoints.find((item) => item.id === checkpointId) ?? null;
@@ -131,70 +124,16 @@ export function GameShell() {
     <section className="relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top,rgba(235,205,143,0.18),transparent_28%),linear-gradient(180deg,#243b25_0%,#172719_100%)] text-stone-100">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_24%,rgba(132,181,91,0.14),transparent_24%),radial-gradient(circle_at_82%_76%,rgba(183,137,73,0.12),transparent_22%)]" />
 
-      {!started ? (
-        <div className="relative z-10 flex min-h-screen items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
-          <div className="grid w-full max-w-6xl gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
-            <div className="panel-surface relative overflow-hidden rounded-[2rem] px-6 py-10 sm:px-10 sm:py-14">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(124,247,212,0.12),transparent_28%),radial-gradient(circle_at_70%_30%,rgba(105,167,255,0.11),transparent_18%)]" />
-              <div className="relative max-w-2xl">
-                <p className="mono text-xs uppercase tracking-[0.38em] text-neon">Backend Odyssey</p>
-                <h1 className="mt-5 text-5xl font-semibold tracking-tight text-white sm:text-6xl">
-                  A portfolio you explore, not scroll.
-                </h1>
-                <p className="mt-4 text-sm uppercase tracking-[0.24em] text-slate-400">{profile.name}</p>
-                <p className="mt-6 max-w-xl text-lg leading-8 text-slate-300">
-                  Top-down RPG quest portfolio for backend systems, data pipelines, complex integrations, financial reconciliation, and production debugging.
-                </p>
-                <div className="mt-8 flex flex-wrap gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setStarted(true)}
-                    className="rounded-full border border-neon/40 bg-neon/15 px-5 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-neon transition hover:bg-neon/20"
-                  >
-                    Begin Quest
-                  </button>
-                  {navLinks.map((link) => (
-                    <a
-                      key={link.href}
-                      href={link.href}
-                      className="rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-medium text-slate-200 transition hover:border-white/20 hover:bg-white/[0.08]"
-                    >
-                      {link.label}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </div>
+      <div className="relative min-h-screen">
+        <PhaserGame
+          checkpoints={checkpoints}
+          onReady={handleGameReady}
+          onNearestLocation={handleNearestLocation}
+          onOpenCheckpoint={openCheckpoint}
+          onClosePanel={handleClosePanel}
+        />
 
-            <div className="panel-surface flex flex-col justify-between rounded-[2rem] px-6 py-6 sm:px-7 sm:py-7">
-              <div>
-                <p className="text-xs uppercase tracking-[0.28em] text-slate-500">Controls</p>
-                <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-300">
-                  <li>Click to move</li>
-                  <li>Approach a location to open it</li>
-                  <li>ESC to close panel</li>
-                </ul>
-              </div>
-              <div className="rounded-3xl border border-white/10 bg-slate-950/60 p-4">
-                <p className="text-xs uppercase tracking-[0.24em] text-neon">Classic CV available</p>
-                <p className="mt-3 text-sm leading-7 text-slate-300">
-                  Recruiters and clients can open the readable CV route at any time. The game is the first view, not the only path.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="relative min-h-screen">
-          <PhaserGame
-            checkpoints={checkpoints}
-            onReady={handleGameReady}
-            onNearestLocation={handleNearestLocation}
-            onOpenCheckpoint={openCheckpoint}
-            onClosePanel={handleClosePanel}
-          />
-
-          <div className="pointer-events-none absolute inset-0 z-10 flex flex-col">
+        <div className="pointer-events-none absolute inset-0 z-10 flex flex-col">
             <header className="pointer-events-none flex items-start justify-between gap-4 px-4 pt-4 sm:px-6 lg:px-8">
               <div className="pointer-events-auto max-w-xl rounded-2xl border border-amber-100/15 bg-[#25331f]/88 px-4 py-3 shadow-lg backdrop-blur-xl">
                 <p className="mono text-[10px] uppercase tracking-[0.34em] text-amber-200">Backend Odyssey</p>
@@ -251,36 +190,35 @@ export function GameShell() {
                 </div>
               </div>
             </div>
-          </div>
-
-          {selectedCheckpoint ? (
-            <motion.aside
-              initial={{ opacity: 0, x: 28 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 28 }}
-              transition={{ duration: 0.18 }}
-              className="pointer-events-auto absolute right-4 top-24 z-20 w-[min(92vw,28rem)] max-w-full lg:right-8 lg:top-24"
-            >
-              <div className="rounded-[1.75rem] border border-amber-100/15 bg-[#1f2c1c]/95 p-3 shadow-[0_24px_80px_rgba(20,28,16,0.45)] backdrop-blur-xl">
-                <div className="mb-3 flex items-center justify-between gap-3 px-1">
-                  <div>
-                    <p className="mono text-[10px] uppercase tracking-[0.28em] text-amber-200">Inspected checkpoint</p>
-                    <p className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-500">ESC closes this panel</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleClosePanel}
-                    className="rounded-full border border-amber-100/15 bg-amber-50/5 px-3 py-2 text-[11px] uppercase tracking-[0.2em] text-stone-200 transition hover:border-amber-200/35 hover:bg-amber-100/10"
-                  >
-                    Close
-                  </button>
-                </div>
-                <CheckpointPanel checkpoint={selectedCheckpoint} variant="hud" />
-              </div>
-            </motion.aside>
-          ) : null}
         </div>
-      )}
+
+        {selectedCheckpoint ? (
+          <motion.aside
+            initial={{ opacity: 0, x: 28 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 28 }}
+            transition={{ duration: 0.18 }}
+            className="pointer-events-auto absolute right-4 top-24 z-20 w-[min(92vw,28rem)] max-w-full lg:right-8 lg:top-24"
+          >
+            <div className="rounded-[1.75rem] border border-amber-100/15 bg-[#1f2c1c]/95 p-3 shadow-[0_24px_80px_rgba(20,28,16,0.45)] backdrop-blur-xl">
+              <div className="mb-3 flex items-center justify-between gap-3 px-1">
+                <div>
+                  <p className="mono text-[10px] uppercase tracking-[0.28em] text-amber-200">Inspected checkpoint</p>
+                  <p className="mt-1 text-xs uppercase tracking-[0.18em] text-stone-500">ESC closes this panel</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleClosePanel}
+                  className="rounded-full border border-amber-100/15 bg-amber-50/5 px-3 py-2 text-[11px] uppercase tracking-[0.2em] text-stone-200 transition hover:border-amber-200/35 hover:bg-amber-100/10"
+                >
+                  Close
+                </button>
+              </div>
+              <CheckpointPanel checkpoint={selectedCheckpoint} variant="hud" />
+            </div>
+          </motion.aside>
+        ) : null}
+      </div>
     </section>
   );
 }

@@ -76,7 +76,7 @@ export function PhaserGame({ checkpoints, onReady, onNearestLocation, onOpenChec
       gameRef.current = new Phaser.Game({
         type: Phaser.AUTO,
         parent: containerRef.current,
-        backgroundColor: '#050811',
+        backgroundColor: '#5a9b4e',
         pixelArt: true,
         roundPixels: true,
         scale: {

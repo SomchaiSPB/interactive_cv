@@ -48,27 +48,27 @@ export const TOWN_DISTRICTS: District[] = [
 ];
 
 export const TOWN_PATHS: PathRoute[] = [
-  { from: 'spawn-point', to: 'legacy-forest', via: [{ x: 880, y: 800 }, { x: 880, y: 610 }] },
-  { from: 'spawn-point', to: 'backend-forge', via: [{ x: 1040, y: 800 }, { x: 1040, y: 540 }, { x: 850, y: 540 }] },
+  { from: 'spawn-point', to: 'legacy-forest', via: [{ x: 910, y: 780 }, { x: 760, y: 690 }] },
+  { from: 'spawn-point', to: 'backend-forge', via: [{ x: 1060, y: 720 }, { x: 960, y: 560 }] },
   { from: 'spawn-point', to: 'data-citadel', via: [{ x: 1200, y: 560 }] },
-  { from: 'spawn-point', to: 'integration-swamp', via: [{ x: 1460, y: 800 }, { x: 1460, y: 760 }] },
-  { from: 'spawn-point', to: 'production-black-hole', via: [{ x: 1080, y: 980 }, { x: 900, y: 980 }] },
-  { from: 'spawn-point', to: 'leadership-tower', via: [{ x: 1440, y: 640 }, { x: 1570, y: 640 }] },
-  { from: 'integration-swamp', to: 'product-launch-gate', via: [{ x: 1840, y: 880 }, { x: 1950, y: 880 }] },
+  { from: 'spawn-point', to: 'integration-swamp', via: [{ x: 1450, y: 810 }] },
+  { from: 'spawn-point', to: 'production-black-hole', via: [{ x: 1100, y: 1010 }, { x: 990, y: 1100 }] },
+  { from: 'spawn-point', to: 'leadership-tower', via: [{ x: 1390, y: 690 }, { x: 1480, y: 540 }] },
+  { from: 'integration-swamp', to: 'product-launch-gate', via: [{ x: 1810, y: 850 }, { x: 1890, y: 950 }] },
   { from: 'product-launch-gate', to: 'contact-portal', via: [{ x: 2100, y: 1120 }] },
-  { from: 'backend-forge', to: 'ai-workshop', via: [{ x: 970, y: 430 }, { x: 970, y: 250 }], width: 28 },
-  { from: 'backend-forge', to: 'webrtc-signal-tower', via: [{ x: 600, y: 430 }], width: 28 },
-  { from: 'data-citadel', to: 'video-observatory', via: [{ x: 1220, y: 500 }, { x: 1080, y: 500 }], width: 28 },
-  { from: 'data-citadel', to: 'report-lab', via: [{ x: 1410, y: 250 }], width: 28 },
-  { from: 'leadership-tower', to: 'policy-temple', via: [{ x: 1780, y: 350 }], width: 28 },
-  { from: 'integration-swamp', to: 'xml-foundry', via: [{ x: 1770, y: 860 }], width: 28 },
-  { from: 'integration-swamp', to: 'calendar-gate', via: [{ x: 1960, y: 760 }], width: 28 },
-  { from: 'spawn-point', to: 'education-trail', via: [{ x: 760, y: 1040 }, { x: 500, y: 1040 }], width: 28 },
+  { from: 'backend-forge', to: 'ai-workshop', via: [{ x: 930, y: 340 }], width: 22 },
+  { from: 'backend-forge', to: 'webrtc-signal-tower', via: [{ x: 600, y: 450 }], width: 22 },
+  { from: 'data-citadel', to: 'video-observatory', via: [{ x: 1160, y: 400 }], width: 22 },
+  { from: 'data-citadel', to: 'report-lab', via: [{ x: 1320, y: 350 }], width: 22 },
+  { from: 'leadership-tower', to: 'policy-temple', via: [{ x: 1690, y: 410 }], width: 22 },
+  { from: 'integration-swamp', to: 'xml-foundry', via: [{ x: 1740, y: 850 }], width: 22 },
+  { from: 'integration-swamp', to: 'calendar-gate', via: [{ x: 1900, y: 780 }], width: 22 },
+  { from: 'spawn-point', to: 'education-trail', via: [{ x: 880, y: 1030 }, { x: 680, y: 1160 }], width: 22 },
 ];
 
 export const TREE_POSITIONS: MapPoint[] = [
   { x: 190, y: 280 }, { x: 290, y: 330 }, { x: 410, y: 260 }, { x: 560, y: 310 }, { x: 680, y: 250 },
-  { x: 180, y: 520 }, { x: 300, y: 590 }, { x: 450, y: 700 }, { x: 610, y: 820 }, { x: 210, y: 900 },
+  { x: 180, y: 520 }, { x: 300, y: 590 }, { x: 390, y: 760 }, { x: 610, y: 820 }, { x: 210, y: 900 },
   { x: 180, y: 1160 }, { x: 300, y: 1240 }, { x: 410, y: 1140 }, { x: 620, y: 1460 }, { x: 210, y: 1430 },
   { x: 2230, y: 210 }, { x: 2140, y: 340 }, { x: 2260, y: 520 }, { x: 2190, y: 930 }, { x: 2290, y: 1120 },
   { x: 1510, y: 170 }, { x: 1730, y: 190 }, { x: 1880, y: 280 }, { x: 2030, y: 240 }, { x: 2320, y: 760 },
@@ -76,7 +76,7 @@ export const TREE_POSITIONS: MapPoint[] = [
 
 export const BUSH_POSITIONS: MapPoint[] = [
   { x: 760, y: 690 }, { x: 820, y: 930 }, { x: 960, y: 700 }, { x: 1370, y: 720 }, { x: 1490, y: 920 },
-  { x: 1640, y: 890 }, { x: 1850, y: 630 }, { x: 2010, y: 610 }, { x: 730, y: 1180 }, { x: 1110, y: 1350 },
+  { x: 1740, y: 900 }, { x: 1850, y: 630 }, { x: 2010, y: 610 }, { x: 730, y: 1180 }, { x: 1110, y: 1350 },
   { x: 1420, y: 1240 }, { x: 1560, y: 1370 }, { x: 1900, y: 1420 }, { x: 2050, y: 1230 },
 ];
 
