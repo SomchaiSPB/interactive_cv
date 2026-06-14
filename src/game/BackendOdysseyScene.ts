@@ -191,7 +191,21 @@ export class BackendOdysseyScene extends Phaser.Scene {
       const activeLocation = this.locations.find((location) => location.id === this.activeProximityLocationId);
       if (!activeLocation) {
         this.activeProximityLocationId = null;
+        emitEvent(ODYSSEY_EVENT_CLOSE);
       } else {
+        const reachedDifferentLocation = Boolean(
+          nearest &&
+          nearest.location.id !== activeLocation.id &&
+          nearest.distance <= nearest.location.interactionRadius,
+        );
+        if (reachedDifferentLocation && nearest) {
+          this.activeProximityLocationId = nearest.location.id;
+          this.player.setVelocity(0, 0);
+          this.currentTarget = null;
+          this.openCheckpoint(nearest.location);
+          return;
+        }
+
         const activeDistance = Phaser.Math.Distance.Between(
           this.player.x,
           this.player.y,
@@ -200,6 +214,7 @@ export class BackendOdysseyScene extends Phaser.Scene {
         );
         if (activeDistance > activeLocation.interactionRadius + PROXIMITY_EXIT_BUFFER) {
           this.activeProximityLocationId = null;
+          emitEvent(ODYSSEY_EVENT_CLOSE);
         }
       }
     }
