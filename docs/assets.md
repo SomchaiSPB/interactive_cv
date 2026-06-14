@@ -17,7 +17,9 @@
 
 ### Runtime Preparation
 
-Only the tileset PNG is copied to `public/game/assets/TilesetGrass/`. The current Phaser scene does not load TMX or TSX XML directly, so those files are not browser runtime dependencies.
+The TilesetGrass PNG is copied to `public/game/assets/TilesetGrass/` and is now used by the Phaser prototype as local-only terrain art.
+
+The current Phaser scene does not load TMX or TSX XML directly, so those files remain reference material rather than browser runtime dependencies.
 
 Before map integration, choose one narrow path:
 
@@ -25,6 +27,10 @@ Before map integration, choose one narrow path:
 2. Keep the map code-defined and use audited tile indices from the TSX/TMX files.
 
 Do not add a conversion pipeline until the intended map composition is agreed.
+
+### Prototype Use
+
+The tileset is integrated only as a prototype terrain pass for local development. Buildings, quest content, and gameplay logic still use the generated map system, and the asset remains blocked from production claims until the license is verified.
 
 ### License Gate
 

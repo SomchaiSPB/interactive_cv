@@ -22,6 +22,13 @@ import {
   ODYSSEY_EVENT_READY,
 } from './types';
 import { generateAllTextures, getBuildingTextureKey } from './spriteDefs';
+import {
+  createTileSurface,
+  TILESET_GRASS_KEY,
+  TILESET_GRASS_PATH,
+  TILESET_GRASS_TERRAIN_SCALE,
+  TILESET_GRASS_TILE_SIZE,
+} from './tileAssets';
 
 type BootConfig = {
   locations: GameLocation[];
@@ -68,6 +75,7 @@ export class BackendOdysseyScene extends Phaser.Scene {
   }
 
   preload() {
+    this.load.image(TILESET_GRASS_KEY, TILESET_GRASS_PATH);
     generateAllTextures(this);
   }
 
@@ -78,13 +86,19 @@ export class BackendOdysseyScene extends Phaser.Scene {
     this.cameras.main.setBounds(0, 0, GAME_WORLD.width, GAME_WORLD.height);
     this.physics.world.setBounds(0, 0, GAME_WORLD.width, GAME_WORLD.height);
 
-    this.drawTileGround();
-    this.drawDistricts();
-    this.drawTownSquare();
-    this.drawPaths();
+    if (this.textures.exists(TILESET_GRASS_KEY)) {
+      this.drawPrototypeTerrain();
+    } else {
+      console.error(`TilesetGrass texture "${TILESET_GRASS_KEY}" is missing. Falling back to generated terrain.`);
+      this.drawFallbackTerrain();
+    }
+
     this.drawFences();
-    this.drawFoliage();
-    this.drawTownDetails();
+    if (!this.textures.exists(TILESET_GRASS_KEY)) {
+      this.drawFoliage();
+      this.drawTownDetails();
+    }
+    this.drawTownSquare();
     this.drawLocations();
     this.drawNpcMarkers();
     this.drawLanterns();
@@ -267,6 +281,102 @@ export class BackendOdysseyScene extends Phaser.Scene {
     }
 
     return nearest;
+  }
+
+  private drawFallbackTerrain() {
+    this.drawTileGround();
+    this.drawDistricts();
+    this.drawPaths();
+  }
+
+  private drawPrototypeTerrain() {
+    const textureKey = 'tileset-grass-terrain';
+    const painter = createTileSurface(this, textureKey, GAME_WORLD.width, GAME_WORLD.height);
+
+    painter.drawTileRect(
+      61,
+      0,
+      0,
+      Math.ceil(GAME_WORLD.width / (TILESET_GRASS_TILE_SIZE * TILESET_GRASS_TERRAIN_SCALE)),
+      Math.ceil(GAME_WORLD.height / (TILESET_GRASS_TILE_SIZE * TILESET_GRASS_TERRAIN_SCALE)),
+      TILESET_GRASS_TERRAIN_SCALE,
+    );
+    painter.drawTilePattern([61, 61, 61, 61, 61, 60, 62, 61, 61], { x: 0, y: 0, width: GAME_WORLD.width, height: GAME_WORLD.height }, TILESET_GRASS_TERRAIN_SCALE);
+
+    this.drawPrototypeRoads(painter);
+    this.drawPrototypeForests(painter);
+
+    painter.refresh();
+    this.add.image(0, 0, textureKey).setOrigin(0).setDepth(-60);
+  }
+
+  private drawPrototypeRoads(surface: ReturnType<typeof createTileSurface>) {
+    const roadScale = TILESET_GRASS_TERRAIN_SCALE;
+    const roadTile = 40;
+    const accentTiles = [28, 40, 78];
+
+    for (const route of TOWN_PATHS) {
+      const from = this.locations.find((location) => location.id === route.from);
+      const to = this.locations.find((location) => location.id === route.to);
+      if (!from || !to) {
+        continue;
+      }
+
+      const points: MapPoint[] = [
+        { x: from.worldX, y: from.worldY },
+        ...(route.via ?? []),
+        { x: to.worldX, y: to.worldY },
+      ];
+
+      for (let index = 0; index < points.length - 1; index += 1) {
+        const start = points[index];
+        const end = points[index + 1];
+        const horizontal = start.y === end.y;
+        const tileStep = TILESET_GRASS_TILE_SIZE * roadScale;
+        const length = Math.abs(horizontal ? end.x - start.x : end.y - start.y);
+        const tileCount = Math.max(1, Math.ceil(length / tileStep));
+        const x = Math.min(start.x, end.x) - (horizontal ? 0 : tileStep / 2);
+        const y = Math.min(start.y, end.y) - (horizontal ? tileStep / 2 : 0);
+        const width = horizontal ? tileCount * tileStep : tileStep;
+        const height = horizontal ? tileStep : tileCount * tileStep;
+        surface.drawTilePattern(horizontal ? [roadTile, accentTiles[2]] : [accentTiles[0], roadTile], { x, y, width, height }, roadScale);
+      }
+    }
+
+    const plazaTileSize = TILESET_GRASS_TILE_SIZE * roadScale;
+    const square = this.locations.find((location) => location.id === 'spawn-point');
+    if (square) {
+      const plazaHalf = 4 * plazaTileSize;
+      surface.drawTilePattern([61, 60, 62, 78], {
+        x: square.worldX - plazaHalf,
+        y: square.worldY - plazaHalf,
+        width: plazaHalf * 2,
+        height: plazaHalf * 2,
+      }, roadScale);
+    }
+  }
+
+  private drawPrototypeForests(surface: ReturnType<typeof createTileSurface>) {
+    const patchScale = TILESET_GRASS_TERRAIN_SCALE;
+    const patchWidth = 6 * TILESET_GRASS_TILE_SIZE * patchScale;
+    const patchHeight = 5 * TILESET_GRASS_TILE_SIZE * patchScale;
+    const patchTiles = [51, 52, 53, 63, 64, 65, 77];
+
+    const patches: MapPoint[] = [
+      { x: 120, y: 160 },
+      { x: 1680, y: 120 },
+      { x: 1920, y: 1180 },
+      { x: 220, y: 1140 },
+    ];
+
+    for (const patch of patches) {
+      surface.drawTilePattern(patchTiles, {
+        x: patch.x,
+        y: patch.y,
+        width: patchWidth,
+        height: patchHeight,
+      }, patchScale);
+    }
   }
 
   private drawTileGround() {

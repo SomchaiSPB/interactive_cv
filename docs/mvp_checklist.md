@@ -41,6 +41,7 @@
 - [x] Complete Art Pass 1 with recognizable generated buildings and a warmer RPG town palette
 - [x] Clean up map UX with unobstructed labels and simplified dirt-road geometry
 - [x] Audit and stage the TilesetGrass runtime image with source and license notes
+- [x] Integrate TilesetGrass as a local prototype terrain pass
 - [ ] Add final real sprites, map art, and sound
 - [ ] Replace generated placeholders with a final production asset pack
 - [ ] Verify the TilesetGrass source and license before production use
@@ -90,6 +91,7 @@
 - [ ] Define richer quest / movement rules
 - [x] Improve generated placeholder sprites, buildings, and map readability
 - [ ] Add final production sprites, tiles, and map art
+- [ ] Replace the generated checkpoint buildings with final production art
 - [ ] Convert or author the final tile map after the TilesetGrass license gate is cleared
 - [ ] Add audio and ambient effects
 - [ ] Evaluate Three.js only if 3D value is proven
