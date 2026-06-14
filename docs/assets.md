@@ -36,6 +36,17 @@ Do not add a conversion pipeline until the intended map composition is agreed.
 
 The tileset is integrated only as a prototype terrain pass for local development. Buildings, quest content, and gameplay logic still use the generated map system.
 
+### Object Mappings
+
+The current multi-tile prototype mappings are:
+
+- `townSquarePlaza`: `17,18,19 / 29,30,31 / 41,42,43` at scale `4`
+- `treeCluster`: `57,58,59 / 69,70,71 / 81,82,83 / 93,94,95 / 105,106,107` at scale `2`
+- `bushCluster`: `104,105 / 106,107` at scale `2`
+- `commandHallFort`: `144,145,146,147,148,149 / 156,157,158,159,160,161 / 168,169,170,171,172,173 / 180,181,182,183,184,185` at scale `2`
+
+The plaza and forest objects are drawn into the prototype terrain layer. The `commandHallFort` object is used as a safe landmark replacement for the `Command Hall` checkpoint only; all other checkpoint buildings still fall back to the generated sprite system.
+
 ### License Gate
 
 Source page: https://beast-pixels.itch.io/overworld-tileset-grass-biome

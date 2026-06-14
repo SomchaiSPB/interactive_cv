@@ -10,9 +10,40 @@ export const TILESET_GRASS_TERRAIN_SCALE = 2;
 export const TILESET_GRASS_TILES = {
   grassBase: 1,
   grassVariants: [0, 2, 3, 4, 13, 14, 24, 25, 26, 36, 37, 38] as const,
-  trees: [69, 70, 71, 81, 82, 83, 92, 93, 94, 95] as const,
-  bushes: [104, 105, 106, 107] as const,
-  flowers: [24, 36, 37, 38] as const,
+} as const;
+
+export type TileObjectDefinition = {
+  widthTiles: number;
+  heightTiles: number;
+  tiles: readonly (number | null)[];
+};
+
+export const TILESET_GRASS_OBJECTS = {
+  townSquarePlaza: {
+    widthTiles: 3,
+    heightTiles: 3,
+    tiles: [17, 18, 19, 29, 30, 31, 41, 42, 43],
+  },
+  treeCluster: {
+    widthTiles: 3,
+    heightTiles: 5,
+    tiles: [57, 58, 59, 69, 70, 71, 81, 82, 83, 93, 94, 95, 105, 106, 107],
+  },
+  bushCluster: {
+    widthTiles: 2,
+    heightTiles: 2,
+    tiles: [104, 105, 106, 107],
+  },
+  commandHallFort: {
+    widthTiles: 6,
+    heightTiles: 4,
+    tiles: [
+      144, 145, 146, 147, 148, 149,
+      156, 157, 158, 159, 160, 161,
+      168, 169, 170, 171, 172, 173,
+      180, 181, 182, 183, 184, 185,
+    ],
+  },
 } as const;
 
 export type TileArea = {
@@ -56,6 +87,70 @@ function getSourceImage(scene: Phaser.Scene): CanvasImageSource {
   }
 
   return source as CanvasImageSource;
+}
+
+function paintTileObject(
+  drawTile: (tileIndex: number, x: number, y: number, scale?: number) => void,
+  objectDef: TileObjectDefinition,
+  originX: number,
+  originY: number,
+  scale = 1,
+) {
+  const tileSize = TILESET_GRASS_TILE_SIZE * scale;
+
+  for (let row = 0; row < objectDef.heightTiles; row += 1) {
+    for (let column = 0; column < objectDef.widthTiles; column += 1) {
+      const tileIndex = objectDef.tiles[row * objectDef.widthTiles + column];
+      if (tileIndex === null || tileIndex === undefined) {
+        continue;
+      }
+
+      drawTile(tileIndex, originX + column * tileSize, originY + row * tileSize, scale);
+    }
+  }
+}
+
+export function drawTileObject(
+  surface: Pick<TileSurface, 'drawTile'>,
+  objectDef: TileObjectDefinition,
+  centerX: number,
+  centerY: number,
+  scale = 1,
+) {
+  const tileSize = TILESET_GRASS_TILE_SIZE * scale;
+  const originX = centerX - (objectDef.widthTiles * tileSize) / 2;
+  const originY = centerY - (objectDef.heightTiles * tileSize) / 2;
+  paintTileObject(surface.drawTile, objectDef, originX, originY, scale);
+}
+
+export function createTileObjectTexture(
+  scene: Phaser.Scene,
+  textureKey: string,
+  objectDef: TileObjectDefinition,
+  scale = 1,
+) {
+  const width = Math.ceil(objectDef.widthTiles * TILESET_GRASS_TILE_SIZE * scale);
+  const height = Math.ceil(objectDef.heightTiles * TILESET_GRASS_TILE_SIZE * scale);
+  const canvasTexture = scene.textures.createCanvas(textureKey, width, height);
+  const context = canvasTexture.getContext();
+
+  if (!context) {
+    throw new Error(`Unable to create canvas context for "${textureKey}".`);
+  }
+
+  context.imageSmoothingEnabled = false;
+  const sourceImage = getSourceImage(scene);
+
+  const drawTile = (tileIndex: number, x: number, y: number, tileScale = 1) => {
+    const frame = tileIndexToSourceRect(tileIndex);
+    const size = TILESET_GRASS_TILE_SIZE * tileScale;
+    context.drawImage(sourceImage, frame.x, frame.y, frame.width, frame.height, Math.round(x), Math.round(y), size, size);
+  };
+
+  paintTileObject(drawTile, objectDef, 0, 0, scale);
+  canvasTexture.refresh();
+
+  return canvasTexture;
 }
 
 export function createTileSurface(scene: Phaser.Scene, textureKey: string, width: number, height: number): TileSurface {

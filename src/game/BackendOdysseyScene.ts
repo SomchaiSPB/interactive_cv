@@ -24,7 +24,10 @@ import {
 import { generateAllTextures, getBuildingTextureKey } from './spriteDefs';
 import {
   createTileSurface,
+  createTileObjectTexture,
+  drawTileObject,
   TILESET_GRASS_KEY,
+  TILESET_GRASS_OBJECTS,
   TILESET_GRASS_PATH,
   TILESET_GRASS_TERRAIN_SCALE,
   TILESET_GRASS_TILES,
@@ -320,54 +323,46 @@ export class BackendOdysseyScene extends Phaser.Scene {
       }
     }
 
+    this.drawPrototypePlaza(painter);
     this.drawPrototypeFoliage(painter);
-    this.drawPrototypeAccents(painter);
 
     painter.refresh();
     this.add.image(0, 0, textureKey).setOrigin(0).setDepth(-60);
   }
 
-  private drawPrototypeFoliage(surface: ReturnType<typeof createTileSurface>) {
-    const treeTiles = TILESET_GRASS_TILES.trees;
-    const bushTiles = TILESET_GRASS_TILES.bushes;
+  private drawPrototypePlaza(surface: ReturnType<typeof createTileSurface>) {
+    const square = this.locations.find((location) => location.id === 'spawn-point');
+    if (!square) {
+      return;
+    }
 
-    for (const [index, position] of TREE_POSITIONS.entries()) {
+    drawTileObject(
+      surface,
+      TILESET_GRASS_OBJECTS.townSquarePlaza,
+      square.worldX,
+      square.worldY,
+      4,
+    );
+  }
+
+  private drawPrototypeFoliage(surface: ReturnType<typeof createTileSurface>) {
+    const treePositions = TREE_POSITIONS.filter((_, index) => index % 3 === 0);
+    const bushPositions = BUSH_POSITIONS.filter((_, index) => index % 2 === 0);
+
+    for (const position of treePositions) {
+      if (!this.isDecorationClear(position, 96)) {
+        continue;
+      }
+
+      drawTileObject(surface, TILESET_GRASS_OBJECTS.treeCluster, position.x, position.y, TILESET_GRASS_TERRAIN_SCALE);
+    }
+
+    for (const position of bushPositions) {
       if (!this.isDecorationClear(position, 48)) {
         continue;
       }
 
-      const tileIndex = treeTiles[index % treeTiles.length];
-      surface.drawTileCentered(
-        tileIndex,
-        position.x,
-        position.y,
-        TILESET_GRASS_TERRAIN_SCALE,
-      );
-    }
-
-    for (const [index, position] of BUSH_POSITIONS.entries()) {
-      if (!this.isDecorationClear(position, 24)) {
-        continue;
-      }
-
-      const tileIndex = bushTiles[index % bushTiles.length];
-      surface.drawTileCentered(
-        tileIndex,
-        position.x,
-        position.y,
-        TILESET_GRASS_TERRAIN_SCALE,
-      );
-    }
-  }
-
-  private drawPrototypeAccents(surface: ReturnType<typeof createTileSurface>) {
-    for (const [index, position] of FLOWER_POSITIONS.entries()) {
-      if (!this.isDecorationClear(position, 12)) {
-        continue;
-      }
-
-      const tileIndex = TILESET_GRASS_TILES.flowers[index % TILESET_GRASS_TILES.flowers.length];
-      surface.drawTileCentered(tileIndex, position.x, position.y, 1);
+      drawTileObject(surface, TILESET_GRASS_OBJECTS.bushCluster, position.x, position.y, TILESET_GRASS_TERRAIN_SCALE);
     }
   }
 
@@ -720,6 +715,17 @@ export class BackendOdysseyScene extends Phaser.Scene {
   }
 
   private createLocationBody(location: GameLocation) {
+    if (location.id === 'leadership-tower') {
+      const textureKey = 'tileset-grass-command-hall';
+      if (!this.textures.exists(textureKey)) {
+        createTileObjectTexture(this, textureKey, TILESET_GRASS_OBJECTS.commandHallFort, TILESET_GRASS_TERRAIN_SCALE);
+      }
+
+      return this.add
+        .image(0, 0, textureKey)
+        .setDisplaySize(location.footprintWidth / location.displayScale, location.footprintHeight / location.displayScale);
+    }
+
     const textureKey = getBuildingTextureKey(location.id, location.kind);
     if (this.textures.exists(textureKey)) {
       return this.add
