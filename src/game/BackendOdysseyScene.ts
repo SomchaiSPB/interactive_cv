@@ -22,12 +22,11 @@ import {
 import { generateAllTextures, getBuildingTextureKey } from './spriteDefs';
 import {
   ADVENTURER_IDLE_DEFAULT_KEY,
-  getAdventurerAnimationKey,
+  ADVENTURER_STABLE_FRAME_INDEX,
+  ADVENTURER_TEXTURE_BY_FACING,
   hasAdventurerSprites,
   preloadAdventurerSprites,
-  registerAdventurerAnimations,
   type AdventurerFacing,
-  type AdventurerMotion,
 } from './adventurerAssets';
 import {
   createTileSurface,
@@ -92,9 +91,8 @@ export class BackendOdysseyScene extends Phaser.Scene {
   private heroSpeed = 210;
   private roadSegments: RoadSegment[] = [];
   private heroFacing: AdventurerFacing = 'down';
-  private heroMotion: AdventurerMotion = 'idle';
-  private heroAnimationKey: string | null = null;
   private usesAdventurerSprite = false;
+  private heroTextureKey = ADVENTURER_IDLE_DEFAULT_KEY;
 
   constructor(config: BootConfig) {
     super('BackendOdysseyScene');
@@ -135,24 +133,24 @@ export class BackendOdysseyScene extends Phaser.Scene {
 
     this.usesAdventurerSprite = hasAdventurerSprites(this);
     if (this.usesAdventurerSprite) {
-      registerAdventurerAnimations(this);
       this.player = this.physics.add.sprite(PLAYER_SPAWN.x, PLAYER_SPAWN.y, ADVENTURER_IDLE_DEFAULT_KEY);
-      // The Adventurer strips are 64x80, but the visible art only occupies the lower-center portion.
-      // A slightly larger scale keeps the player readable while the feet-shadow pairing still feels grounded.
-      this.player.setScale(0.66);
+      this.player.setOrigin(0.5, 1);
+      // The Adventurer strips are 64x80, and frame 3 is a centered stable pose in the source pack.
+      // Slightly increasing the scale keeps the player readable without changing the map layout.
+      this.player.setScale(0.88);
       this.player.body.setSize(18, 20, true);
-      this.player.body.setOffset(23, 42);
-      this.playHeroAnimation('idle', 'down');
+      this.player.body.setOffset(23, 40);
+      this.player.setFrame(ADVENTURER_STABLE_FRAME_INDEX);
     } else {
       console.warn('[BackendOdysseyScene] Adventurer sprite assets are unavailable; using the generated hero fallback.');
       this.player = this.physics.add.sprite(PLAYER_SPAWN.x, PLAYER_SPAWN.y, 'odyssey-hero');
       this.player.body.setSize(14, 10, true);
       this.player.body.setOffset(4, 30);
     }
-    this.player.setDepth(PLAYER_SPAWN.y + 20);
+    this.player.setDepth(PLAYER_SPAWN.y);
     this.player.setCollideWorldBounds(true);
     this.player.setDrag(0, 0);
-    this.playerShadow = this.add.ellipse(this.player.x, this.player.y + 20, 24, 8, 0x000000, 0.34).setDepth(999);
+    this.playerShadow = this.add.ellipse(this.player.x, this.player.y + 8, 24, 8, 0x000000, 0.34).setDepth(PLAYER_SPAWN.y - 1);
 
     this.currentTarget = new Phaser.Math.Vector2(this.player.x, this.player.y);
 
@@ -193,7 +191,6 @@ export class BackendOdysseyScene extends Phaser.Scene {
         const speedX = (dx / distance) * this.heroSpeed;
         const speedY = (dy / distance) * this.heroSpeed;
         this.player.setVelocity(speedX, speedY);
-        this.player.setFlipX(speedX < 0);
         this.updateHeroFacing(dx, dy);
 
         if (distance < step) {
@@ -206,10 +203,10 @@ export class BackendOdysseyScene extends Phaser.Scene {
       this.player.setVelocity(0, 0);
     }
 
-    this.updateHeroAnimation();
-    this.playerShadow.setPosition(this.player.x, this.player.y + 20);
-    this.player.setDepth(this.player.y + 20);
-    this.playerShadow.setDepth(this.player.y + 19);
+    this.player.setPosition(Math.round(this.player.x), Math.round(this.player.y));
+    this.playerShadow.setPosition(this.player.x, this.player.y + 8);
+    this.player.setDepth(this.player.y);
+    this.playerShadow.setDepth(this.player.y - 1);
 
     const nearest = this.findNearestLocation(this.player.x, this.player.y);
     const interactable = Boolean(nearest && nearest.distance <= nearest.location.interactionRadius);
@@ -249,52 +246,29 @@ export class BackendOdysseyScene extends Phaser.Scene {
   private updateHeroFacing(velocityX: number, velocityY: number) {
     const absX = Math.abs(velocityX);
     const absY = Math.abs(velocityY);
-    const axisBias = 1.15;
+    const axisBias = 1.25;
 
     if (absX >= absY * axisBias) {
       this.heroFacing = velocityX >= 0 ? 'right' : 'left';
-      return;
-    }
-
-    if (absY >= absX * axisBias) {
+    } else if (absY >= absX * axisBias) {
       this.heroFacing = velocityY >= 0 ? 'down' : 'up';
     }
+    this.applyHeroFacingTexture();
   }
 
-  private updateHeroAnimation() {
+  private applyHeroFacingTexture() {
     if (!this.usesAdventurerSprite) {
       return;
     }
 
-    const velocity = this.player.body?.velocity;
-    const moving = Boolean(velocity && (Math.abs(velocity.x) > 1 || Math.abs(velocity.y) > 1));
-    const motion: AdventurerMotion = moving ? 'run' : 'idle';
-
-    if (moving && velocity) {
-      this.updateHeroFacing(velocity.x, velocity.y);
-    }
-
-    const desiredKey = getAdventurerAnimationKey(motion, this.heroFacing);
-    if (this.heroMotion === motion && this.heroAnimationKey === desiredKey) {
+    const nextTextureKey = ADVENTURER_TEXTURE_BY_FACING[this.heroFacing];
+    if (this.heroTextureKey === nextTextureKey) {
       return;
     }
 
-    this.heroMotion = motion;
-    this.playHeroAnimation(motion, this.heroFacing);
-  }
-
-  private playHeroAnimation(motion: AdventurerMotion, facing: AdventurerFacing) {
-    if (!this.usesAdventurerSprite) {
-      return;
-    }
-
-    const key = getAdventurerAnimationKey(motion, facing);
-    if (this.heroAnimationKey === key) {
-      return;
-    }
-
-    this.heroAnimationKey = key;
-    this.player.anims.play(key, true);
+    this.heroTextureKey = nextTextureKey;
+    this.player.setTexture(nextTextureKey);
+    this.player.setFrame(ADVENTURER_STABLE_FRAME_INDEX);
   }
 
   private openCheckpoint(location: GameLocation) {
