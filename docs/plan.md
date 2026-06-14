@@ -52,6 +52,7 @@ Scope:
 - refine the RPG town feel while keeping it professional;
 - improve readability on both desktop and mobile.
 - stabilize the mounted Phaser scene and recomposed town so the homepage stays readable before any new gameplay is added.
+- use a tile-like generated town composition with distinct districts, paths, foliage, fences, and a central plaza.
 
 Deliverables:
 
@@ -92,7 +93,8 @@ Non-goals:
 Scope:
 
 - refine guided travel and interaction flow beyond the current Phaser prototype;
-- preserve click-to-move, E-to-interact, and readable HUD structure;
+- preserve click-to-move and readable HUD structure;
+- auto-open checkpoint panels when the hero enters a location's interaction radius;
 - keep navigation readable and controlled.
 
 Deliverables:
@@ -106,13 +108,14 @@ Non-goals:
 - no 3D / Three.js;
 - no joystick/mobile controller in the default build;
 - no pathfinding-heavy traversal layer;
+- no Tiled pipeline yet; the current map remains generated and asset-free;
 - no replacement of the static CV fallback.
 
 Important:
 
 - the homepage is already game-first and playable;
 - the classic CV remains a fallback for quick review;
-- the next work should improve art, sound, and clarity before any bigger interaction change.
+- the current direction is a tile-like 2D RPG town; a full tileset and asset pipeline remain pending.
 - `/cv` remains the classic readable fallback for recruiters and clients.
 
 ## Phase 5: Optional Advanced Movement

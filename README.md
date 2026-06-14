@@ -2,7 +2,7 @@
 
 This repository is a static-first Astro + React + TypeScript portfolio site for Denis Gaivoronskii.
 
-The homepage is a Phaser-powered 2D RPG quest portfolio prototype called "Backend Odyssey". Visitors start on a playable town map, click to move a hero, approach buildings and NPCs, and press `E` or click to open portfolio panels. The classic CV, projects, and contact pages stay available as readable static routes.
+The homepage is a Phaser-powered 2D RPG quest portfolio prototype called "Backend Odyssey". Visitors start on a tile-like town map, click to move a hero, and open portfolio panels automatically by approaching buildings. The classic CV, projects, and contact pages stay available as readable static routes.
 
 ## Backend Odyssey
 
@@ -10,6 +10,8 @@ The concept is a dark, cyberpunk-inspired RPG quest:
 
 - each checkpoint becomes a town location, building, gate, or NPC interaction;
 - the desktop homepage opens with a playable Phaser town scene;
+- the current map uses a generated tile-like composition with districts, dirt paths, foliage, fences, and a central plaza;
+- checkpoint panels open automatically when the hero enters a location's interaction radius;
 - the classic pages remain accessible as a fallback for recruiters and clients;
 - the mobile experience falls back to a readable journey/timeline view;
 - the content stays separate from the UI so the story can evolve without rewriting components.
@@ -66,6 +68,7 @@ Key interactive files:
 - `src/components/game/GameShell.tsx`
 - `src/components/game/PhaserGame.tsx`
 - `src/game/BackendOdysseyScene.ts`
+- `src/game/townMap.ts`
 - `src/components/CheckpointPanel.tsx`
 - `src/components/Timeline.astro`
 
@@ -90,7 +93,7 @@ The current build is an MVP, not a full game product.
 Current limitations:
 
 - the game layer uses generated placeholder buildings, roads, and hero sprites rather than final art;
-- the tilemap / asset pipeline is not finalized yet;
+- the generated tile-like map is not a finalized Tiled or production asset pipeline;
 - mobile users still get a readable fallback instead of joystick or touch controls;
 - WASD movement, pathfinding, and richer traversal are deferred;
 - 3D/Three.js is deferred;

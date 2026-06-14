@@ -24,7 +24,7 @@ export type GameLocation = Checkpoint & {
   worldY: number;
   footprintWidth: number;
   footprintHeight: number;
-  promptRadius: number;
+  interactionRadius: number;
   displayScale: number;
   labelOffsetX: number;
   labelOffsetY: number;

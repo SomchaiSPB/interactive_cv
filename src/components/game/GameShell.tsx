@@ -175,7 +175,7 @@ export function GameShell() {
                 <p className="text-xs uppercase tracking-[0.28em] text-slate-500">Controls</p>
                 <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-300">
                   <li>Click to move</li>
-                  <li>E to inspect</li>
+                  <li>Approach a location to open it</li>
                   <li>ESC to close panel</li>
                 </ul>
               </div>
@@ -223,7 +223,7 @@ export function GameShell() {
                 <div className="rounded-3xl border border-white/10 bg-slate-950/74 px-4 py-3 backdrop-blur-xl">
                   <p className="text-[10px] uppercase tracking-[0.28em] text-slate-500">Controls</p>
                   <p className="mt-2 text-sm leading-6 text-slate-300">
-                    Click to move. {nearestDetail.prompt ?? 'Walk up to a building or NPC to inspect it.'}
+                    Click to move. {nearestDetail.prompt ?? 'Approach a building to open its checkpoint automatically.'}
                   </p>
                 </div>
 
@@ -249,7 +249,9 @@ export function GameShell() {
 
                 <div className="pointer-events-auto rounded-3xl border border-white/10 bg-slate-950/74 p-3 backdrop-blur-xl">
                   <p className="text-[10px] uppercase tracking-[0.28em] text-slate-500">Hint</p>
-                  <p className="mt-2 text-sm leading-6 text-slate-300">Press E or click a location to inspect its checkpoint panel.</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-300">
+                    Click a location to walk toward it. Its checkpoint opens when you arrive.
+                  </p>
                 </div>
               </div>
             </div>
@@ -271,7 +273,7 @@ export function GameShell() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => setSelectedCheckpointId(null)}
+                    onClick={handleClosePanel}
                     className="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-[11px] uppercase tracking-[0.2em] text-slate-300 transition hover:border-neon/30 hover:bg-neon/10"
                   >
                     Close

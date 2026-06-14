@@ -27,8 +27,8 @@
 - [x] Start screen appears before entering the game
 - [x] Visible hero character appears in the first viewport
 - [x] Click-to-move hero movement works
-- [x] E opens the checkpoint panel when near a location
-- [x] Clicking a location opens the checkpoint panel
+- [x] Checkpoint panel opens automatically when the hero enters interaction range
+- [x] Clicking a location moves the hero toward it
 - [x] Checkpoints render from content data
 - [x] Town, buildings, roads, and side locations are visually distinct
 - [x] Phaser.Game mounts once per game session without remount flicker
@@ -37,6 +37,7 @@
 - [x] Detail panel shows title, summary, details, stack, and links
 - [x] HUD shows the classic CV and main navigation
 - [x] Add generated placeholder sprite system
+- [x] Add tile-like generated terrain, districts, paths, foliage, and fences
 - [ ] Add final real sprites, map art, and sound
 - [ ] Add richer town / building visuals
 - [ ] Add deeper guided travel or interaction behaviors

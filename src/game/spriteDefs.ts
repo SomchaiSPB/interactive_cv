@@ -90,18 +90,6 @@ const PALETTE_WOOD: Palette = [
   0x69a7ff,
 ];
 
-const PALETTE_STONE: Palette = [
-  0x00000000,
-  0x2a2a3a,
-  0x4a4a5a,
-  0x6a6a7a,
-  0x8a8a9a,
-  0xb8b8c8,
-  0x69a7ff,
-  0x7cf7d4,
-  0xc9d6ea,
-];
-
 const PALETTE_MARKET: Palette = [
   0x00000000,
   0x2a1a0a,
@@ -239,26 +227,26 @@ function validateGrid(name: string, grid: string[], palette: Palette) {
 const HERO: SpriteData = (() => {
   const pal = PALETTE_CYBER;
   const g = [
-    '00c0000',
-    '0ccccc00',
-    'c111111c',
-    'c111111c',
-    'c155551c',
-    'c188881c',
-    '0c11111c',
-    '0c11111c',
-    '00c121c0',
-    '0c1221c0',
-    '0c1991c0',
-    '0c1991c0',
-    '0ca99ac0',
-    '0ca99ac0',
-    '0ca99ac0',
-    '00c33c00',
-    '0c3333c0',
-    '0c3333c0',
-    '00c33c00',
-    '00c33c00',
+    '000ccccc000',
+    '00c11111c00',
+    '0c1111111c0',
+    '0c1555551c0',
+    '0c1888881c0',
+    '00c11111c00',
+    '00c12221c00',
+    '0cc12221cc0',
+    '0c4122214c0',
+    '0c4122214c0',
+    '00c19991c00',
+    '00c19991c00',
+    '00ca999ac00',
+    '00ca999ac00',
+    '000c333c000',
+    '00c33333c00',
+    '00c33333c00',
+    '000c33c0000',
+    '000c33c0000',
+    '00cc00cc000',
   ];
   return parseGrid('odyssey-hero', g, pal);
 })();
@@ -269,24 +257,6 @@ type BuildingDef = {
 };
 
 const B_DEFS: Record<string, BuildingDef> = {
-  town_square: {
-    palette: PALETTE_STONE,
-    grid: [
-      '0555555555550',
-      '5555555555555',
-      '5111111111115',
-      '5111111111115',
-      '5111511111115',
-      '5111511111115',
-      '5111511111115',
-      '5111111111115',
-      '5111111111115',
-      '5111111111115',
-      '5111111111115',
-      '5555555555555',
-      '0555555555550',
-    ],
-  },
   library: {
     palette: PALETTE_BUILDINGS_CORE,
     grid: [
@@ -511,37 +481,8 @@ const BUILDING_SPRITES: Record<string, ParsedGrid> = Object.fromEntries(
 export function generateAllTextures(scene: Phaser.Scene) {
   generateTexture(scene, 'odyssey-hero', HERO, PALETTE_CYBER, 2);
 
-  generateGroundTexture(scene);
   generateNoiseTexture(scene);
   generateBuildingTextures(scene);
-}
-
-function generateGroundTexture(scene: Phaser.Scene) {
-  const size = 128;
-  const scale = 2;
-  const g = scene.add.graphics();
-
-  g.fillStyle(0x18261a, 1);
-  g.fillRect(0, 0, size * scale, size * scale);
-
-  for (let i = 0; i < 300; i++) {
-    const x = Phaser.Math.Between(0, size * scale - 1);
-    const y = Phaser.Math.Between(0, size * scale - 1);
-    const variant = i % 17;
-    const shade = variant === 0 ? 0x31482f : variant === 7 ? 0x243620 : 0x1f3121;
-    g.fillStyle(shade, Phaser.Math.FloatBetween(0.15, 0.35));
-    g.fillRect(x, y, Phaser.Math.Between(1, 3), Phaser.Math.Between(1, 3));
-  }
-
-  for (let i = 0; i < 12; i++) {
-    g.fillStyle(0x40563b, 0.12);
-    const cx = Phaser.Math.Between(0, size * scale);
-    const cy = Phaser.Math.Between(0, size * scale);
-    g.fillCircle(cx, cy, Phaser.Math.Between(4, 10));
-  }
-
-  g.generateTexture('odyssey-ground', size * scale, size * scale);
-  g.destroy();
 }
 
 function generateNoiseTexture(scene: Phaser.Scene) {
