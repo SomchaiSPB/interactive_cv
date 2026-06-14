@@ -210,14 +210,14 @@ function validateGrid(name: string, grid: string[], palette: Palette) {
 
   for (const [rowIndex, row] of grid.entries()) {
     if (row.length !== width) {
-      throw new Error(`Sprite "${name}" row ${rowIndex} has width ${row.length}; expected ${width}.`);
+      throw new Error(`Sprite "${name}" row ${rowIndex + 1} has width ${row.length}; expected ${width}.`);
     }
 
     for (const pixel of row) {
       const colorIndex = parseInt(pixel, 36);
       if (!Number.isInteger(colorIndex) || colorIndex < 0 || colorIndex >= palette.length) {
         throw new Error(
-          `Sprite "${name}" references palette index "${pixel}", but the palette has ${palette.length} colors.`,
+          `Sprite "${name}" row ${rowIndex + 1} references palette index "${pixel}", but the palette has ${palette.length} colors.`,
         );
       }
     }
@@ -350,9 +350,9 @@ const B_DEFS: Record<string, BuildingDef> = {
       '8888888888',
       '8111111118',
       '8111111118',
-      '811a111a118',
+      '81a1111a18',
       '8111111118',
-      '811a111a118',
+      '81a1111a18',
       '8111111118',
       '8111111118',
       '8111111118',
