@@ -68,6 +68,10 @@ const LABEL_BORDER_COLOR = 0xd8b36a;
 const LABEL_HOVER_BORDER_COLOR = 0xffd166;
 const LABEL_TITLE_COLOR = '#fff2b8';
 const LABEL_SUBTITLE_COLOR = '#d7c98d';
+const ADVENTURER_SHADOW_OFFSET_X = 0;
+const ADVENTURER_SHADOW_OFFSET_Y = -2;
+const ADVENTURER_SHADOW_WIDTH = 18;
+const ADVENTURER_SHADOW_HEIGHT = 6;
 
 function emitEvent<T>(name: string, detail?: T) {
   if (typeof window === 'undefined') {
@@ -150,7 +154,17 @@ export class BackendOdysseyScene extends Phaser.Scene {
     this.player.setDepth(PLAYER_SPAWN.y);
     this.player.setCollideWorldBounds(true);
     this.player.setDrag(0, 0);
-    this.playerShadow = this.add.ellipse(this.player.x, this.player.y + 8, 24, 8, 0x000000, 0.34).setDepth(PLAYER_SPAWN.y - 1);
+    // The Adventurer uses a bottom-centered origin, so the contact shadow hugs the feet instead of the old placeholder torso.
+    this.playerShadow = this.add
+      .ellipse(
+        this.player.x + ADVENTURER_SHADOW_OFFSET_X,
+        this.player.y + ADVENTURER_SHADOW_OFFSET_Y,
+        ADVENTURER_SHADOW_WIDTH,
+        ADVENTURER_SHADOW_HEIGHT,
+        0x000000,
+        0.34,
+      )
+      .setDepth(PLAYER_SPAWN.y - 1);
 
     this.currentTarget = new Phaser.Math.Vector2(this.player.x, this.player.y);
 
@@ -204,7 +218,10 @@ export class BackendOdysseyScene extends Phaser.Scene {
     }
 
     this.player.setPosition(Math.round(this.player.x), Math.round(this.player.y));
-    this.playerShadow.setPosition(this.player.x, this.player.y + 8);
+    this.playerShadow.setPosition(
+      this.player.x + ADVENTURER_SHADOW_OFFSET_X,
+      this.player.y + ADVENTURER_SHADOW_OFFSET_Y,
+    );
     this.player.setDepth(this.player.y);
     this.playerShadow.setDepth(this.player.y - 1);
 
