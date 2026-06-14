@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 
 type Palette = number[];
 type SpriteData = { w: number; h: number; pixels: number[][] };
+type ParsedGrid = { w: number; h: number; pixels: number[][] };
 
 function drawSprite(
   graphics: Phaser.GameObjects.Graphics,
@@ -13,7 +14,10 @@ function drawSprite(
     for (let x = 0; x < data.w; x++) {
       const colorIndex = data.pixels[y]?.[x] ?? 0;
       if (colorIndex === 0) continue;
-      const color = palette[colorIndex] ?? 0x000000;
+      const color = palette[colorIndex];
+      if (color === undefined) {
+        throw new Error(`Sprite references palette index ${colorIndex}, but the palette has ${palette.length} colors.`);
+      }
       graphics.fillStyle(color, 1);
       graphics.fillRect(x * scale, y * scale, scale, scale);
     }
@@ -96,18 +100,6 @@ const PALETTE_STONE: Palette = [
   0x69a7ff,
   0x7cf7d4,
   0xc9d6ea,
-];
-
-const PALETTE_DARK: Palette = [
-  0x00000000,
-  0x0d0a12,
-  0x1c1420,
-  0x34223f,
-  0x4a2a5a,
-  0x885e9b,
-  0xb06eff,
-  0xff6b6b,
-  0x3d1a1a,
 ];
 
 const PALETTE_MARKET: Palette = [
@@ -216,9 +208,32 @@ const PALETTE_PIT: Palette = [
   0xff4500,
 ];
 
-function parseGrid(grid: string[], palette: Palette): SpriteData {
+function parseGrid(name: string, grid: string[], palette: Palette): SpriteData {
+  validateGrid(name, grid, palette);
   const pixels = grid.map((row) => [...row].map((ch) => parseInt(ch, 36)));
   return { w: grid[0].length, h: grid.length, pixels };
+}
+
+function validateGrid(name: string, grid: string[], palette: Palette) {
+  const width = grid[0]?.length ?? 0;
+  if (width === 0) {
+    throw new Error(`Sprite "${name}" must have at least one pixel column.`);
+  }
+
+  for (const [rowIndex, row] of grid.entries()) {
+    if (row.length !== width) {
+      throw new Error(`Sprite "${name}" row ${rowIndex} has width ${row.length}; expected ${width}.`);
+    }
+
+    for (const pixel of row) {
+      const colorIndex = parseInt(pixel, 36);
+      if (!Number.isInteger(colorIndex) || colorIndex < 0 || colorIndex >= palette.length) {
+        throw new Error(
+          `Sprite "${name}" references palette index "${pixel}", but the palette has ${palette.length} colors.`,
+        );
+      }
+    }
+  }
 }
 
 const HERO: SpriteData = (() => {
@@ -245,10 +260,8 @@ const HERO: SpriteData = (() => {
     '00c33c00',
     '00c33c00',
   ];
-  return parseGrid(g, pal);
+  return parseGrid('odyssey-hero', g, pal);
 })();
-
-const BUILDING_SPRITES: Record<string, { w: number; h: number; pixels: number[][] }> = {};
 
 type BuildingDef = {
   grid: string[];
@@ -259,19 +272,19 @@ const B_DEFS: Record<string, BuildingDef> = {
   town_square: {
     palette: PALETTE_STONE,
     grid: [
-      '0bbbbbbbbbbb0',
-      'bbbbbbbbbbbbb',
-      'b11111111111b',
-      'b11111111111b',
-      'b1111b111111b',
-      'b1111b111111b',
-      'b1111b111111b',
-      'b11111111111b',
-      'b11111111111b',
-      'b11111111111b',
-      'b11111111111b',
-      'bbbbbbbbbbbbb',
-      '0bbbbbbbbbbb0',
+      '0555555555550',
+      '5555555555555',
+      '5111111111115',
+      '5111111111115',
+      '5111511111115',
+      '5111511111115',
+      '5111511111115',
+      '5111111111115',
+      '5111111111115',
+      '5111111111115',
+      '5111111111115',
+      '5555555555555',
+      '0555555555550',
     ],
   },
   library: {
@@ -399,7 +412,7 @@ const B_DEFS: Record<string, BuildingDef> = {
       '6666666666',
       '6611111166',
       '6611111166',
-      '6611b1b166',
+      '6611818166',
       '6611111166',
       '6611111166',
       '6611111166',
@@ -431,9 +444,9 @@ const B_DEFS: Record<string, BuildingDef> = {
       '0666666660',
       '0666666660',
       '6611111166',
-      '6611a1a166',
+      '6611818166',
       '6611111166',
-      '6611a1a166',
+      '6611818166',
       '6611111166',
       '6611111166',
       '6611111166',
@@ -480,7 +493,7 @@ const B_DEFS: Record<string, BuildingDef> = {
       '8888888888',
       '8811111188',
       '8811111188',
-      '8811a1a188',
+      '8811818188',
       '8811111188',
       '8811111188',
       '8811111188',
@@ -489,29 +502,11 @@ const B_DEFS: Record<string, BuildingDef> = {
       '0888888880',
     ],
   },
-  npc: {
-    palette: PALETTE_CYBER,
-    grid: [
-      '066666660',
-      '666666666',
-      '661111166',
-      '661111166',
-      '661555166',
-      '661888166',
-      '666111666',
-      '066111660',
-      '006121600',
-      '006122600',
-      '006199600',
-      '006a99a60',
-      '000c33c00',
-    ],
-  },
 };
 
-for (const [key, def] of Object.entries(B_DEFS)) {
-  BUILDING_SPRITES[key] = parseGrid(def.grid, def.palette);
-}
+const BUILDING_SPRITES: Record<string, ParsedGrid> = Object.fromEntries(
+  Object.entries(B_DEFS).map(([key, def]) => [key, parseGrid(`building-${key}`, def.grid, def.palette)]),
+);
 
 export function generateAllTextures(scene: Phaser.Scene) {
   generateTexture(scene, 'odyssey-hero', HERO, PALETTE_CYBER, 2);

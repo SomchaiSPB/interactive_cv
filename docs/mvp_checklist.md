@@ -36,8 +36,9 @@
 - [x] Default site navbar stays off the game page
 - [x] Detail panel shows title, summary, details, stack, and links
 - [x] HUD shows the classic CV and main navigation
-- [x] Add real sprites, map art, and sound
-- [x] Add richer town / building visuals
+- [x] Add generated placeholder sprite system
+- [ ] Add final real sprites, map art, and sound
+- [ ] Add richer town / building visuals
 - [ ] Add deeper guided travel or interaction behaviors
 - [ ] Add WASD / keyboard movement only if it becomes useful
 

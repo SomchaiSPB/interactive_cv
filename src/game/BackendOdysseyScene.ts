@@ -369,7 +369,7 @@ export class BackendOdysseyScene extends Phaser.Scene {
   private createLocationBody(location: GameLocation) {
     const textureKey = `building-${location.kind}`;
     if (this.textures.exists(textureKey)) {
-      return this.add.image(0, 0, textureKey);
+      return this.add.image(0, 0, textureKey).setDisplaySize(location.footprintWidth, location.footprintHeight);
     }
 
     const fallback = this.add.graphics();
