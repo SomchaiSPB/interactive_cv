@@ -47,6 +47,12 @@ type LocationNode = {
   zone: Phaser.GameObjects.Zone;
 };
 
+type RoadSegment = {
+  start: MapPoint;
+  end: MapPoint;
+  clearance: number;
+};
+
 const PROXIMITY_EXIT_BUFFER = 36;
 const LOCATION_LABEL_DEPTH = 100_000;
 const LABEL_BACKGROUND_COLOR = 0x26301c;
@@ -75,6 +81,7 @@ export class BackendOdysseyScene extends Phaser.Scene {
   private activeProximityLocationId: string | null = null;
   private currentTarget: Phaser.Math.Vector2 | null = null;
   private heroSpeed = 210;
+  private roadSegments: RoadSegment[] = [];
 
   constructor(config: BootConfig) {
     super('BackendOdysseyScene');
@@ -88,6 +95,7 @@ export class BackendOdysseyScene extends Phaser.Scene {
 
   create() {
     this.locations = this.bootConfig.locations;
+    this.roadSegments = this.buildRoadSegments();
 
     this.cameras.main.setBackgroundColor('#4f8f49');
     this.cameras.main.setBounds(0, 0, GAME_WORLD.width, GAME_WORLD.height);
@@ -370,9 +378,9 @@ export class BackendOdysseyScene extends Phaser.Scene {
     const treePositions = TREE_POSITIONS.filter((_, index) => index % 3 === 0);
     const bushPositions = BUSH_POSITIONS.filter((_, index) => index % 2 === 0);
     const centerTrees: MapPoint[] = [
-      { x: 760, y: 720 },
-      { x: 980, y: 720 },
-      { x: 1380, y: 700 },
+      { x: 680, y: 520 },
+      { x: 1540, y: 180 },
+      { x: 2140, y: 320 },
     ];
 
     for (const position of treePositions) {
@@ -562,6 +570,10 @@ export class BackendOdysseyScene extends Phaser.Scene {
   }
 
   private isDecorationClear(position: MapPoint, margin: number) {
+    if (!this.isClearOfRoads(position, margin)) {
+      return false;
+    }
+
     return this.locations.every((location) => {
       const halfWidth = location.footprintWidth / 2 + margin;
       const halfHeight = location.footprintHeight / 2 + margin;
@@ -579,6 +591,59 @@ export class BackendOdysseyScene extends Phaser.Scene {
         position.y < labelY + 54 + margin
       );
     });
+  }
+
+  private buildRoadSegments() {
+    const segments: RoadSegment[] = [];
+
+    for (const route of TOWN_PATHS) {
+      const from = this.locations.find((location) => location.id === route.from);
+      const to = this.locations.find((location) => location.id === route.to);
+      if (!from || !to) {
+        continue;
+      }
+
+      const points: MapPoint[] = [
+        { x: from.worldX, y: from.worldY },
+        ...(route.via ?? []),
+        { x: to.worldX, y: to.worldY },
+      ];
+      const clearance = (route.width ?? 36) / 2 + 24;
+
+      for (let index = 0; index < points.length - 1; index += 1) {
+        segments.push({
+          start: points[index],
+          end: points[index + 1],
+          clearance,
+        });
+      }
+    }
+
+    return segments;
+  }
+
+  private isClearOfRoads(position: MapPoint, margin: number) {
+    return this.roadSegments.every((segment) => {
+      const distance = this.distanceToSegment(position, segment.start, segment.end);
+      return distance > segment.clearance + margin;
+    });
+  }
+
+  private distanceToSegment(point: MapPoint, start: MapPoint, end: MapPoint) {
+    const dx = end.x - start.x;
+    const dy = end.y - start.y;
+    if (dx === 0 && dy === 0) {
+      return Phaser.Math.Distance.Between(point.x, point.y, start.x, start.y);
+    }
+
+    const t = Phaser.Math.Clamp(
+      ((point.x - start.x) * dx + (point.y - start.y) * dy) / (dx * dx + dy * dy),
+      0,
+      1,
+    );
+    const projectionX = start.x + t * dx;
+    const projectionY = start.y + t * dy;
+    return Phaser.Math.Distance.Between(point.x, point.y, projectionX, projectionY);
   }
 
   private drawNpcMarkers() {
