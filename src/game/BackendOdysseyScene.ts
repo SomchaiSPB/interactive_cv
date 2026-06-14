@@ -3,12 +3,10 @@ import type { GameLocation, OdysseyNearestEventDetail } from './types';
 import { GAME_WORLD } from './locationMapper';
 import {
   BUSH_POSITIONS,
-  FENCES,
   FLOWER_POSITIONS,
   NPC_MARKERS,
   PLAYER_SPAWN,
   ROCK_POSITIONS,
-  SIGN_POSTS,
   TILE_SIZE,
   TOWN_DISTRICTS,
   TOWN_PATHS,
@@ -104,7 +102,6 @@ export class BackendOdysseyScene extends Phaser.Scene {
 
     this.drawPaths();
 
-    this.drawFences();
     if (!this.textures.exists(TILESET_GRASS_KEY)) {
       this.drawFoliage();
       this.drawTownDetails();
@@ -536,26 +533,6 @@ export class BackendOdysseyScene extends Phaser.Scene {
     }
   }
 
-  private drawFences() {
-    const fences = this.add.graphics().setDepth(4);
-    for (const fence of FENCES) {
-      const horizontal = fence.orientation === 'horizontal';
-      const endX = fence.x + (horizontal ? fence.length : 0);
-      const endY = fence.y + (horizontal ? 0 : fence.length);
-      fences.lineStyle(6, 0x5b3d24, 1);
-      fences.lineBetween(fence.x, fence.y, endX, endY);
-      fences.lineStyle(3, 0xa97843, 1);
-      fences.lineBetween(fence.x, fence.y - 7, endX, endY - 7);
-
-      for (let offset = 0; offset <= fence.length; offset += 28) {
-        const x = fence.x + (horizontal ? offset : 0);
-        const y = fence.y + (horizontal ? 0 : offset);
-        fences.fillStyle(0x754c29, 1);
-        fences.fillRect(x - 3, y - 13, 7, 26);
-      }
-    }
-  }
-
   private drawTownDetails() {
     for (const [index, position] of ROCK_POSITIONS.entries()) {
       if (!this.isDecorationClear(position, 16)) {
@@ -581,18 +558,6 @@ export class BackendOdysseyScene extends Phaser.Scene {
       flowers.fillCircle(position.x - 3, position.y, 3);
       flowers.fillCircle(position.x + 3, position.y, 3);
       flowers.fillCircle(position.x, position.y - 3, 3);
-    }
-
-    for (const sign of SIGN_POSTS) {
-      const post = this.add.container(sign.x, sign.y).setDepth(sign.y);
-      post.add(this.add.rectangle(0, 9, 5, 30, 0x63401f, 1));
-      post.add(this.add.rectangle(0, -4, 70, 24, 0x9d6c36, 1).setStrokeStyle(2, 0x53351d));
-      post.add(this.add.text(0, -4, sign.label, {
-        fontFamily: '"IBM Plex Sans", sans-serif',
-        fontSize: '8px',
-        color: '#fff0c5',
-        align: 'center',
-      }).setOrigin(0.5));
     }
   }
 
@@ -640,14 +605,10 @@ export class BackendOdysseyScene extends Phaser.Scene {
 
   private drawLanterns() {
     const lanternPositions = [
-      [1080, 770],
-      [1420, 770],
-      [1040, 1010],
-      [1460, 1010],
-      [860, 620],
-      [1680, 620],
-      [820, 1260],
-      [2060, 1250],
+      [1044, 770],
+      [1356, 770],
+      [1044, 940],
+      [1356, 940],
     ] as const;
 
     lanternPositions.forEach(([x, y], index) => {

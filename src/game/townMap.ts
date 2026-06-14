@@ -21,19 +21,10 @@ type PathRoute = {
   width?: number;
 };
 
-type Fence = MapPoint & {
-  length: number;
-  orientation: 'horizontal' | 'vertical';
-};
-
 type NpcMarker = MapPoint & {
   id: string;
   name: string;
   role: string;
-};
-
-type SignPost = MapPoint & {
-  label: string;
 };
 
 export const TOWN_DISTRICTS: District[] = [
@@ -88,21 +79,6 @@ export const ROCK_POSITIONS: MapPoint[] = [
 export const FLOWER_POSITIONS: MapPoint[] = [
   { x: 720, y: 760 }, { x: 760, y: 790 }, { x: 1510, y: 740 }, { x: 1550, y: 780 },
   { x: 430, y: 1180 }, { x: 470, y: 1150 }, { x: 1870, y: 1160 }, { x: 1910, y: 1190 },
-];
-
-export const SIGN_POSTS: SignPost[] = [
-  { x: 900, y: 800, label: 'Library / Forge' },
-  { x: 1500, y: 780, label: 'Market / Hall' },
-  { x: 1080, y: 1040, label: 'Academy / Bug Pit' },
-  { x: 1910, y: 930, label: 'Town Gates' },
-];
-
-export const FENCES: Fence[] = [
-  { x: 700, y: 660, length: 220, orientation: 'vertical' },
-  { x: 1540, y: 610, length: 230, orientation: 'vertical' },
-  { x: 1600, y: 1010, length: 300, orientation: 'horizontal' },
-  { x: 180, y: 1080, length: 320, orientation: 'horizontal' },
-  { x: 1800, y: 1480, length: 280, orientation: 'horizontal' },
 ];
 
 export const NPC_MARKERS: NpcMarker[] = [
