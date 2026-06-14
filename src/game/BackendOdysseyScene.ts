@@ -68,10 +68,14 @@ const LABEL_BORDER_COLOR = 0xd8b36a;
 const LABEL_HOVER_BORDER_COLOR = 0xffd166;
 const LABEL_TITLE_COLOR = '#fff2b8';
 const LABEL_SUBTITLE_COLOR = '#d7c98d';
-const ADVENTURER_SHADOW_OFFSET_X = 4;
-const ADVENTURER_SHADOW_OFFSET_Y = -6;
-const ADVENTURER_SHADOW_WIDTH = 18;
-const ADVENTURER_SHADOW_HEIGHT = 6;
+const ADVENTURER_SHADOW_OFFSET_X = 8;
+const ADVENTURER_SHADOW_OFFSET_Y = -10;
+const ADVENTURER_SHADOW_WIDTH = 16;
+const ADVENTURER_SHADOW_HEIGHT = 5;
+const FALLBACK_HERO_SHADOW_OFFSET_X = 4;
+const FALLBACK_HERO_SHADOW_OFFSET_Y = -6;
+const FALLBACK_HERO_SHADOW_WIDTH = 18;
+const FALLBACK_HERO_SHADOW_HEIGHT = 6;
 const DEBUG_PLAYER_VISUALS = false;
 
 function emitEvent<T>(name: string, detail?: T) {
@@ -155,13 +159,21 @@ export class BackendOdysseyScene extends Phaser.Scene {
     this.player.setDepth(PLAYER_SPAWN.y);
     this.player.setCollideWorldBounds(true);
     this.player.setDrag(0, 0);
-    // The Adventurer uses a bottom-centered origin, so the contact shadow is nudged a few pixels right/up to sit under the feet.
+    const shadowOffsetX = this.usesAdventurerSprite
+      ? ADVENTURER_SHADOW_OFFSET_X
+      : FALLBACK_HERO_SHADOW_OFFSET_X;
+    const shadowOffsetY = this.usesAdventurerSprite
+      ? ADVENTURER_SHADOW_OFFSET_Y
+      : FALLBACK_HERO_SHADOW_OFFSET_Y;
+    const shadowWidth = this.usesAdventurerSprite ? ADVENTURER_SHADOW_WIDTH : FALLBACK_HERO_SHADOW_WIDTH;
+    const shadowHeight = this.usesAdventurerSprite ? ADVENTURER_SHADOW_HEIGHT : FALLBACK_HERO_SHADOW_HEIGHT;
+    // Adventurer coordinates use the bottom-center foot anchor; its shadow is tightened and offset to hug the boots.
     this.playerShadow = this.add
       .ellipse(
-        this.player.x + ADVENTURER_SHADOW_OFFSET_X,
-        this.player.y + ADVENTURER_SHADOW_OFFSET_Y,
-        ADVENTURER_SHADOW_WIDTH,
-        ADVENTURER_SHADOW_HEIGHT,
+        this.player.x + shadowOffsetX,
+        this.player.y + shadowOffsetY,
+        shadowWidth,
+        shadowHeight,
         0x000000,
         0.34,
       )
@@ -219,10 +231,13 @@ export class BackendOdysseyScene extends Phaser.Scene {
     }
 
     this.player.setPosition(Math.round(this.player.x), Math.round(this.player.y));
-    this.playerShadow.setPosition(
-      this.player.x + ADVENTURER_SHADOW_OFFSET_X,
-      this.player.y + ADVENTURER_SHADOW_OFFSET_Y,
-    );
+    const shadowOffsetX = this.usesAdventurerSprite
+      ? ADVENTURER_SHADOW_OFFSET_X
+      : FALLBACK_HERO_SHADOW_OFFSET_X;
+    const shadowOffsetY = this.usesAdventurerSprite
+      ? ADVENTURER_SHADOW_OFFSET_Y
+      : FALLBACK_HERO_SHADOW_OFFSET_Y;
+    this.playerShadow.setPosition(this.player.x + shadowOffsetX, this.player.y + shadowOffsetY);
     this.player.setDepth(this.player.y);
     this.playerShadow.setDepth(this.player.y - 1);
 
