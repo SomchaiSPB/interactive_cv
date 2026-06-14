@@ -119,7 +119,7 @@ Important:
 - the homepage is already game-first and playable;
 - the classic CV remains a fallback for quick review;
 - the current direction is a tile-like 2D RPG town; a full tileset and asset pipeline remain pending.
-- Art Pass 1 intentionally uses source-generated placeholder sprites; final production sprites, tiles, and sound remain future work.
+- The player now uses the runtime Adventurer sprite strip set; final production sprites, tiles, and sound remain future work.
 - after this generated-map UX cleanup, the next visual phase is a deliberate production asset pipeline rather than more placeholder complexity.
 - TilesetGrass is a verified CC0 / Public Domain source asset for the prototype terrain layer, but the final Tiled JSON versus code-defined map decision remains open.
 - TilesetGrass is now being used only as a local prototype terrain layer while the final asset pipeline is still being chosen.

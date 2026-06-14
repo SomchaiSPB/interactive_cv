@@ -21,6 +21,15 @@ import {
 } from './types';
 import { generateAllTextures, getBuildingTextureKey } from './spriteDefs';
 import {
+  ADVENTURER_IDLE_DEFAULT_KEY,
+  getAdventurerAnimationKey,
+  hasAdventurerSprites,
+  preloadAdventurerSprites,
+  registerAdventurerAnimations,
+  type AdventurerFacing,
+  type AdventurerMotion,
+} from './adventurerAssets';
+import {
   createTileSurface,
   createTileObjectTexture,
   drawTileObject,
@@ -82,6 +91,9 @@ export class BackendOdysseyScene extends Phaser.Scene {
   private currentTarget: Phaser.Math.Vector2 | null = null;
   private heroSpeed = 210;
   private roadSegments: RoadSegment[] = [];
+  private heroFacing: AdventurerFacing = 'down';
+  private heroMotion: AdventurerMotion = 'idle';
+  private usesAdventurerSprite = false;
 
   constructor(config: BootConfig) {
     super('BackendOdysseyScene');
@@ -89,6 +101,7 @@ export class BackendOdysseyScene extends Phaser.Scene {
   }
 
   preload() {
+    preloadAdventurerSprites(this);
     this.load.image(TILESET_GRASS_KEY, TILESET_GRASS_PATH);
     generateAllTextures(this);
   }
@@ -119,12 +132,23 @@ export class BackendOdysseyScene extends Phaser.Scene {
     this.drawNpcMarkers();
     this.drawLanterns();
 
-    this.player = this.physics.add.sprite(PLAYER_SPAWN.x, PLAYER_SPAWN.y, 'odyssey-hero');
+    this.usesAdventurerSprite = hasAdventurerSprites(this);
+    if (this.usesAdventurerSprite) {
+      registerAdventurerAnimations(this);
+      this.player = this.physics.add.sprite(PLAYER_SPAWN.x, PLAYER_SPAWN.y, ADVENTURER_IDLE_DEFAULT_KEY);
+      this.player.setScale(0.48);
+      this.player.body.setSize(16, 18, true);
+      this.player.body.setOffset(24, 40);
+      this.playHeroAnimation('idle', 'down');
+    } else {
+      console.warn('[BackendOdysseyScene] Adventurer sprite assets are unavailable; using the generated hero fallback.');
+      this.player = this.physics.add.sprite(PLAYER_SPAWN.x, PLAYER_SPAWN.y, 'odyssey-hero');
+      this.player.body.setSize(14, 10, true);
+      this.player.body.setOffset(4, 30);
+    }
     this.player.setDepth(PLAYER_SPAWN.y + 20);
     this.player.setCollideWorldBounds(true);
     this.player.setDrag(0, 0);
-    this.player.body.setSize(14, 10, true);
-    this.player.body.setOffset(4, 30);
     this.playerShadow = this.add.ellipse(this.player.x, this.player.y + 20, 24, 8, 0x000000, 0.34).setDepth(999);
 
     this.currentTarget = new Phaser.Math.Vector2(this.player.x, this.player.y);
@@ -167,6 +191,7 @@ export class BackendOdysseyScene extends Phaser.Scene {
         const speedY = (dy / distance) * this.heroSpeed;
         this.player.setVelocity(speedX, speedY);
         this.player.setFlipX(speedX < 0);
+        this.updateHeroFacing(speedX, speedY);
 
         if (distance < step) {
           this.player.setPosition(target.x, target.y);
@@ -178,6 +203,7 @@ export class BackendOdysseyScene extends Phaser.Scene {
       this.player.setVelocity(0, 0);
     }
 
+    this.updateHeroAnimation();
     this.playerShadow.setPosition(this.player.x, this.player.y + 20);
     this.player.setDepth(this.player.y + 20);
     this.playerShadow.setDepth(this.player.y + 19);
@@ -215,6 +241,49 @@ export class BackendOdysseyScene extends Phaser.Scene {
       Phaser.Math.Clamp(worldX, 0, GAME_WORLD.width),
       Phaser.Math.Clamp(worldY, 0, GAME_WORLD.height),
     );
+  }
+
+  private updateHeroFacing(velocityX: number, velocityY: number) {
+    if (Math.abs(velocityX) >= Math.abs(velocityY)) {
+      this.heroFacing = velocityX >= 0 ? 'right' : 'left';
+      return;
+    }
+
+    this.heroFacing = velocityY >= 0 ? 'down' : 'up';
+  }
+
+  private updateHeroAnimation() {
+    if (!this.usesAdventurerSprite) {
+      return;
+    }
+
+    const velocity = this.player.body?.velocity;
+    const moving = Boolean(velocity && (Math.abs(velocity.x) > 1 || Math.abs(velocity.y) > 1));
+    const motion: AdventurerMotion = moving ? 'run' : 'idle';
+
+    if (moving && velocity) {
+      this.updateHeroFacing(velocity.x, velocity.y);
+    }
+
+    if (this.heroMotion === motion && this.player.anims.currentAnim?.key === getAdventurerAnimationKey(motion, this.heroFacing)) {
+      return;
+    }
+
+    this.heroMotion = motion;
+    this.playHeroAnimation(motion, this.heroFacing);
+  }
+
+  private playHeroAnimation(motion: AdventurerMotion, facing: AdventurerFacing) {
+    if (!this.usesAdventurerSprite) {
+      return;
+    }
+
+    const key = getAdventurerAnimationKey(motion, facing);
+    if (this.player.anims.currentAnim?.key === key) {
+      return;
+    }
+
+    this.player.anims.play(key, true);
   }
 
   private openCheckpoint(location: GameLocation) {

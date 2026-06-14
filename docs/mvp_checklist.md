@@ -40,6 +40,7 @@
 - [x] Add tile-like generated terrain, districts, paths, foliage, and fences
 - [x] Complete Art Pass 1 with recognizable generated buildings and a warmer RPG town palette
 - [x] Clean up map UX with unobstructed labels and simplified dirt-road geometry
+- [x] Integrate the Adventurer runtime player sprite with directional idle/run animation
 - [x] Audit and stage the TilesetGrass runtime image with source and license notes
 - [x] Integrate TilesetGrass as a local prototype terrain pass
 - [x] Generate a tile index contact sheet for TilesetGrass

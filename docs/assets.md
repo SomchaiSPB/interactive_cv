@@ -58,3 +58,37 @@ Author: Beast Pixels
 License: CC0 / Public Domain according to the source page. Attribution is not required by CC0, but the source is documented here for traceability.
 
 Do not treat the asset as production-integrated game art until the full asset pipeline is intentionally finalized in the repository.
+
+## Adventurer Player Sprite
+
+`assets/FREE_Adventurer 2D Pixel Art` is a user-provided downloaded character pack. The source files are preserved unchanged in the workspace, while only runtime PNG strips are copied into the public asset tree.
+
+### Runtime Format
+
+- Asset name: `Adventurer 2D Top-Down`
+- Frame size: `64 x 80` pixels
+- Each directional strip is `768 x 80` pixels, so the spritesheet contains `12` animation frames per file.
+- Available directions: `down`, `left`, `right`, `up`
+- Runtime animations used:
+  - `idle_down`, `idle_left`, `idle_right`, `idle_up`
+  - `run_down`, `run_left`, `run_right`, `run_up`
+
+### Runtime Path
+
+`public/game/assets/characters/adventurer/`
+
+### Copied Runtime Files
+
+- `idle_down.png`
+- `idle_left.png`
+- `idle_right.png`
+- `idle_up.png`
+- `run_down.png`
+- `run_left.png`
+- `run_right.png`
+- `run_up.png`
+
+### License
+
+- Source-provided terms: use in personal or commercial game projects, do not resell or redistribute as a standalone asset pack, credit not required but appreciated, modification allowed, no NFT use.
+- The runtime PNGs are included as part of the portfolio project and are not being redistributed as a separate asset pack.
