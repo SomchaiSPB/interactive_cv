@@ -4,6 +4,9 @@ export const ADVENTURER_ASSET_BASE = '/game/assets/characters/adventurer';
 export const ADVENTURER_FRAME_WIDTH = 64;
 export const ADVENTURER_FRAME_HEIGHT = 80;
 export const ADVENTURER_FRAME_COUNT = 12;
+// The source strips include blank separator columns at 1, 4, 7, and 10.
+// Use only the visible frames so the animation does not blink through empty cells.
+export const ADVENTURER_VISIBLE_FRAMES = [0, 2, 3, 5, 6, 8, 9, 11] as const;
 
 export type AdventurerFacing = 'down' | 'left' | 'right' | 'up';
 export type AdventurerMotion = 'idle' | 'run';
@@ -50,8 +53,7 @@ export function registerAdventurerAnimations(scene: Phaser.Scene) {
     scene.anims.create({
       key: sheet.key,
       frames: scene.anims.generateFrameNumbers(sheet.key, {
-        start: 0,
-        end: ADVENTURER_FRAME_COUNT - 1,
+        frames: [...ADVENTURER_VISIBLE_FRAMES],
       }),
       frameRate: sheet.frameRate,
       repeat: -1,

@@ -93,6 +93,7 @@ export class BackendOdysseyScene extends Phaser.Scene {
   private roadSegments: RoadSegment[] = [];
   private heroFacing: AdventurerFacing = 'down';
   private heroMotion: AdventurerMotion = 'idle';
+  private heroAnimationKey: string | null = null;
   private usesAdventurerSprite = false;
 
   constructor(config: BootConfig) {
@@ -136,9 +137,11 @@ export class BackendOdysseyScene extends Phaser.Scene {
     if (this.usesAdventurerSprite) {
       registerAdventurerAnimations(this);
       this.player = this.physics.add.sprite(PLAYER_SPAWN.x, PLAYER_SPAWN.y, ADVENTURER_IDLE_DEFAULT_KEY);
-      this.player.setScale(0.48);
-      this.player.body.setSize(16, 18, true);
-      this.player.body.setOffset(24, 40);
+      // The Adventurer strips are 64x80, but the visible art only occupies the lower-center portion.
+      // A slightly larger scale keeps the player readable while the feet-shadow pairing still feels grounded.
+      this.player.setScale(0.66);
+      this.player.body.setSize(18, 20, true);
+      this.player.body.setOffset(23, 42);
       this.playHeroAnimation('idle', 'down');
     } else {
       console.warn('[BackendOdysseyScene] Adventurer sprite assets are unavailable; using the generated hero fallback.');
@@ -191,7 +194,7 @@ export class BackendOdysseyScene extends Phaser.Scene {
         const speedY = (dy / distance) * this.heroSpeed;
         this.player.setVelocity(speedX, speedY);
         this.player.setFlipX(speedX < 0);
-        this.updateHeroFacing(speedX, speedY);
+        this.updateHeroFacing(dx, dy);
 
         if (distance < step) {
           this.player.setPosition(target.x, target.y);
@@ -244,12 +247,18 @@ export class BackendOdysseyScene extends Phaser.Scene {
   }
 
   private updateHeroFacing(velocityX: number, velocityY: number) {
-    if (Math.abs(velocityX) >= Math.abs(velocityY)) {
+    const absX = Math.abs(velocityX);
+    const absY = Math.abs(velocityY);
+    const axisBias = 1.15;
+
+    if (absX >= absY * axisBias) {
       this.heroFacing = velocityX >= 0 ? 'right' : 'left';
       return;
     }
 
-    this.heroFacing = velocityY >= 0 ? 'down' : 'up';
+    if (absY >= absX * axisBias) {
+      this.heroFacing = velocityY >= 0 ? 'down' : 'up';
+    }
   }
 
   private updateHeroAnimation() {
@@ -265,7 +274,8 @@ export class BackendOdysseyScene extends Phaser.Scene {
       this.updateHeroFacing(velocity.x, velocity.y);
     }
 
-    if (this.heroMotion === motion && this.player.anims.currentAnim?.key === getAdventurerAnimationKey(motion, this.heroFacing)) {
+    const desiredKey = getAdventurerAnimationKey(motion, this.heroFacing);
+    if (this.heroMotion === motion && this.heroAnimationKey === desiredKey) {
       return;
     }
 
@@ -279,10 +289,11 @@ export class BackendOdysseyScene extends Phaser.Scene {
     }
 
     const key = getAdventurerAnimationKey(motion, facing);
-    if (this.player.anims.currentAnim?.key === key) {
+    if (this.heroAnimationKey === key) {
       return;
     }
 
+    this.heroAnimationKey = key;
     this.player.anims.play(key, true);
   }
 
