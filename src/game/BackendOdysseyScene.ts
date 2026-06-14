@@ -68,8 +68,8 @@ const LABEL_BORDER_COLOR = 0xd8b36a;
 const LABEL_HOVER_BORDER_COLOR = 0xffd166;
 const LABEL_TITLE_COLOR = '#fff2b8';
 const LABEL_SUBTITLE_COLOR = '#d7c98d';
-const ADVENTURER_SHADOW_OFFSET_X = 0;
-const ADVENTURER_SHADOW_OFFSET_Y = -2;
+const ADVENTURER_SHADOW_OFFSET_X = 4;
+const ADVENTURER_SHADOW_OFFSET_Y = -6;
 const ADVENTURER_SHADOW_WIDTH = 18;
 const ADVENTURER_SHADOW_HEIGHT = 6;
 const DEBUG_PLAYER_VISUALS = false;
@@ -155,7 +155,7 @@ export class BackendOdysseyScene extends Phaser.Scene {
     this.player.setDepth(PLAYER_SPAWN.y);
     this.player.setCollideWorldBounds(true);
     this.player.setDrag(0, 0);
-    // The Adventurer uses a bottom-centered origin, so the contact shadow hugs the feet instead of the old placeholder torso.
+    // The Adventurer uses a bottom-centered origin, so the contact shadow is nudged a few pixels right/up to sit under the feet.
     this.playerShadow = this.add
       .ellipse(
         this.player.x + ADVENTURER_SHADOW_OFFSET_X,
