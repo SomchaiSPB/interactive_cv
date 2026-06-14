@@ -345,6 +345,25 @@ export class BackendOdysseyScene extends Phaser.Scene {
     );
   }
 
+  private getMapSubtitle(location: GameLocation) {
+    if (location.branchOf) {
+      return null;
+    }
+
+    const compact = location.subtitle
+      .split('/')
+      .map((part) => part.trim())
+      .filter(Boolean)
+      .slice(0, 2)
+      .join(' / ');
+
+    if (!compact) {
+      return null;
+    }
+
+    return compact.length > 26 ? `${compact.slice(0, 23).trimEnd()}…` : compact;
+  }
+
   private drawPrototypeFoliage(surface: ReturnType<typeof createTileSurface>) {
     const treePositions = TREE_POSITIONS.filter((_, index) => index % 3 === 0);
     const bushPositions = BUSH_POSITIONS.filter((_, index) => index % 2 === 0);
@@ -644,31 +663,40 @@ export class BackendOdysseyScene extends Phaser.Scene {
         : this.createLocationBody(location);
       visuals.add([halo, body]);
 
+      container.add(visuals);
+      const mapSubtitle = this.getMapSubtitle(location);
       const labelY = Math.max(location.labelOffsetY, location.footprintHeight / 2 + 18);
-      const label = this.add
-        .text(location.labelOffsetX, labelY, location.displayName, {
+      const labelWidth = mapSubtitle ? 200 : 150;
+      const labelHeight = mapSubtitle ? 40 : 24;
+      const labelBackground = this.add.graphics();
+      labelBackground.fillStyle(0x1f2b1dcc, 1);
+      labelBackground.fillRoundedRect(-labelWidth / 2, -labelHeight / 2, labelWidth, labelHeight, 8);
+      labelBackground.lineStyle(1, 0xd6e1bf, 0.14);
+      labelBackground.strokeRoundedRect(-labelWidth / 2, -labelHeight / 2, labelWidth, labelHeight, 8);
+
+      const labelTitle = this.add
+        .text(0, mapSubtitle ? -10 : -5, location.displayName, {
           fontFamily: '"IBM Plex Sans", sans-serif',
-          fontSize: location.branchOf ? '12px' : '14px',
+          fontSize: location.branchOf ? '11px' : '12px',
           color: '#fff7dc',
           align: 'center',
-          backgroundColor: '#263b22dd',
-          padding: { x: 6, y: 3 },
         })
-        .setOrigin(0.5, 0)
-        .setStroke('#263b22', 7)
-        .setShadow(0, 2, '#172414', 8, true, true);
+        .setOrigin(0.5, 0.5)
+        .setStroke('#263b22', 4)
+        .setShadow(0, 1, '#172414', 4, true, true);
 
-      const subtitle = this.add
-        .text(location.labelOffsetX, labelY + 24, location.subtitle, {
+      const labelSubtitle = this.add
+        .text(0, 9, mapSubtitle ?? '', {
           fontFamily: '"IBM Plex Mono", monospace',
-          fontSize: '9px',
-          color: '#f0dfb4',
+          fontSize: '8px',
+          color: '#d8e0ba',
           align: 'center',
         })
-        .setOrigin(0.5, 0);
+        .setOrigin(0.5, 0.5)
+        .setVisible(Boolean(mapSubtitle));
 
-      container.add(visuals);
-      labelContainer.add([label, subtitle]);
+      labelContainer.setPosition(location.worldX + location.labelOffsetX, location.worldY + labelY);
+      labelContainer.add([labelBackground, labelTitle, labelSubtitle]);
 
       const zone = this.add.zone(location.worldX, location.worldY, location.footprintWidth, location.footprintHeight).setInteractive({
         useHandCursor: true,
@@ -715,6 +743,28 @@ export class BackendOdysseyScene extends Phaser.Scene {
   }
 
   private createLocationBody(location: GameLocation) {
+    if (location.id === 'legacy-forest') {
+      const textureKey = 'tileset-grass-old-library';
+      if (!this.textures.exists(textureKey)) {
+        createTileObjectTexture(this, textureKey, TILESET_GRASS_OBJECTS.oldLibraryCompound, TILESET_GRASS_TERRAIN_SCALE);
+      }
+
+      return this.add
+        .image(0, 0, textureKey)
+        .setDisplaySize(location.footprintWidth / location.displayScale, location.footprintHeight / location.displayScale);
+    }
+
+    if (location.id === 'integration-swamp') {
+      const textureKey = 'tileset-grass-integration-market';
+      if (!this.textures.exists(textureKey)) {
+        createTileObjectTexture(this, textureKey, TILESET_GRASS_OBJECTS.integrationMarketStalls, TILESET_GRASS_TERRAIN_SCALE);
+      }
+
+      return this.add
+        .image(0, 0, textureKey)
+        .setDisplaySize(location.footprintWidth / location.displayScale, location.footprintHeight / location.displayScale);
+    }
+
     if (location.id === 'leadership-tower') {
       const textureKey = 'tileset-grass-command-hall';
       if (!this.textures.exists(textureKey)) {

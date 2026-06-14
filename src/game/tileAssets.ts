@@ -24,6 +24,16 @@ export const TILESET_GRASS_OBJECTS = {
     heightTiles: 3,
     tiles: [17, 18, 19, 29, 30, 31, 41, 42, 43],
   },
+  oldLibraryCompound: {
+    widthTiles: 2,
+    heightTiles: 2,
+    tiles: [192, 193, 204, 205],
+  },
+  integrationMarketStalls: {
+    widthTiles: 2,
+    heightTiles: 2,
+    tiles: [216, 217, 218, 219],
+  },
   treeCluster: {
     widthTiles: 3,
     heightTiles: 5,
