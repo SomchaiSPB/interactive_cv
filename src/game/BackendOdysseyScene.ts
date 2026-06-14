@@ -72,6 +72,7 @@ const ADVENTURER_SHADOW_OFFSET_X = 0;
 const ADVENTURER_SHADOW_OFFSET_Y = -2;
 const ADVENTURER_SHADOW_WIDTH = 18;
 const ADVENTURER_SHADOW_HEIGHT = 6;
+const DEBUG_PLAYER_VISUALS = false;
 
 function emitEvent<T>(name: string, detail?: T) {
   if (typeof window === 'undefined') {
@@ -764,19 +765,24 @@ export class BackendOdysseyScene extends Phaser.Scene {
       const visualScale = location.displayScale;
       const visuals = this.add.container(0, 0).setScale(visualScale);
 
-      const halo = this.add.ellipse(
-        0,
-        18,
-        (location.footprintWidth * 1.12) / visualScale,
-        (location.footprintHeight * 0.42) / visualScale,
-        location.accentColor,
-        location.branchOf ? 0.08 : 0.12,
-      );
-
       const body = location.kind === 'town_square'
         ? this.add.rectangle(0, 0, 1, 1, 0xffffff, 0)
         : this.createLocationBody(location);
-      visuals.add([halo, body]);
+      const halo = DEBUG_PLAYER_VISUALS
+        ? this.add.ellipse(
+            0,
+            18,
+            (location.footprintWidth * 1.12) / visualScale,
+            (location.footprintHeight * 0.42) / visualScale,
+            location.accentColor,
+            location.branchOf ? 0.08 : 0.12,
+          )
+        : null;
+
+      if (halo) {
+        visuals.add(halo);
+      }
+      visuals.add(body);
 
       container.add(visuals);
       const mapSubtitle = this.getMapSubtitle(location);
@@ -833,11 +839,13 @@ export class BackendOdysseyScene extends Phaser.Scene {
         labelBackground.fillRoundedRect(-labelWidth / 2, -labelHeight / 2, labelWidth, labelHeight, 8);
         labelBackground.lineStyle(1, LABEL_HOVER_BORDER_COLOR, 0.95);
         labelBackground.strokeRoundedRect(-labelWidth / 2, -labelHeight / 2, labelWidth, labelHeight, 8);
-        this.tweens.add({
-          targets: halo,
-          alpha: location.branchOf ? 0.2 : 0.28,
-          duration: 120,
-        });
+        if (halo) {
+          this.tweens.add({
+            targets: halo,
+            alpha: location.branchOf ? 0.2 : 0.28,
+            duration: 120,
+          });
+        }
       });
       zone.on('pointerout', () => {
         labelBackground.clear();
@@ -845,25 +853,29 @@ export class BackendOdysseyScene extends Phaser.Scene {
         labelBackground.fillRoundedRect(-labelWidth / 2, -labelHeight / 2, labelWidth, labelHeight, 8);
         labelBackground.lineStyle(1, LABEL_BORDER_COLOR, 0.85);
         labelBackground.strokeRoundedRect(-labelWidth / 2, -labelHeight / 2, labelWidth, labelHeight, 8);
-        this.tweens.add({
-          targets: halo,
-          alpha: location.branchOf ? 0.08 : 0.12,
-          duration: 120,
-        });
+        if (halo) {
+          this.tweens.add({
+            targets: halo,
+            alpha: location.branchOf ? 0.08 : 0.12,
+            duration: 120,
+          });
+        }
       });
 
       this.nodes.set(location.id, { location, halo, zone });
 
-      this.tweens.add({
-        targets: halo,
-        scaleX: 1.04,
-        scaleY: 1.04,
-        alpha: location.branchOf ? 0.05 : 0.08,
-        duration: 3000 + location.order * 30,
-        yoyo: true,
-        repeat: -1,
-        ease: 'Sine.easeInOut',
-      });
+      if (halo) {
+        this.tweens.add({
+          targets: halo,
+          scaleX: 1.04,
+          scaleY: 1.04,
+          alpha: location.branchOf ? 0.05 : 0.08,
+          duration: 3000 + location.order * 30,
+          yoyo: true,
+          repeat: -1,
+          ease: 'Sine.easeInOut',
+        });
+      }
     }
   }
 
