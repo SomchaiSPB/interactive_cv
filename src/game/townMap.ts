@@ -68,14 +68,14 @@ export const TOWN_PATHS: PathRoute[] = [
 
 export const TREE_POSITIONS: MapPoint[] = [
   { x: 190, y: 280 }, { x: 290, y: 330 }, { x: 410, y: 260 }, { x: 560, y: 310 }, { x: 680, y: 250 },
-  { x: 180, y: 520 }, { x: 300, y: 590 }, { x: 390, y: 760 }, { x: 610, y: 820 }, { x: 210, y: 900 },
-  { x: 180, y: 1160 }, { x: 300, y: 1240 }, { x: 410, y: 1140 }, { x: 620, y: 1460 }, { x: 210, y: 1430 },
-  { x: 2230, y: 210 }, { x: 2140, y: 340 }, { x: 2260, y: 520 }, { x: 2190, y: 930 }, { x: 2290, y: 1120 },
-  { x: 1510, y: 170 }, { x: 1730, y: 190 }, { x: 1880, y: 280 }, { x: 2030, y: 240 }, { x: 2320, y: 760 },
+  { x: 210, y: 520 }, { x: 330, y: 610 }, { x: 430, y: 730 }, { x: 640, y: 760 }, { x: 230, y: 920 },
+  { x: 240, y: 1180 }, { x: 320, y: 1290 }, { x: 440, y: 1140 }, { x: 610, y: 1450 }, { x: 210, y: 1430 },
+  { x: 960, y: 710 }, { x: 760, y: 710 }, { x: 1380, y: 710 }, { x: 1510, y: 170 }, { x: 1730, y: 190 },
+  { x: 1880, y: 280 }, { x: 2030, y: 240 }, { x: 2230, y: 210 }, { x: 2140, y: 340 }, { x: 2260, y: 520 },
 ];
 
 export const BUSH_POSITIONS: MapPoint[] = [
-  { x: 760, y: 690 }, { x: 820, y: 930 }, { x: 960, y: 700 }, { x: 1370, y: 720 }, { x: 1490, y: 920 },
+  { x: 760, y: 690 }, { x: 840, y: 960 }, { x: 980, y: 720 }, { x: 1370, y: 720 }, { x: 1490, y: 920 },
   { x: 1740, y: 900 }, { x: 1850, y: 630 }, { x: 2010, y: 610 }, { x: 730, y: 1180 }, { x: 1110, y: 1350 },
   { x: 1420, y: 1240 }, { x: 1560, y: 1370 }, { x: 1900, y: 1420 }, { x: 2050, y: 1230 },
 ];
@@ -91,18 +91,18 @@ export const FLOWER_POSITIONS: MapPoint[] = [
 ];
 
 export const SIGN_POSTS: SignPost[] = [
-  { x: 930, y: 790, label: 'Library / Forge' },
-  { x: 1460, y: 790, label: 'Market / Hall' },
-  { x: 1090, y: 1010, label: 'Academy / Bug Pit' },
-  { x: 1900, y: 900, label: 'Town Gates' },
+  { x: 900, y: 800, label: 'Library / Forge' },
+  { x: 1500, y: 780, label: 'Market / Hall' },
+  { x: 1080, y: 1040, label: 'Academy / Bug Pit' },
+  { x: 1910, y: 930, label: 'Town Gates' },
 ];
 
 export const FENCES: Fence[] = [
-  { x: 720, y: 690, length: 240, orientation: 'vertical' },
-  { x: 1510, y: 610, length: 250, orientation: 'vertical' },
-  { x: 1560, y: 1010, length: 320, orientation: 'horizontal' },
-  { x: 240, y: 1060, length: 420, orientation: 'horizontal' },
-  { x: 1780, y: 1490, length: 360, orientation: 'horizontal' },
+  { x: 700, y: 660, length: 220, orientation: 'vertical' },
+  { x: 1540, y: 610, length: 230, orientation: 'vertical' },
+  { x: 1600, y: 1010, length: 300, orientation: 'horizontal' },
+  { x: 180, y: 1080, length: 320, orientation: 'horizontal' },
+  { x: 1800, y: 1480, length: 280, orientation: 'horizontal' },
 ];
 
 export const NPC_MARKERS: NpcMarker[] = [

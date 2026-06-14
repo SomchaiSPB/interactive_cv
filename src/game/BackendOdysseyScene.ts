@@ -51,6 +51,11 @@ type LocationNode = {
 
 const PROXIMITY_EXIT_BUFFER = 36;
 const LOCATION_LABEL_DEPTH = 100_000;
+const LABEL_BACKGROUND_COLOR = 0x26301c;
+const LABEL_BORDER_COLOR = 0xd8b36a;
+const LABEL_HOVER_BORDER_COLOR = 0xffd166;
+const LABEL_TITLE_COLOR = '#fff2b8';
+const LABEL_SUBTITLE_COLOR = '#d7c98d';
 
 function emitEvent<T>(name: string, detail?: T) {
   if (typeof window === 'undefined') {
@@ -367,6 +372,11 @@ export class BackendOdysseyScene extends Phaser.Scene {
   private drawPrototypeFoliage(surface: ReturnType<typeof createTileSurface>) {
     const treePositions = TREE_POSITIONS.filter((_, index) => index % 3 === 0);
     const bushPositions = BUSH_POSITIONS.filter((_, index) => index % 2 === 0);
+    const centerTrees: MapPoint[] = [
+      { x: 760, y: 720 },
+      { x: 980, y: 720 },
+      { x: 1380, y: 700 },
+    ];
 
     for (const position of treePositions) {
       if (!this.isDecorationClear(position, 96)) {
@@ -382,6 +392,14 @@ export class BackendOdysseyScene extends Phaser.Scene {
       }
 
       drawTileObject(surface, TILESET_GRASS_OBJECTS.bushCluster, position.x, position.y, TILESET_GRASS_TERRAIN_SCALE);
+    }
+
+    for (const position of centerTrees) {
+      if (!this.isDecorationClear(position, 96)) {
+        continue;
+      }
+
+      drawTileObject(surface, TILESET_GRASS_OBJECTS.treeCluster, position.x, position.y, TILESET_GRASS_TERRAIN_SCALE);
     }
   }
 
@@ -622,14 +640,14 @@ export class BackendOdysseyScene extends Phaser.Scene {
 
   private drawLanterns() {
     const lanternPositions = [
-      [1130, 820],
-      [1370, 820],
-      [1120, 960],
-      [1380, 960],
-      [900, 620],
-      [1660, 620],
-      [860, 1260],
-      [2050, 1260],
+      [1080, 770],
+      [1420, 770],
+      [1040, 1010],
+      [1460, 1010],
+      [860, 620],
+      [1680, 620],
+      [820, 1260],
+      [2060, 1250],
     ] as const;
 
     lanternPositions.forEach(([x, y], index) => {
@@ -669,16 +687,16 @@ export class BackendOdysseyScene extends Phaser.Scene {
       const labelWidth = mapSubtitle ? 200 : 150;
       const labelHeight = mapSubtitle ? 40 : 24;
       const labelBackground = this.add.graphics();
-      labelBackground.fillStyle(0x1f2b1dcc, 1);
+      labelBackground.fillStyle(LABEL_BACKGROUND_COLOR, 0.88);
       labelBackground.fillRoundedRect(-labelWidth / 2, -labelHeight / 2, labelWidth, labelHeight, 8);
-      labelBackground.lineStyle(1, 0xd6e1bf, 0.14);
+      labelBackground.lineStyle(1, LABEL_BORDER_COLOR, 0.85);
       labelBackground.strokeRoundedRect(-labelWidth / 2, -labelHeight / 2, labelWidth, labelHeight, 8);
 
       const labelTitle = this.add
         .text(0, mapSubtitle ? -10 : -5, location.displayName, {
           fontFamily: '"IBM Plex Sans", sans-serif',
           fontSize: location.branchOf ? '11px' : '12px',
-          color: '#fff7dc',
+          color: LABEL_TITLE_COLOR,
           align: 'center',
         })
         .setOrigin(0.5, 0.5)
@@ -689,7 +707,7 @@ export class BackendOdysseyScene extends Phaser.Scene {
         .text(0, 9, mapSubtitle ?? '', {
           fontFamily: '"IBM Plex Mono", monospace',
           fontSize: '8px',
-          color: '#d8e0ba',
+          color: LABEL_SUBTITLE_COLOR,
           align: 'center',
         })
         .setOrigin(0.5, 0.5)
@@ -713,6 +731,11 @@ export class BackendOdysseyScene extends Phaser.Scene {
         this.setMoveTarget(location.worldX, location.worldY);
       });
       zone.on('pointerover', () => {
+        labelBackground.clear();
+        labelBackground.fillStyle(LABEL_BACKGROUND_COLOR, 0.92);
+        labelBackground.fillRoundedRect(-labelWidth / 2, -labelHeight / 2, labelWidth, labelHeight, 8);
+        labelBackground.lineStyle(1, LABEL_HOVER_BORDER_COLOR, 0.95);
+        labelBackground.strokeRoundedRect(-labelWidth / 2, -labelHeight / 2, labelWidth, labelHeight, 8);
         this.tweens.add({
           targets: halo,
           alpha: location.branchOf ? 0.2 : 0.28,
@@ -720,6 +743,11 @@ export class BackendOdysseyScene extends Phaser.Scene {
         });
       });
       zone.on('pointerout', () => {
+        labelBackground.clear();
+        labelBackground.fillStyle(LABEL_BACKGROUND_COLOR, 0.88);
+        labelBackground.fillRoundedRect(-labelWidth / 2, -labelHeight / 2, labelWidth, labelHeight, 8);
+        labelBackground.lineStyle(1, LABEL_BORDER_COLOR, 0.85);
+        labelBackground.strokeRoundedRect(-labelWidth / 2, -labelHeight / 2, labelWidth, labelHeight, 8);
         this.tweens.add({
           targets: halo,
           alpha: location.branchOf ? 0.08 : 0.12,
