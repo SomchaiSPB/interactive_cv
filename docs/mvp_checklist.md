@@ -38,8 +38,9 @@
 - [x] HUD shows the classic CV and main navigation
 - [x] Add generated placeholder sprite system
 - [x] Add tile-like generated terrain, districts, paths, foliage, and fences
+- [x] Complete Art Pass 1 with recognizable generated buildings and a warmer RPG town palette
 - [ ] Add final real sprites, map art, and sound
-- [ ] Add richer town / building visuals
+- [ ] Replace generated placeholders with a final production asset pack
 - [ ] Add deeper guided travel or interaction behaviors
 - [ ] Add WASD / keyboard movement only if it becomes useful
 
@@ -84,7 +85,8 @@
 ## Future Game Layer
 
 - [ ] Define richer quest / movement rules
-- [ ] Add better sprites, buildings, and map art
+- [x] Improve generated placeholder sprites, buildings, and map readability
+- [ ] Add final production sprites, tiles, and map art
 - [ ] Add audio and ambient effects
 - [ ] Evaluate Three.js only if 3D value is proven
 - [ ] Add mobile controls only after the desktop prototype is already useful

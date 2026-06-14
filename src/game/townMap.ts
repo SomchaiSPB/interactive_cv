@@ -32,15 +32,19 @@ type NpcMarker = MapPoint & {
   role: string;
 };
 
+type SignPost = MapPoint & {
+  label: string;
+};
+
 export const TOWN_DISTRICTS: District[] = [
-  { x: 128, y: 224, width: 640, height: 704, baseColor: 0x24472b, alternateColor: 0x294f30, borderColor: 0x315d38 },
-  { x: 704, y: 192, width: 448, height: 448, baseColor: 0x3d3f2c, alternateColor: 0x454431, borderColor: 0x5c5137 },
-  { x: 1056, y: 64, width: 672, height: 448, baseColor: 0x33483b, alternateColor: 0x394f41, borderColor: 0x526052 },
-  { x: 768, y: 544, width: 864, height: 544, baseColor: 0x355b35, alternateColor: 0x3b633b, borderColor: 0x54734b },
-  { x: 1536, y: 512, width: 736, height: 480, baseColor: 0x4f5231, alternateColor: 0x585936, borderColor: 0x6d6940 },
-  { x: 640, y: 1024, width: 640, height: 448, baseColor: 0x2f3830, alternateColor: 0x343d34, borderColor: 0x454b41 },
-  { x: 96, y: 1088, width: 672, height: 416, baseColor: 0x2b4d34, alternateColor: 0x31563a, borderColor: 0x416747 },
-  { x: 1632, y: 960, width: 672, height: 544, baseColor: 0x3f4935, alternateColor: 0x46503a, borderColor: 0x596048 },
+  { x: 128, y: 224, width: 640, height: 704, baseColor: 0x4f8a49, alternateColor: 0x5a9852, borderColor: 0x3e743d },
+  { x: 704, y: 192, width: 448, height: 448, baseColor: 0x738b45, alternateColor: 0x81984e, borderColor: 0x64783e },
+  { x: 1056, y: 64, width: 672, height: 448, baseColor: 0x5f8b59, alternateColor: 0x6a9862, borderColor: 0x507b4d },
+  { x: 768, y: 544, width: 864, height: 544, baseColor: 0x65a052, alternateColor: 0x70aa5b, borderColor: 0x548d48 },
+  { x: 1536, y: 512, width: 736, height: 480, baseColor: 0x8b994d, alternateColor: 0x98a556, borderColor: 0x788744 },
+  { x: 640, y: 1024, width: 640, height: 448, baseColor: 0x597455, alternateColor: 0x647f5e, borderColor: 0x4b6749 },
+  { x: 96, y: 1088, width: 672, height: 416, baseColor: 0x579052, alternateColor: 0x639c5b, borderColor: 0x487d47 },
+  { x: 1632, y: 960, width: 672, height: 544, baseColor: 0x708650, alternateColor: 0x7b9258, borderColor: 0x607647 },
 ];
 
 export const TOWN_PATHS: PathRoute[] = [
@@ -74,6 +78,23 @@ export const BUSH_POSITIONS: MapPoint[] = [
   { x: 760, y: 690 }, { x: 820, y: 930 }, { x: 960, y: 700 }, { x: 1370, y: 720 }, { x: 1490, y: 920 },
   { x: 1640, y: 890 }, { x: 1850, y: 630 }, { x: 2010, y: 610 }, { x: 730, y: 1180 }, { x: 1110, y: 1350 },
   { x: 1420, y: 1240 }, { x: 1560, y: 1370 }, { x: 1900, y: 1420 }, { x: 2050, y: 1230 },
+];
+
+export const ROCK_POSITIONS: MapPoint[] = [
+  { x: 740, y: 350 }, { x: 1320, y: 150 }, { x: 1880, y: 690 }, { x: 1020, y: 1140 },
+  { x: 1320, y: 1320 }, { x: 2140, y: 1080 }, { x: 380, y: 980 }, { x: 2260, y: 1450 },
+];
+
+export const FLOWER_POSITIONS: MapPoint[] = [
+  { x: 720, y: 760 }, { x: 760, y: 790 }, { x: 1510, y: 740 }, { x: 1550, y: 780 },
+  { x: 430, y: 1180 }, { x: 470, y: 1150 }, { x: 1870, y: 1160 }, { x: 1910, y: 1190 },
+];
+
+export const SIGN_POSTS: SignPost[] = [
+  { x: 930, y: 790, label: 'Library / Forge' },
+  { x: 1460, y: 790, label: 'Market / Hall' },
+  { x: 1090, y: 1010, label: 'Academy / Bug Pit' },
+  { x: 1900, y: 900, label: 'Town Gates' },
 ];
 
 export const FENCES: Fence[] = [

@@ -18,12 +18,12 @@ export function CheckpointPanel({ checkpoint, variant = 'default' }: Props) {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: 24 }}
           transition={{ duration: 0.2 }}
-          className={`panel-surface h-full rounded-3xl ${isHud ? 'max-h-[calc(100vh-10rem)] overflow-y-auto p-4 sm:p-5' : 'p-6'}`}
+          className={`${isHud ? 'h-full max-h-[calc(100vh-10rem)] overflow-y-auto rounded-3xl border border-amber-100/10 bg-[#273522]/95 p-4 shadow-inner sm:p-5' : 'panel-surface h-full rounded-3xl p-6'}`}
         >
           <div className={isHud ? 'space-y-3' : 'space-y-4'}>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="space-y-2">
-                <p className="mono text-xs uppercase tracking-[0.28em] text-neon">
+                <p className={`mono text-xs uppercase tracking-[0.28em] ${isHud ? 'text-amber-200' : 'text-neon'}`}>
                   Checkpoint {String(checkpoint.order).padStart(2, '0')}
                 </p>
                 <h3 className={`${isHud ? 'text-xl sm:text-2xl' : 'text-2xl'} font-semibold text-white`}>{checkpoint.title}</h3>
@@ -39,8 +39,8 @@ export function CheckpointPanel({ checkpoint, variant = 'default' }: Props) {
               </div>
             </div>
 
-            <div className={`rounded-3xl border border-neon/15 bg-neon/5 ${isHud ? 'p-3 sm:p-4' : 'p-4'}`}>
-              <p className="text-xs uppercase tracking-[0.24em] text-neon">Quest summary</p>
+            <div className={`rounded-3xl ${isHud ? 'border border-amber-200/15 bg-amber-100/[0.06] p-3 sm:p-4' : 'border border-neon/15 bg-neon/5 p-4'}`}>
+              <p className={`text-xs uppercase tracking-[0.24em] ${isHud ? 'text-amber-200' : 'text-neon'}`}>Quest summary</p>
               <p className={`mt-3 text-sm leading-7 text-slate-200 ${isHud ? 'sm:text-[0.92rem]' : ''}`}>{checkpoint.summary}</p>
             </div>
 

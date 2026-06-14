@@ -128,12 +128,8 @@ export function GameShell() {
   }
 
   return (
-    <section className="relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top,rgba(105,167,255,0.14),transparent_26%),radial-gradient(circle_at_20%_20%,rgba(124,247,212,0.08),transparent_22%),linear-gradient(180deg,#050811_0%,#070b14_100%)] text-slate-100">
-      <div className="absolute inset-0 map-noise opacity-20" />
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(124,247,212,0.04)_1px,transparent_1px),linear-gradient(rgba(124,247,212,0.04)_1px,transparent_1px)] bg-[size:56px_56px]" />
-      <div className="absolute left-0 top-0 h-96 w-96 rounded-full bg-neon/10 blur-3xl" />
-      <div className="absolute right-0 top-0 h-96 w-96 rounded-full bg-blue-400/10 blur-3xl" />
-      <div className="absolute bottom-0 left-1/4 h-96 w-96 rounded-full bg-amber-400/[0.08] blur-3xl" />
+    <section className="relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top,rgba(235,205,143,0.18),transparent_28%),linear-gradient(180deg,#243b25_0%,#172719_100%)] text-stone-100">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_24%,rgba(132,181,91,0.14),transparent_24%),radial-gradient(circle_at_82%_76%,rgba(183,137,73,0.12),transparent_22%)]" />
 
       {!started ? (
         <div className="relative z-10 flex min-h-screen items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
@@ -200,8 +196,8 @@ export function GameShell() {
 
           <div className="pointer-events-none absolute inset-0 z-10 flex flex-col">
             <header className="pointer-events-none flex items-start justify-between gap-4 px-4 pt-4 sm:px-6 lg:px-8">
-              <div className="pointer-events-auto max-w-xl rounded-2xl border border-white/10 bg-slate-950/74 px-4 py-3 backdrop-blur-xl">
-                <p className="mono text-[10px] uppercase tracking-[0.34em] text-neon">Backend Odyssey</p>
+              <div className="pointer-events-auto max-w-xl rounded-2xl border border-amber-100/15 bg-[#25331f]/88 px-4 py-3 shadow-lg backdrop-blur-xl">
+                <p className="mono text-[10px] uppercase tracking-[0.34em] text-amber-200">Backend Odyssey</p>
                 <p className="mt-1 text-sm font-medium text-white">{profile.name}</p>
                 <p className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-400">{profile.role}</p>
               </div>
@@ -210,7 +206,7 @@ export function GameShell() {
                   <a
                     key={link.href}
                     href={link.href}
-                    className="rounded-full border border-white/10 bg-slate-950/74 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.22em] text-slate-200 backdrop-blur-xl transition hover:border-neon/30 hover:bg-neon/10"
+                    className="rounded-full border border-amber-100/15 bg-[#25331f]/88 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.22em] text-stone-100 backdrop-blur-xl transition hover:border-amber-200/35 hover:bg-[#3d4d2d]"
                   >
                     {link.label}
                   </a>
@@ -220,24 +216,24 @@ export function GameShell() {
 
             <div className="mt-auto grid gap-4 px-4 pb-4 sm:px-6 sm:pb-6 lg:grid-cols-[minmax(0,1fr)_24rem] lg:px-8">
               <div className="pointer-events-auto space-y-4">
-                <div className="rounded-3xl border border-white/10 bg-slate-950/74 px-4 py-3 backdrop-blur-xl">
+                <div className="rounded-3xl border border-amber-100/15 bg-[#25331f]/88 px-4 py-3 shadow-lg backdrop-blur-xl">
                   <p className="text-[10px] uppercase tracking-[0.28em] text-slate-500">Controls</p>
                   <p className="mt-2 text-sm leading-6 text-slate-300">
                     Click to move. {nearestDetail.prompt ?? 'Approach a building to open its checkpoint automatically.'}
                   </p>
                 </div>
 
-                <div className="rounded-3xl border border-white/10 bg-slate-950/74 px-4 py-3 backdrop-blur-xl">
+                <div className="rounded-3xl border border-amber-100/15 bg-[#25331f]/88 px-4 py-3 shadow-lg backdrop-blur-xl">
                   <p className="text-[10px] uppercase tracking-[0.28em] text-slate-500">Quest state</p>
                   <div className="mt-2 flex flex-wrap items-center gap-3">
-                    <span className={`h-2.5 w-2.5 rounded-full ${gameReady ? 'bg-neon shadow-[0_0_16px_rgba(124,247,212,0.8)]' : 'bg-amber-400'}`} />
+                    <span className={`h-2.5 w-2.5 rounded-full ${gameReady ? 'bg-lime-400 shadow-[0_0_12px_rgba(163,230,53,0.55)]' : 'bg-amber-400'}`} />
                     <p className="text-sm text-slate-200">{gameReady ? 'Quest map ready' : 'Building the town...'}</p>
                   </div>
                 </div>
               </div>
 
               <div className="pointer-events-auto space-y-4">
-                <div className="rounded-3xl border border-white/10 bg-slate-950/74 px-4 py-3 backdrop-blur-xl">
+                <div className="rounded-3xl border border-amber-100/15 bg-[#25331f]/88 px-4 py-3 shadow-lg backdrop-blur-xl">
                   <p className="text-[10px] uppercase tracking-[0.28em] text-slate-500">Nearest location</p>
                   <p className="mt-2 text-base font-semibold text-white">
                     {nearestDetail.location ? nearestDetail.location.displayName : 'Town Square'}
@@ -247,7 +243,7 @@ export function GameShell() {
                   </p>
                 </div>
 
-                <div className="pointer-events-auto rounded-3xl border border-white/10 bg-slate-950/74 p-3 backdrop-blur-xl">
+                <div className="pointer-events-auto rounded-3xl border border-amber-100/15 bg-[#25331f]/88 p-3 shadow-lg backdrop-blur-xl">
                   <p className="text-[10px] uppercase tracking-[0.28em] text-slate-500">Hint</p>
                   <p className="mt-2 text-sm leading-6 text-slate-300">
                     Click a location to walk toward it. Its checkpoint opens when you arrive.
@@ -265,16 +261,16 @@ export function GameShell() {
               transition={{ duration: 0.18 }}
               className="pointer-events-auto absolute right-4 top-24 z-20 w-[min(92vw,28rem)] max-w-full lg:right-8 lg:top-24"
             >
-              <div className="rounded-[1.75rem] border border-white/10 bg-slate-950/92 p-3 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl">
+              <div className="rounded-[1.75rem] border border-amber-100/15 bg-[#1f2c1c]/95 p-3 shadow-[0_24px_80px_rgba(20,28,16,0.45)] backdrop-blur-xl">
                 <div className="mb-3 flex items-center justify-between gap-3 px-1">
                   <div>
-                    <p className="mono text-[10px] uppercase tracking-[0.28em] text-neon">Inspected checkpoint</p>
+                    <p className="mono text-[10px] uppercase tracking-[0.28em] text-amber-200">Inspected checkpoint</p>
                     <p className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-500">ESC closes this panel</p>
                   </div>
                   <button
                     type="button"
                     onClick={handleClosePanel}
-                    className="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-[11px] uppercase tracking-[0.2em] text-slate-300 transition hover:border-neon/30 hover:bg-neon/10"
+                    className="rounded-full border border-amber-100/15 bg-amber-50/5 px-3 py-2 text-[11px] uppercase tracking-[0.2em] text-stone-200 transition hover:border-amber-200/35 hover:bg-amber-100/10"
                   >
                     Close
                   </button>

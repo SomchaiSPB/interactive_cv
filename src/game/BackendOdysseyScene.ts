@@ -4,8 +4,11 @@ import { GAME_WORLD } from './locationMapper';
 import {
   BUSH_POSITIONS,
   FENCES,
+  FLOWER_POSITIONS,
   NPC_MARKERS,
   PLAYER_SPAWN,
+  ROCK_POSITIONS,
+  SIGN_POSTS,
   TILE_SIZE,
   TOWN_DISTRICTS,
   TOWN_PATHS,
@@ -18,7 +21,7 @@ import {
   ODYSSEY_EVENT_OPEN,
   ODYSSEY_EVENT_READY,
 } from './types';
-import { generateAllTextures } from './spriteDefs';
+import { generateAllTextures, getBuildingTextureKey } from './spriteDefs';
 
 type BootConfig = {
   locations: GameLocation[];
@@ -70,7 +73,7 @@ export class BackendOdysseyScene extends Phaser.Scene {
   create() {
     this.locations = this.bootConfig.locations;
 
-    this.cameras.main.setBackgroundColor('#08110a');
+    this.cameras.main.setBackgroundColor('#4f8f49');
     this.cameras.main.setBounds(0, 0, GAME_WORLD.width, GAME_WORLD.height);
     this.physics.world.setBounds(0, 0, GAME_WORLD.width, GAME_WORLD.height);
 
@@ -80,6 +83,7 @@ export class BackendOdysseyScene extends Phaser.Scene {
     this.drawPaths();
     this.drawFences();
     this.drawFoliage();
+    this.drawTownDetails();
     this.drawLocations();
     this.drawNpcMarkers();
     this.drawLanterns();
@@ -268,30 +272,32 @@ export class BackendOdysseyScene extends Phaser.Scene {
     const ground = this.add.graphics().setDepth(-30);
     for (let y = 0; y < GAME_WORLD.height; y += TILE_SIZE) {
       for (let x = 0; x < GAME_WORLD.width; x += TILE_SIZE) {
-        const alternate = (x / TILE_SIZE + y / TILE_SIZE) % 2 === 0;
-        ground.fillStyle(alternate ? 0x244a2a : 0x284f2e, 1);
+        const variation = (x / TILE_SIZE + y / TILE_SIZE * 3) % 5;
+        ground.fillStyle(variation === 0 ? 0x62a653 : 0x5a9b4e, 1);
         ground.fillRect(x, y, TILE_SIZE, TILE_SIZE);
-        ground.fillStyle(0x42653c, 0.12);
-        ground.fillRect(x + 5, y + 7, 3, 2);
-        ground.fillRect(x + 22, y + 19, 2, 3);
+        ground.fillStyle(0x8fc768, 0.28);
+        ground.fillTriangle(x + 6, y + 13, x + 9, y + 6, x + 11, y + 13);
+        ground.fillTriangle(x + 23, y + 26, x + 25, y + 20, x + 28, y + 26);
       }
     }
 
-    this.add.tileSprite(0, 0, GAME_WORLD.width, GAME_WORLD.height, 'odyssey-noise').setOrigin(0).setAlpha(0.08).setDepth(-29);
+    this.add.tileSprite(0, 0, GAME_WORLD.width, GAME_WORLD.height, 'odyssey-noise').setOrigin(0).setAlpha(0.05).setDepth(-29);
   }
 
   private drawDistricts() {
     const districts = this.add.graphics().setDepth(-20);
     for (const district of TOWN_DISTRICTS) {
-      for (let y = district.y; y < district.y + district.height; y += TILE_SIZE) {
-        for (let x = district.x; x < district.x + district.width; x += TILE_SIZE) {
-          const alternate = (x / TILE_SIZE + y / TILE_SIZE) % 2 === 0;
-          districts.fillStyle(alternate ? district.baseColor : district.alternateColor, 0.92);
-          districts.fillRect(x, y, TILE_SIZE, TILE_SIZE);
-        }
-      }
-      districts.lineStyle(3, district.borderColor, 0.5);
-      districts.strokeRect(district.x, district.y, district.width, district.height);
+      districts.fillStyle(district.baseColor, 0.72);
+      districts.fillRoundedRect(district.x, district.y, district.width, district.height, 36);
+      districts.fillStyle(district.alternateColor, 0.2);
+      districts.fillEllipse(
+        district.x + district.width * 0.32,
+        district.y + district.height * 0.38,
+        district.width * 0.58,
+        district.height * 0.46,
+      );
+      districts.lineStyle(2, district.borderColor, 0.24);
+      districts.strokeRoundedRect(district.x, district.y, district.width, district.height, 36);
     }
   }
 
@@ -320,6 +326,7 @@ export class BackendOdysseyScene extends Phaser.Scene {
     const corner = { x: to.x, y: from.y };
     this.drawPathSegment(graphics, from, corner, width);
     this.drawPathSegment(graphics, corner, to, width);
+    this.drawPathJoint(graphics, corner, width);
   }
 
   private drawPathSegment(graphics: Phaser.GameObjects.Graphics, from: MapPoint, to: MapPoint, width: number) {
@@ -327,12 +334,23 @@ export class BackendOdysseyScene extends Phaser.Scene {
       return;
     }
 
-    graphics.lineStyle(width + 10, 0x33271a, 0.72);
+    graphics.lineStyle(width + 12, 0x765332, 0.78);
     graphics.lineBetween(from.x, from.y, to.x, to.y);
-    graphics.lineStyle(width, 0x8b7047, 1);
+    graphics.lineStyle(width, 0xb58a50, 1);
     graphics.lineBetween(from.x, from.y, to.x, to.y);
-    graphics.lineStyle(4, 0xc2a878, 0.32);
+    graphics.lineStyle(3, 0xe0bd7a, 0.42);
     graphics.lineBetween(from.x, from.y, to.x, to.y);
+    this.drawPathJoint(graphics, from, width);
+    this.drawPathJoint(graphics, to, width);
+  }
+
+  private drawPathJoint(graphics: Phaser.GameObjects.Graphics, point: MapPoint, width: number) {
+    graphics.fillStyle(0x765332, 0.78);
+    graphics.fillCircle(point.x, point.y, (width + 12) / 2);
+    graphics.fillStyle(0xb58a50, 1);
+    graphics.fillCircle(point.x, point.y, width / 2);
+    graphics.fillStyle(0xe0bd7a, 0.2);
+    graphics.fillCircle(point.x - width * 0.08, point.y - width * 0.08, width * 0.24);
   }
 
   private drawTownSquare() {
@@ -348,37 +366,38 @@ export class BackendOdysseyScene extends Phaser.Scene {
     for (let y = 0; y < plazaSize; y += TILE_SIZE) {
       for (let x = 0; x < plazaSize; x += TILE_SIZE) {
         const alternate = (x / TILE_SIZE + y / TILE_SIZE) % 2 === 0;
-        plaza.fillStyle(alternate ? 0x827d70 : 0x746f64, 1);
+        plaza.fillStyle(alternate ? 0xc8b98f : 0xb9aa82, 1);
         plaza.fillRect(startX + x, startY + y, TILE_SIZE, TILE_SIZE);
-        plaza.lineStyle(1, 0x9c9686, 0.2);
+        plaza.lineStyle(1, 0xe1d5ae, 0.42);
         plaza.strokeRect(startX + x, startY + y, TILE_SIZE, TILE_SIZE);
       }
     }
-    plaza.lineStyle(6, 0x514b41, 0.9);
+    plaza.lineStyle(6, 0x806f51, 0.9);
     plaza.strokeRect(startX, startY, plazaSize, plazaSize);
-    plaza.fillStyle(0x5f6f78, 1);
+    plaza.fillStyle(0x718985, 1);
     plaza.fillCircle(square.worldX, square.worldY, 30);
-    plaza.fillStyle(0xb9c7cb, 0.9);
+    plaza.fillStyle(0xcbd7c9, 0.9);
     plaza.fillCircle(square.worldX, square.worldY - 5, 18);
-    plaza.fillStyle(0x6b7f88, 1);
+    plaza.fillStyle(0x607871, 1);
     plaza.fillRect(square.worldX - 5, square.worldY - 44, 10, 34);
   }
 
   private drawFoliage() {
     for (const position of TREE_POSITIONS) {
       const tree = this.add.container(position.x, position.y).setDepth(position.y);
-      tree.add(this.add.rectangle(0, 12, 10, 26, 0x4a321f, 1));
-      tree.add(this.add.circle(-10, -8, 18, 0x214f2a, 1));
-      tree.add(this.add.circle(10, -10, 20, 0x285d31, 1));
-      tree.add(this.add.circle(0, -24, 21, 0x32703a, 1));
-      tree.add(this.add.circle(-5, -28, 8, 0x4b874b, 0.78));
+      tree.add(this.add.ellipse(0, 22, 34, 10, 0x315b31, 0.3));
+      tree.add(this.add.rectangle(0, 12, 10, 28, 0x704627, 1));
+      tree.add(this.add.circle(-11, -8, 18, 0x2f753a, 1));
+      tree.add(this.add.circle(11, -10, 20, 0x3c8943, 1));
+      tree.add(this.add.circle(0, -25, 22, 0x4c9c4c, 1));
+      tree.add(this.add.circle(-6, -30, 8, 0x77b85b, 0.9));
     }
 
     for (const position of BUSH_POSITIONS) {
       const bush = this.add.container(position.x, position.y).setDepth(position.y);
-      bush.add(this.add.circle(-8, 0, 11, 0x285b31, 1));
-      bush.add(this.add.circle(7, -2, 13, 0x34703b, 1));
-      bush.add(this.add.circle(0, -8, 10, 0x438449, 1));
+      bush.add(this.add.circle(-8, 0, 11, 0x377a3b, 1));
+      bush.add(this.add.circle(7, -2, 13, 0x489347, 1));
+      bush.add(this.add.circle(0, -8, 10, 0x65a953, 1));
     }
   }
 
@@ -388,17 +407,49 @@ export class BackendOdysseyScene extends Phaser.Scene {
       const horizontal = fence.orientation === 'horizontal';
       const endX = fence.x + (horizontal ? fence.length : 0);
       const endY = fence.y + (horizontal ? 0 : fence.length);
-      fences.lineStyle(6, 0x493522, 1);
+      fences.lineStyle(6, 0x5b3d24, 1);
       fences.lineBetween(fence.x, fence.y, endX, endY);
-      fences.lineStyle(3, 0x8b6840, 1);
+      fences.lineStyle(3, 0xa97843, 1);
       fences.lineBetween(fence.x, fence.y - 7, endX, endY - 7);
 
       for (let offset = 0; offset <= fence.length; offset += 28) {
         const x = fence.x + (horizontal ? offset : 0);
         const y = fence.y + (horizontal ? 0 : offset);
-        fences.fillStyle(0x5c4328, 1);
+        fences.fillStyle(0x754c29, 1);
         fences.fillRect(x - 3, y - 13, 7, 26);
       }
+    }
+  }
+
+  private drawTownDetails() {
+    for (const [index, position] of ROCK_POSITIONS.entries()) {
+      const rock = this.add.container(position.x, position.y).setDepth(position.y - 1);
+      rock.add(this.add.ellipse(0, 8, 28, 9, 0x315b31, 0.24));
+      rock.add(this.add.ellipse(0, 0, 24 + index % 3 * 3, 15, 0x777b6b, 1));
+      rock.add(this.add.ellipse(-4, -3, 11, 5, 0xa8aa91, 0.72));
+    }
+
+    for (const [index, position] of FLOWER_POSITIONS.entries()) {
+      const flowers = this.add.graphics().setDepth(position.y);
+      const color = index % 3 === 0 ? 0xf4d15f : index % 3 === 1 ? 0xf29b7f : 0xece2c2;
+      flowers.fillStyle(0x3c7d3d, 1);
+      flowers.fillRect(position.x - 1, position.y, 2, 8);
+      flowers.fillStyle(color, 1);
+      flowers.fillCircle(position.x - 3, position.y, 3);
+      flowers.fillCircle(position.x + 3, position.y, 3);
+      flowers.fillCircle(position.x, position.y - 3, 3);
+    }
+
+    for (const sign of SIGN_POSTS) {
+      const post = this.add.container(sign.x, sign.y).setDepth(sign.y);
+      post.add(this.add.rectangle(0, 9, 5, 30, 0x63401f, 1));
+      post.add(this.add.rectangle(0, -4, 70, 24, 0x9d6c36, 1).setStrokeStyle(2, 0x53351d));
+      post.add(this.add.text(0, -4, sign.label, {
+        fontFamily: '"IBM Plex Sans", sans-serif',
+        fontSize: '8px',
+        color: '#fff0c5',
+        align: 'center',
+      }).setOrigin(0.5));
     }
   }
 
@@ -407,16 +458,16 @@ export class BackendOdysseyScene extends Phaser.Scene {
       const npc = this.add.container(marker.x, marker.y).setDepth(marker.y);
       npc.add(this.add.ellipse(0, 16, 22, 8, 0x000000, 0.3));
       npc.add(this.add.circle(0, -11, 8, 0xd5b48a, 1));
-      npc.add(this.add.rectangle(0, 4, 16, 24, 0x6b4d7a, 1));
-      npc.add(this.add.rectangle(-5, 18, 5, 12, 0x2b2634, 1));
-      npc.add(this.add.rectangle(5, 18, 5, 12, 0x2b2634, 1));
+      npc.add(this.add.rectangle(0, 4, 16, 24, 0x7b5737, 1));
+      npc.add(this.add.rectangle(-5, 18, 5, 12, 0x3f3327, 1));
+      npc.add(this.add.rectangle(5, 18, 5, 12, 0x3f3327, 1));
       const label = this.add
         .text(0, 34, `${marker.name}\n${marker.role}`, {
           fontFamily: '"IBM Plex Mono", monospace',
           fontSize: '9px',
-          color: '#d7c8e3',
+          color: '#fff0c5',
           align: 'center',
-          backgroundColor: '#101016cc',
+          backgroundColor: '#24351fcc',
           padding: { x: 5, y: 3 },
         })
         .setOrigin(0.5, 0);
@@ -439,7 +490,7 @@ export class BackendOdysseyScene extends Phaser.Scene {
     lanternPositions.forEach(([x, y], index) => {
       const lantern = this.add.container(x, y).setDepth(12 + index);
       lantern.add(this.add.rectangle(0, 8, 6, 18, 0x2e2419, 1));
-      lantern.add(this.add.circle(0, -2, 7, index % 2 === 0 ? 0xf6b74c : 0x7cf7d4, 0.34));
+      lantern.add(this.add.circle(0, -2, 7, index % 2 === 0 ? 0xf6b74c : 0xf0d47a, 0.34));
       lantern.add(this.add.circle(0, -2, 3, 0xfff2cf, 0.82));
     });
   }
@@ -469,20 +520,20 @@ export class BackendOdysseyScene extends Phaser.Scene {
         .text(location.labelOffsetX, labelY, location.displayName, {
           fontFamily: '"IBM Plex Sans", sans-serif',
           fontSize: location.branchOf ? '12px' : '14px',
-          color: '#f2f6ff',
+          color: '#fff7dc',
           align: 'center',
-          backgroundColor: '#08110acc',
+          backgroundColor: '#263b22dd',
           padding: { x: 6, y: 3 },
         })
         .setOrigin(0.5, 0)
-        .setStroke('#08110a', 8)
-        .setShadow(0, 0, '#08110a', 12, true, true);
+        .setStroke('#263b22', 7)
+        .setShadow(0, 2, '#172414', 8, true, true);
 
       const subtitle = this.add
         .text(location.labelOffsetX, labelY + 24, location.subtitle, {
           fontFamily: '"IBM Plex Mono", monospace',
           fontSize: '9px',
-          color: '#9ab0c7',
+          color: '#f0dfb4',
           align: 'center',
         })
         .setOrigin(0.5, 0);
@@ -534,7 +585,7 @@ export class BackendOdysseyScene extends Phaser.Scene {
   }
 
   private createLocationBody(location: GameLocation) {
-    const textureKey = `building-${location.kind}`;
+    const textureKey = getBuildingTextureKey(location.id, location.kind);
     if (this.textures.exists(textureKey)) {
       return this.add
         .image(0, 0, textureKey)

@@ -53,12 +53,14 @@ Scope:
 - improve readability on both desktop and mobile.
 - stabilize the mounted Phaser scene and recomposed town so the homepage stays readable before any new gameplay is added.
 - use a tile-like generated town composition with distinct districts, paths, foliage, fences, and a central plaza.
+- complete Art Pass 1 with generated location-specific building silhouettes, warmer terrain, softer roads, and restrained town decoration.
 
 Deliverables:
 
 - stronger visual hierarchy;
 - better buildings, roads, panels, and map legibility;
 - tighter responsive polish.
+- generated placeholder art that reads as an old-school RPG town while the production asset pipeline remains pending.
 
 Non-goals:
 
@@ -116,6 +118,7 @@ Important:
 - the homepage is already game-first and playable;
 - the classic CV remains a fallback for quick review;
 - the current direction is a tile-like 2D RPG town; a full tileset and asset pipeline remain pending.
+- Art Pass 1 intentionally uses source-generated placeholder sprites; final production sprites, tiles, and sound remain future work.
 - `/cv` remains the classic readable fallback for recruiters and clients.
 
 ## Phase 5: Optional Advanced Movement
