@@ -82,6 +82,7 @@
 - [x] Timeline is readable without the map UI
 - [x] Content order remains consistent on mobile
 - [x] Game mode is best on desktop with a readable mobile fallback
+- [x] Mobile `/play` list: each place expands to its summary, results, screenshot and links
 - [ ] Add touch-specific controls only if explicitly requested
 
 ## SEO

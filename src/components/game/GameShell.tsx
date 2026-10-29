@@ -83,7 +83,7 @@ export function GameShell() {
             <h1 className="pixel mt-3 text-2xl uppercase text-neon">{profile.brand}</h1>
             <p className="mt-2 text-sm uppercase tracking-[0.18em] text-slate-400">{profile.role}</p>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
-              The quest is desktop-only. Here is the short version — or open the pages below.
+              Walking around town needs a computer. Here is the same town as a list — tap a place to look inside.
             </p>
           </div>
 
@@ -92,13 +92,47 @@ export function GameShell() {
               <p className="text-xs uppercase tracking-[0.24em] text-neon">Quest path</p>
               <div className="mt-4 space-y-3">
                 {mainPath.map((checkpoint) => (
-                  <div key={checkpoint.id} className="rounded-2xl border border-white/10 bg-slate-950/65 px-4 py-3">
-                    <p className="mono text-[10px] uppercase tracking-[0.28em] text-slate-500">
-                      {String(checkpoint.order).padStart(2, '0')}
-                    </p>
-                    <p className="mt-1 text-sm font-semibold text-white">{checkpoint.title}</p>
-                    <p className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-400">{checkpoint.subtitle}</p>
-                  </div>
+                  <details key={checkpoint.id} className="group rounded-2xl border border-white/10 bg-slate-950/65 open:border-neon/30">
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 [&::-webkit-details-marker]:hidden">
+                      <span>
+                        <span className="mono block text-[10px] uppercase tracking-[0.28em] text-slate-500">
+                          {String(checkpoint.order).padStart(2, '0')}
+                        </span>
+                        <span className="mt-1 block text-sm font-semibold text-white">{checkpoint.title}</span>
+                        <span className="mt-1 block text-xs uppercase tracking-[0.18em] text-slate-400">{checkpoint.subtitle}</span>
+                      </span>
+                      <span className="pixel text-xs text-accent transition-transform group-open:rotate-90" aria-hidden="true">▶</span>
+                    </summary>
+                    <div className="space-y-3 px-4 pb-4 text-sm leading-6 text-slate-300">
+                      <p className="text-slate-200">{checkpoint.summary}</p>
+                      <ul className="space-y-2">
+                        {checkpoint.details.map((detail) => (
+                          <li key={detail} className="flex gap-2">
+                            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-neon" />
+                            <span>{detail}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      {checkpoint.image ? (
+                        <img src={checkpoint.image.src} alt={checkpoint.image.alt} loading="lazy" className="h-auto w-full rounded-xl border border-white/10" />
+                      ) : null}
+                      {checkpoint.links?.length ? (
+                        <div className="flex flex-wrap gap-2">
+                          {checkpoint.links.map((link) => (
+                            <a
+                              key={link.label}
+                              href={link.href}
+                              target={link.external ? '_blank' : undefined}
+                              rel={link.external ? 'noreferrer' : undefined}
+                              className="rounded-full border border-neon/30 bg-neon/10 px-3 py-1.5 text-xs text-neon"
+                            >
+                              {link.label}
+                            </a>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
+                  </details>
                 ))}
               </div>
             </div>

@@ -48,7 +48,7 @@ Current state: Phaser town renders with TilesetGrass terrain, Adventurer hero wa
 - [x] Fix hero sprite slicing (strips are 8×96px, not 12×64px) and enable idle/run animation.
 - [x] Walking to a clicked building no longer stops at every building on the way.
 - [ ] Panel per case: result first, link, screenshot.
-- [ ] Mobile timeline fallback shows the same items + contact CTA.
+- [x] Mobile `/play` fallback: expandable places with the same content as the game panels.
 
 Parked: a "References" NPC once referees are confirmed (so far only the current CEO).
 
