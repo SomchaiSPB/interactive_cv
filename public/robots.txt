@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://somchai.dev/sitemap.xml

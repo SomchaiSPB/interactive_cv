@@ -49,6 +49,8 @@ Current state: Phaser town renders with TilesetGrass terrain, Adventurer hero wa
 - [ ] Panel per case: result first, link, screenshot.
 - [ ] Mobile timeline fallback shows the same items + contact CTA.
 
+Parked: a "References" NPC once referees are confirmed (so far only the current CEO).
+
 Out of scope for launch: sound, WASD, pathfinding, Tiled pipeline, new art packs, mobile controls, 3D.
 
 ## Phase 3 — Homepage, contact, SEO
@@ -57,7 +59,8 @@ Out of scope for launch: sound, WASD, pathfinding, Tiled pipeline, new art packs
 - [x] `/contact`: email + Telegram, what to include in the first message.
 - [x] `/cv` and `/projects` follow the new content.
 - [x] Contacts: info@somchai.dev, Telegram @s0mchai.
-- [ ] Open Graph / Twitter card / canonical / Person structured data in `Layout.astro`; favicon, OG image.
+- [x] Open Graph / Twitter card / canonical / Person structured data in `Layout.astro`; favicon, OG image.
+- [x] `robots.txt`, `sitemap.xml`, custom 404; slash-free URLs.
 
 ## Phase 4 — Deploy to `ovhvps` (FR)
 

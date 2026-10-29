@@ -8,6 +8,9 @@
 - [x] TailwindCSS styling is configured
 - [x] Static production build passes
 - [x] Basic site shell and navigation exist
+- [x] Static services landing at `/`; game moved to `/play`
+- [x] Favicon and Apple touch icon
+- [x] Custom 404 page
 
 ## Content
 
@@ -17,14 +20,15 @@
 - [x] Project data is separated from UI
 - [x] Skills data is separated from UI
 - [x] Education data is separated from UI
-- [x] Final content pass with Denis's exact wording
+- [x] Content repositioned for client-facing services (English draft)
+- [ ] Final content pass with Denis's exact wording (positioning, SUPO case numbers)
 - [x] Replace placeholder external links with final live profiles
 
 ## RPG Map MVP
 
 - [x] Fullscreen game-first homepage exists
-- [x] Phaser-powered 2D RPG quest prototype exists on `/`
-- [x] Desktop homepage opens directly into the playable quest map
+- [x] Phaser-powered 2D RPG quest exists on `/play`
+- [x] `/play` opens directly into the playable quest map
 - [x] Visible hero character appears in the first viewport
 - [x] Click-to-move hero movement works
 - [x] Checkpoint panel opens automatically when the hero enters interaction range
@@ -40,7 +44,10 @@
 - [x] Add tile-like generated terrain, districts, paths, foliage, and fences
 - [x] Complete Art Pass 1 with recognizable generated buildings and a warmer RPG town palette
 - [x] Clean up map UX with unobstructed labels and simplified dirt-road geometry
-- [x] Integrate the Adventurer runtime player sprite with directional idle/run animation
+- [x] Integrate the Adventurer runtime player sprite with directional idle/run animation (fixed 96px frame slicing)
+- [x] Town reduced to six client-facing locations, all visible on the first screen
+- [x] Hero walks past buildings to the clicked one without stopping
+- [x] Remove dead code (roads, halos, NPC marker, debug panel stats)
 - [x] Audit and stage the TilesetGrass runtime image with source and license notes
 - [x] Integrate TilesetGrass as a local prototype terrain pass
 - [x] Generate a tile index contact sheet for TilesetGrass
@@ -63,8 +70,8 @@
 - [x] `/projects` route exists
 - [x] Projects are content-driven
 - [x] Projects are presented as reusable cards
-- [ ] Add more project entries
-- [ ] Add case-study depth for selected projects
+- [x] Case studies: problem → what I did → result, with live links
+- [ ] Screenshots for tldw.cloud and Zapros
 
 ## Mobile
 
@@ -76,14 +83,15 @@
 
 ## SEO
 
-- [ ] Add Open Graph metadata
-- [ ] Add Twitter card metadata
-- [ ] Add canonical URLs
-- [ ] Add structured data for person/profile
+- [x] Add Open Graph metadata (1200×630 `og.png`)
+- [x] Add Twitter card metadata
+- [x] Add canonical URLs (slash-free, `build.format: 'file'`)
+- [x] Add structured data for person/profile
+- [x] `robots.txt` and `sitemap.xml`
 
 ## Deployment
 
-- [ ] Set deployment environment for `somchai.dev`
+- [ ] Set deployment environment for `somchai.dev` (ovhvps origin behind the Vultr edge)
 - [ ] Verify static hosting configuration
 - [ ] Verify build output on target infrastructure
 - [ ] Set up preview/staging deploy flow
@@ -98,3 +106,4 @@
 - [ ] Add audio and ambient effects
 - [ ] Evaluate Three.js only if 3D value is proven
 - [ ] Add mobile controls only after the desktop prototype is already useful
+- [ ] References NPC (parked until referees are confirmed)
