@@ -82,6 +82,7 @@ function emitEvent<T>(name: string, detail?: T) {
 export class BackendOdysseyScene extends Phaser.Scene {
   private readonly bootConfig: BootConfig;
   private locations: GameLocation[] = [];
+  private labelContainers: Phaser.GameObjects.Container[] = [];
   private player!: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
   private playerShadow?: Phaser.GameObjects.Ellipse;
   private keys!: KeyboardBundle;
@@ -166,7 +167,10 @@ export class BackendOdysseyScene extends Phaser.Scene {
     // Zoom out a step on narrow screens so phones see more than one building; further out the labels become unreadable.
     const fitZoom = () => {
       const width = this.scale.width;
-      this.cameras.main.setZoom(width < 1000 ? 0.75 : 1);
+      const zoom = width < 1000 ? 0.75 : 1;
+      this.cameras.main.setZoom(zoom);
+      // Phones: enlarge building labels so they read at ~15px on screen despite the zoom-out.
+      this.labelContainers.forEach((label) => label.setScale(zoom < 1 ? 1.7 : 1));
     };
     fitZoom();
     this.scale.on(Phaser.Scale.Events.RESIZE, fitZoom);
@@ -638,13 +642,8 @@ export class BackendOdysseyScene extends Phaser.Scene {
       container.add(visuals);
       const mapSubtitle = this.getMapSubtitle(location);
       const labelY = Math.max(location.labelOffsetY, location.footprintHeight / 2 + 18);
-      const labelWidth = mapSubtitle ? 200 : 150;
       const labelHeight = mapSubtitle ? 40 : 24;
       const labelBackground = this.add.graphics();
-      labelBackground.fillStyle(LABEL_BACKGROUND_COLOR, 0.88);
-      labelBackground.fillRoundedRect(-labelWidth / 2, -labelHeight / 2, labelWidth, labelHeight, 8);
-      labelBackground.lineStyle(1, LABEL_BORDER_COLOR, 0.85);
-      labelBackground.strokeRoundedRect(-labelWidth / 2, -labelHeight / 2, labelWidth, labelHeight, 8);
 
       const labelTitle = this.add
         .text(0, mapSubtitle ? -10 : -5, location.displayName, {
@@ -654,6 +653,7 @@ export class BackendOdysseyScene extends Phaser.Scene {
           align: 'center',
         })
         .setOrigin(0.5, 0.5)
+        .setResolution(3)
         .setStroke('#263b22', 4)
         .setShadow(0, 1, '#172414', 4, true, true);
 
@@ -665,10 +665,19 @@ export class BackendOdysseyScene extends Phaser.Scene {
           align: 'center',
         })
         .setOrigin(0.5, 0.5)
+        .setResolution(3)
         .setVisible(Boolean(mapSubtitle));
+
+      // Hug the text so labels stay compact when enlarged on phones.
+      const labelWidth = Math.ceil(Math.max(labelTitle.width, labelSubtitle.width)) + 28;
+      labelBackground.fillStyle(LABEL_BACKGROUND_COLOR, 0.88);
+      labelBackground.fillRoundedRect(-labelWidth / 2, -labelHeight / 2, labelWidth, labelHeight, 8);
+      labelBackground.lineStyle(1, LABEL_BORDER_COLOR, 0.85);
+      labelBackground.strokeRoundedRect(-labelWidth / 2, -labelHeight / 2, labelWidth, labelHeight, 8);
 
       labelContainer.setPosition(location.worldX + location.labelOffsetX, location.worldY + labelY);
       labelContainer.add([labelBackground, labelTitle, labelSubtitle]);
+      this.labelContainers.push(labelContainer);
 
       const zone = this.add.zone(location.worldX, location.worldY, location.footprintWidth, location.footprintHeight).setInteractive({
         useHandCursor: true,
