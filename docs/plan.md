@@ -49,10 +49,12 @@ Current state: Phaser town renders with TilesetGrass terrain, Adventurer hero wa
 - [x] Walking to a clicked building no longer stops at every building on the way.
 - [ ] Panel per case: result first, link, screenshot.
 - [x] Mobile `/play` fallback: expandable places with the same content as the game panels.
+- [x] `/play` on phones: tap to walk, bottom-sheet panel; list one tap away.
+- [x] Day/Night theme toggle on the static pages (Night by default).
 
 Parked: a "References" NPC once referees are confirmed (so far only the current CEO).
 
-Out of scope for launch: sound, WASD, pathfinding, Tiled pipeline, new art packs, mobile controls, 3D.
+Out of scope for launch: sound, WASD, pathfinding, Tiled pipeline, new art packs, joystick, 3D.
 
 ## Phase 3 — Homepage, contact, SEO
 

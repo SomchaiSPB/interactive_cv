@@ -83,6 +83,8 @@
 - [x] Content order remains consistent on mobile
 - [x] Game mode is best on desktop with a readable mobile fallback
 - [x] Mobile `/play` list: each place expands to its summary, results, screenshot and links
+- [x] `/play` playable on phones: tap to walk, zoomed camera, bottom-sheet panel, List button for the fallback
+- [x] Light/dark theme toggle (dark by default, choice remembered)
 - [ ] Add touch-specific controls only if explicitly requested
 
 ## SEO
@@ -109,5 +111,5 @@
 - [ ] Convert or author the final tile map after the TilesetGrass license gate is cleared
 - [ ] Add audio and ambient effects
 - [ ] Evaluate Three.js only if 3D value is proven
-- [ ] Add mobile controls only after the desktop prototype is already useful
+- [x] Add mobile controls only after the desktop prototype is already useful (tap to walk)
 - [ ] References NPC (parked until referees are confirmed)

@@ -8,9 +8,14 @@ export default {
         panel: '#0d1423',
         panel2: '#111b2e',
         line: 'rgba(129, 140, 248, 0.18)',
-        neon: '#7cf7d4',
+        // Theme-aware colours: channels live in global.css and flip under [data-theme='light'].
+        white: 'rgb(var(--c-white) / <alpha-value>)',
+        slate: Object.fromEntries(
+          [100, 200, 300, 400, 500, 900, 950].map((shade) => [shade, `rgb(var(--c-slate-${shade}) / <alpha-value>)`]),
+        ),
+        neon: 'rgb(var(--c-neon) / <alpha-value>)',
         neon2: '#69a7ff',
-        accent: '#f6b74c',
+        accent: 'rgb(var(--c-accent) / <alpha-value>)',
         text: '#dbe7ff',
         muted: '#8ea1c7',
       },

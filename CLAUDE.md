@@ -24,9 +24,11 @@ Static Astro site (React + Tailwind islands) selling private development service
 - `src/game/BackendOdysseyScene.ts` is the Phaser scene (click-to-move hero, proximity-triggered locations).
 
 **React ↔ Phaser bridge**
-- `src/components/game/GameShell.tsx` (mounted `client:load` in `src/pages/play.astro`) owns UI state, nav, and `CheckpointPanel`; below 768px it renders the readable mobile fallback instead of the game.
+- `src/components/game/GameShell.tsx` (mounted `client:load` in `src/pages/play.astro`) owns UI state, nav, and `CheckpointPanel`; a "List" button swaps the game for the readable list fallback. On phones the camera zooms to 0.75 and the panel becomes a bottom sheet.
 - `src/components/game/PhaserGame.tsx` lazy-imports `phaser` and the scene (keeps Phaser out of SSR) and owns the `Phaser.Game` lifecycle.
 - Scene and React communicate only via `window` `CustomEvent`s named in `src/game/types.ts` (`odyssey:ready`, `odyssey:nearest`, `odyssey:open`, `odyssey:close`). Add new interactions as new events there rather than coupling the scene to React.
+
+**Theme**: dark by default; `Layout.astro` sets `html[data-theme='light']` from `localStorage.theme`. Tailwind `white`/`slate`/`neon`/`accent` read RGB channels from CSS variables that flip under `.themed` (all pages except `/play`), so dark-first classes like `text-white` stay correct in light mode.
 
 ## Docs
 

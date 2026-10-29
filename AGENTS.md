@@ -30,8 +30,8 @@ This file defines the working rules for AI coding agents in this repository.
    - It must not become childish, toy-like, or novelty-first.
 
 7. Preserve the mobile fallback.
-   - Mobile users must see a readable vertical timeline.
-   - Do not remove or break the simplified mobile experience.
+   - `/play` is playable by tap on phones; the readable list stays one tap away ("List" in the HUD).
+   - Do not remove or break the list view.
 
 8. Keep operational artifacts in the repo-local artifact area.
    - Write worklogs to `.ai-artifacts/worklogs/`.
@@ -46,7 +46,8 @@ This file defines the working rules for AI coding agents in this repository.
 - Astro pages: `/` (static landing), `/play` (game), `/cv`, `/projects`, `/contact`
 - `/play` game layer: `src/components/game/GameShell.tsx`, `src/components/game/PhaserGame.tsx`, `src/game/BackendOdysseyScene.ts`
 - Checkpoint details: `src/components/CheckpointPanel.tsx`
-- Mobile fallback: `src/components/Timeline.astro`
+- `/play` list fallback: `GameShell.tsx` (`listView`)
+- Colour theme: dark by default, light via `[data-theme='light']` (`src/styles/global.css`, `tailwind.config.mjs`); `/play` keeps its own palette
 - Static content source: `src/content/*.ts`
 
 ## Product Direction
@@ -57,7 +58,7 @@ This file defines the working rules for AI coding agents in this repository.
 - `/cv`, `/projects`, and `/contact` remain classic readable static pages.
 - Do not present AI as a selling point.
 - Keep the content model separate from UI and game code.
-- Preserve the mobile fallback; do not replace it with joystick controls unless explicitly requested.
+- Phones use tap-to-walk (same as click); no joystick unless explicitly requested.
 - The quest prototype should use click-to-move, inspectable buildings/NPCs, and a town-style map.
 - Reject any return to space/cockpit metaphors, planet maps, or 3D-style direction unless explicitly requested later.
 - 3D / Three.js remains deferred unless the user explicitly asks for it.

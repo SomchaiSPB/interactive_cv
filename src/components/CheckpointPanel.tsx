@@ -18,7 +18,7 @@ export function CheckpointPanel({ checkpoint, variant = 'default' }: Props) {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: 24 }}
           transition={{ duration: 0.2 }}
-          className={`${isHud ? 'h-full max-h-[calc(100vh-10rem)] overflow-y-auto rounded-3xl border border-amber-100/10 bg-[#273522]/95 p-4 shadow-inner sm:p-5' : 'panel-surface h-full rounded-3xl p-6'}`}
+          className={`${isHud ? 'h-full max-h-[45dvh] overflow-y-auto md:max-h-[calc(100dvh-10rem)] rounded-3xl border border-amber-100/10 bg-[#273522]/95 p-4 shadow-inner sm:p-5' : 'panel-surface h-full rounded-3xl p-6'}`}
         >
           <div className={isHud ? 'space-y-3' : 'space-y-4'}>
             <div className="flex flex-wrap items-start justify-between gap-3">

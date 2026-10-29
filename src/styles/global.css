@@ -15,6 +15,83 @@
   --neon: #7cf7d4;
   --neon2: #69a7ff;
   --accent: #f6b74c;
+  /* RGB channels behind the Tailwind white/slate/neon/accent colours (see tailwind.config.mjs). */
+  --c-white: 255 255 255;
+  --c-slate-100: 241 245 249;
+  --c-slate-200: 226 232 240;
+  --c-slate-300: 203 213 225;
+  --c-slate-400: 148 163 184;
+  --c-slate-500: 100 116 139;
+  --c-slate-900: 15 23 42;
+  --c-slate-950: 2 6 23;
+  --c-neon: 124 247 212;
+  --c-accent: 246 183 76;
+}
+
+/* Light theme: the slate scale flips, so dark-first markup reads correctly on a light page.
+   Scoped to .themed so the game (/play) keeps its own palette. */
+html[data-theme='light'] {
+  color-scheme: light;
+  background: #f4f1e8;
+}
+
+html[data-theme='light'] body {
+  background: #f4f1e8;
+}
+
+html[data-theme='light'] .themed {
+  --text: #1e293b;
+  --neon: #0f766e;
+  --accent: #f6b74c;
+  --c-white: 15 23 42;
+  --c-slate-100: 30 41 59;
+  --c-slate-200: 30 41 59;
+  --c-slate-300: 51 65 85;
+  --c-slate-400: 71 85 105;
+  --c-slate-500: 100 116 139;
+  --c-slate-900: 241 245 249;
+  --c-slate-950: 250 248 242;
+  --c-neon: 15 118 110;
+  --c-accent: 180 83 9;
+  color: var(--text);
+  background:
+    linear-gradient(rgba(15, 23, 42, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.04) 1px, transparent 1px),
+    #f4f1e8;
+  background-size: 100% 32px, 32px 100%, auto;
+}
+
+html[data-theme='light'] .themed::before {
+  display: none;
+}
+
+html[data-theme='light'] .themed .panel-surface {
+  background: #fffdf8;
+  border-color: rgba(15, 23, 42, 0.12);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+html[data-theme='light'] .themed .crt::after {
+  background: repeating-linear-gradient(180deg, rgba(15, 23, 42, 0.04) 0 1px, transparent 1px 3px);
+}
+
+html[data-theme='light'] .themed .title-logo {
+  text-shadow:
+    4px 4px 0 #99e2d0,
+    8px 8px 0 rgba(15, 23, 42, 0.12);
+}
+
+html[data-theme='light'] .themed .pixel-border {
+  box-shadow: 0 0 0 1px rgba(15, 118, 110, 0.4), 0 0 0 4px rgba(15, 23, 42, 0.06);
+}
+
+.theme-toggle .icon-light,
+html[data-theme='light'] .theme-toggle .icon-dark {
+  display: none;
+}
+
+html[data-theme='light'] .theme-toggle .icon-light {
+  display: inline;
 }
 
 html {

@@ -163,6 +163,13 @@ export class BackendOdysseyScene extends Phaser.Scene {
     const cameraOffsetY = 110;
     this.cameras.main.centerOn(this.player.x, this.player.y - cameraOffsetY);
     this.cameras.main.startFollow(this.player, true, 0.08, 0.08, 0, cameraOffsetY);
+    // Zoom out a step on narrow screens so phones see more than one building; further out the labels become unreadable.
+    const fitZoom = () => {
+      const width = this.scale.width;
+      this.cameras.main.setZoom(width < 1000 ? 0.75 : 1);
+    };
+    fitZoom();
+    this.scale.on(Phaser.Scale.Events.RESIZE, fitZoom);
 
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer, currentlyOver: Phaser.GameObjects.GameObject[]) => {
       if (currentlyOver.length > 0) {

@@ -71,9 +71,15 @@ const navItems = [
     <meta name="twitter:image" content={ogImageUrl} />
 
     <script type="application/ld+json" set:html={personJsonLd} />
+    <script is:inline>
+      // Dark by default; a saved choice wins. Runs before paint to avoid a flash.
+      try {
+        if (localStorage.getItem('theme') === 'light') document.documentElement.dataset.theme = 'light';
+      } catch {}
+    </script>
   </head>
   <body>
-    <div class="page-shell min-h-screen">
+    <div class:list={['page-shell min-h-screen', !isGame && 'themed']}>
       {!isGame ? (
         <header class="sticky top-0 z-40 border-b border-white/5 bg-slate-950/75 backdrop-blur-xl">
           <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
@@ -86,6 +92,7 @@ const navItems = [
                 <span class="block text-xs uppercase tracking-[0.28em] text-slate-400">Software engineer for hire</span>
               </span>
             </a>
+            <div class="flex items-center gap-2">
             <nav class="hidden items-center gap-2 md:flex">
               {navItems.map((item) => (
                 <a
@@ -101,6 +108,16 @@ const navItems = [
                 </a>
               ))}
             </nav>
+            <button
+              type="button"
+              class="theme-toggle whitespace-nowrap rounded-full border border-white/10 px-4 py-2 text-sm text-slate-300 transition hover:border-neon/30 hover:text-white"
+              aria-label="Switch colour theme"
+              title="Switch colour theme"
+            >
+              <span class="icon-dark">☀ Day</span>
+              <span class="icon-light">☾ Night</span>
+            </button>
+            </div>
           </div>
         </header>
       ) : null}
@@ -116,5 +133,16 @@ const navItems = [
         </footer>
       ) : null}
     </div>
+    <script is:inline>
+      document.querySelector('.theme-toggle')?.addEventListener('click', () => {
+        const root = document.documentElement;
+        const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+        if (next === 'light') root.dataset.theme = 'light';
+        else delete root.dataset.theme;
+        try {
+          localStorage.setItem('theme', next);
+        } catch {}
+      });
+    </script>
   </body>
 </html>
