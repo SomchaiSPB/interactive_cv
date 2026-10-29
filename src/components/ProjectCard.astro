@@ -11,7 +11,7 @@ const { project } = Astro.props satisfies Props;
 <article class="panel-surface flex h-full flex-col overflow-hidden rounded-3xl">
   {project.image && (
     <a href={project.links?.[0]?.href ?? project.image.src} target="_blank" rel="noreferrer" class="block border-b border-white/10 bg-black/30">
-      <img src={project.image.src} alt={project.image.alt} width="1600" height="1000" loading="lazy" decoding="async" class="aspect-[16/10] w-full object-cover object-top" />
+      <img src={project.image.src} alt={project.image.alt} loading="lazy" decoding="async" class="aspect-[16/10] w-full object-cover object-top" />
     </a>
   )}
   <div class="flex flex-1 flex-col p-6">

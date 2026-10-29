@@ -42,10 +42,8 @@ export function CheckpointPanel({ checkpoint, variant = 'default' }: Props) {
               <img
                 src={checkpoint.image.src}
                 alt={checkpoint.image.alt}
-                width={1600}
-                height={1000}
                 loading="lazy"
-                className="aspect-[16/10] w-full rounded-2xl border border-white/10 object-cover object-top"
+                className="h-auto w-full rounded-2xl border border-white/10"
               />
             ) : null}
 

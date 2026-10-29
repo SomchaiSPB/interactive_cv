@@ -51,7 +51,7 @@ export const checkpoints: Checkpoint[] = [
     side: 'left',
     position: { x: 40, y: 25 },
     links: [{ label: 'tldw.cloud', href: 'https://tldw.cloud', external: true }],
-    image: { src: '/work/tldw.webp', alt: 'tldw.cloud conversation: video chapters, an answer with timestamped citations, and the transcript' },
+    image: { src: '/work/tldw-proof.webp', alt: 'tldw.cloud evidence view: a cited answer opens the exact video moment with its quote' },
     pathOrder: 3,
   },
   {
