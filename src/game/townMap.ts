@@ -1,6 +1,6 @@
 export const TILE_SIZE = 32;
 
-export const PLAYER_SPAWN = { x: 1200, y: 1030 } as const;
+export const PLAYER_SPAWN = { x: 1200, y: 1040 } as const;
 
 export type MapPoint = { x: number; y: number };
 
@@ -14,19 +14,6 @@ type District = {
   borderColor: number;
 };
 
-type PathRoute = {
-  from: string;
-  to: string;
-  via?: MapPoint[];
-  width?: number;
-};
-
-type NpcMarker = MapPoint & {
-  id: string;
-  name: string;
-  role: string;
-};
-
 export const TOWN_DISTRICTS: District[] = [
   { x: 128, y: 224, width: 640, height: 704, baseColor: 0x4f8a49, alternateColor: 0x5a9852, borderColor: 0x3e743d },
   { x: 704, y: 192, width: 448, height: 448, baseColor: 0x738b45, alternateColor: 0x81984e, borderColor: 0x64783e },
@@ -36,25 +23,6 @@ export const TOWN_DISTRICTS: District[] = [
   { x: 640, y: 1024, width: 640, height: 448, baseColor: 0x597455, alternateColor: 0x647f5e, borderColor: 0x4b6749 },
   { x: 96, y: 1088, width: 672, height: 416, baseColor: 0x579052, alternateColor: 0x639c5b, borderColor: 0x487d47 },
   { x: 1632, y: 960, width: 672, height: 544, baseColor: 0x708650, alternateColor: 0x7b9258, borderColor: 0x607647 },
-];
-
-export const TOWN_PATHS: PathRoute[] = [
-  { from: 'spawn-point', to: 'legacy-forest', via: [{ x: 910, y: 780 }, { x: 760, y: 690 }] },
-  { from: 'spawn-point', to: 'backend-forge', via: [{ x: 1060, y: 720 }, { x: 960, y: 560 }] },
-  { from: 'spawn-point', to: 'data-citadel', via: [{ x: 1200, y: 560 }] },
-  { from: 'spawn-point', to: 'integration-swamp', via: [{ x: 1450, y: 810 }] },
-  { from: 'spawn-point', to: 'production-black-hole', via: [{ x: 1100, y: 1010 }, { x: 990, y: 1100 }] },
-  { from: 'spawn-point', to: 'leadership-tower', via: [{ x: 1390, y: 690 }, { x: 1480, y: 540 }] },
-  { from: 'integration-swamp', to: 'product-launch-gate', via: [{ x: 1810, y: 850 }, { x: 1890, y: 950 }] },
-  { from: 'product-launch-gate', to: 'contact-portal', via: [{ x: 2100, y: 1120 }] },
-  { from: 'backend-forge', to: 'ai-workshop', via: [{ x: 930, y: 340 }], width: 22 },
-  { from: 'backend-forge', to: 'webrtc-signal-tower', via: [{ x: 600, y: 450 }], width: 22 },
-  { from: 'data-citadel', to: 'video-observatory', via: [{ x: 1160, y: 400 }], width: 22 },
-  { from: 'data-citadel', to: 'report-lab', via: [{ x: 1320, y: 350 }], width: 22 },
-  { from: 'leadership-tower', to: 'policy-temple', via: [{ x: 1690, y: 410 }], width: 22 },
-  { from: 'integration-swamp', to: 'xml-foundry', via: [{ x: 1740, y: 850 }], width: 22 },
-  { from: 'integration-swamp', to: 'calendar-gate', via: [{ x: 1900, y: 780 }], width: 22 },
-  { from: 'spawn-point', to: 'education-trail', via: [{ x: 880, y: 1030 }, { x: 680, y: 1160 }], width: 22 },
 ];
 
 export const TREE_POSITIONS: MapPoint[] = [
@@ -79,8 +47,4 @@ export const ROCK_POSITIONS: MapPoint[] = [
 export const FLOWER_POSITIONS: MapPoint[] = [
   { x: 720, y: 760 }, { x: 760, y: 790 }, { x: 1510, y: 740 }, { x: 1550, y: 780 },
   { x: 430, y: 1180 }, { x: 470, y: 1150 }, { x: 1870, y: 1160 }, { x: 1910, y: 1190 },
-];
-
-export const NPC_MARKERS: NpcMarker[] = [
-  { id: 'reference-keeper', name: 'Reference Keeper', role: 'Future Reference Tavern', x: 1480, y: 930 },
 ];

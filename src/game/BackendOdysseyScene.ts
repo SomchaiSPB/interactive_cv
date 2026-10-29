@@ -4,12 +4,10 @@ import { GAME_WORLD } from './locationMapper';
 import {
   BUSH_POSITIONS,
   FLOWER_POSITIONS,
-  NPC_MARKERS,
   PLAYER_SPAWN,
   ROCK_POSITIONS,
   TILE_SIZE,
   TOWN_DISTRICTS,
-  TOWN_PATHS,
   TREE_POSITIONS,
   type MapPoint,
 } from './townMap';
@@ -21,12 +19,12 @@ import {
 } from './types';
 import { generateAllTextures, getBuildingTextureKey } from './spriteDefs';
 import {
-  ADVENTURER_IDLE_DEFAULT_KEY,
-  ADVENTURER_STABLE_FRAME_INDEX,
-  ADVENTURER_TEXTURE_BY_FACING,
-  hasAdventurerSprites,
+  ADVENTURER_FEET_ORIGIN_Y,
+  adventurerKey,
+  createAdventurerAnimations,
   preloadAdventurerSprites,
   type AdventurerFacing,
+  type AdventurerMotion,
 } from './adventurerAssets';
 import {
   createTileSurface,
@@ -34,6 +32,7 @@ import {
   drawTileObject,
   TILESET_GRASS_KEY,
   TILESET_GRASS_OBJECTS,
+  type TileObjectDefinition,
   TILESET_GRASS_PATH,
   TILESET_GRASS_TERRAIN_SCALE,
   TILESET_GRASS_TILES,
@@ -49,16 +48,11 @@ type KeyboardBundle = {
   ESC?: Phaser.Input.Keyboard.Key;
 };
 
-type LocationNode = {
-  location: GameLocation;
-  halo: Phaser.GameObjects.Ellipse;
-  zone: Phaser.GameObjects.Zone;
-};
-
-type RoadSegment = {
-  start: MapPoint;
-  end: MapPoint;
-  clearance: number;
+// Location kinds drawn from TilesetGrass objects instead of generated pixel sprites.
+const TILESET_BUILDINGS: Partial<Record<GameLocation['kind'], TileObjectDefinition>> = {
+  library: TILESET_GRASS_OBJECTS.oldLibraryCompound,
+  market: TILESET_GRASS_OBJECTS.integrationMarketStalls,
+  hall: TILESET_GRASS_OBJECTS.commandHallFort,
 };
 
 const PROXIMITY_EXIT_BUFFER = 36;
@@ -72,7 +66,8 @@ const FALLBACK_HERO_SHADOW_OFFSET_X = 4;
 const FALLBACK_HERO_SHADOW_OFFSET_Y = -6;
 const FALLBACK_HERO_SHADOW_WIDTH = 18;
 const FALLBACK_HERO_SHADOW_HEIGHT = 6;
-const DEBUG_PLAYER_VISUALS = false;
+const HERO_SPEED = 210;
+const ARRIVAL_DISTANCE = 6;
 
 function emitEvent<T>(name: string, detail?: T) {
   if (typeof window === 'undefined') {
@@ -85,7 +80,6 @@ function emitEvent<T>(name: string, detail?: T) {
 export class BackendOdysseyScene extends Phaser.Scene {
   private readonly bootConfig: BootConfig;
   private locations: GameLocation[] = [];
-  private nodes = new Map<string, LocationNode>();
   private player!: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
   private playerShadow?: Phaser.GameObjects.Ellipse;
   private keys!: KeyboardBundle;
@@ -93,11 +87,10 @@ export class BackendOdysseyScene extends Phaser.Scene {
   private nearestInteractable = false;
   private activeProximityLocationId: string | null = null;
   private currentTarget: Phaser.Math.Vector2 | null = null;
-  private heroSpeed = 210;
-  private roadSegments: RoadSegment[] = [];
+  // Set when the player clicked a building: walk past other locations without stopping.
+  private targetLocationId: string | null = null;
   private heroFacing: AdventurerFacing = 'down';
   private usesAdventurerSprite = false;
-  private heroTextureKey = ADVENTURER_IDLE_DEFAULT_KEY;
 
   constructor(config: BootConfig) {
     super('BackendOdysseyScene');
@@ -112,7 +105,6 @@ export class BackendOdysseyScene extends Phaser.Scene {
 
   create() {
     this.locations = this.bootConfig.locations;
-    this.roadSegments = this.buildRoadSegments();
 
     this.cameras.main.setBackgroundColor('#4f8f49');
     this.cameras.main.setBounds(0, 0, GAME_WORLD.width, GAME_WORLD.height);
@@ -125,27 +117,23 @@ export class BackendOdysseyScene extends Phaser.Scene {
       this.drawFallbackTerrain();
     }
 
-    this.drawPaths();
-
     if (!this.textures.exists(TILESET_GRASS_KEY)) {
       this.drawFoliage();
       this.drawTownDetails();
     }
     this.drawTownSquare();
     this.drawLocations();
-    this.drawNpcMarkers();
     this.drawLanterns();
 
-    this.usesAdventurerSprite = hasAdventurerSprites(this);
+    this.usesAdventurerSprite = createAdventurerAnimations(this);
     if (this.usesAdventurerSprite) {
-      this.player = this.physics.add.sprite(PLAYER_SPAWN.x, PLAYER_SPAWN.y, ADVENTURER_IDLE_DEFAULT_KEY);
-      this.player.setOrigin(0.5, 1);
-      // The Adventurer strips are 64x80, and frame 3 is a centered stable pose in the source pack.
-      // Slightly increasing the scale keeps the player readable without changing the map layout.
-      this.player.setScale(0.88);
-      this.player.body.setSize(18, 20, true);
-      this.player.body.setOffset(23, 40);
-      this.player.setFrame(ADVENTURER_STABLE_FRAME_INDEX);
+      const idleKey = adventurerKey('idle', this.heroFacing);
+      this.player = this.physics.add.sprite(PLAYER_SPAWN.x, PLAYER_SPAWN.y, idleKey);
+      // Origin at the feet so depth sorting and proximity checks use where the hero stands.
+      this.player.setOrigin(0.5, ADVENTURER_FEET_ORIGIN_Y);
+      this.player.body.setSize(18, 12);
+      this.player.body.setOffset(37, 46);
+      this.player.play(idleKey);
     } else {
       console.warn('[BackendOdysseyScene] Adventurer sprite assets are unavailable; using the generated hero fallback.');
       this.player = this.physics.add.sprite(PLAYER_SPAWN.x, PLAYER_SPAWN.y, 'odyssey-hero');
@@ -155,8 +143,6 @@ export class BackendOdysseyScene extends Phaser.Scene {
     this.player.setDepth(PLAYER_SPAWN.y);
     this.player.setCollideWorldBounds(true);
     this.player.setDrag(0, 0);
-    // The Adventurer is small and readable without a contact shadow. Previous offsets looked misaligned,
-    // so its shadow remains disabled until a proper sprite and lighting pass.
     if (!this.usesAdventurerSprite) {
       this.playerShadow = this.add
         .ellipse(
@@ -170,12 +156,11 @@ export class BackendOdysseyScene extends Phaser.Scene {
         .setDepth(PLAYER_SPAWN.y - 1);
     }
 
-    this.currentTarget = new Phaser.Math.Vector2(this.player.x, this.player.y);
-
     this.keys = (this.input.keyboard?.addKeys('E,ESC') as KeyboardBundle | undefined) ?? {};
-    this.cameras.main.centerOn(this.player.x, this.player.y);
-    this.cameras.main.startFollow(this.player, true, 0.08, 0.08);
-    this.cameras.main.setZoom(0.98);
+    // Keep the hero below centre so the whole town (top buildings included) fits the first screen.
+    const cameraOffsetY = 110;
+    this.cameras.main.centerOn(this.player.x, this.player.y - cameraOffsetY);
+    this.cameras.main.startFollow(this.player, true, 0.08, 0.08, 0, cameraOffsetY);
 
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer, currentlyOver: Phaser.GameObjects.GameObject[]) => {
       if (currentlyOver.length > 0) {
@@ -200,28 +185,17 @@ export class BackendOdysseyScene extends Phaser.Scene {
       const dx = target.x - this.player.x;
       const dy = target.y - this.player.y;
       const distance = Math.hypot(dx, dy);
+      const step = (HERO_SPEED * delta) / 1000;
 
-      if (distance <= 6) {
-        this.player.setVelocity(0, 0);
-        this.currentTarget = null;
+      if (distance <= Math.max(ARRIVAL_DISTANCE, step)) {
+        this.stopHero();
       } else {
-        const step = (this.heroSpeed * delta) / 1000;
-        const speedX = (dx / distance) * this.heroSpeed;
-        const speedY = (dy / distance) * this.heroSpeed;
-        this.player.setVelocity(speedX, speedY);
+        this.player.setVelocity((dx / distance) * HERO_SPEED, (dy / distance) * HERO_SPEED);
         this.updateHeroFacing(dx, dy);
-
-        if (distance < step) {
-          this.player.setPosition(target.x, target.y);
-          this.player.setVelocity(0, 0);
-          this.currentTarget = null;
-        }
+        this.playHeroAnimation('run');
       }
-    } else {
-      this.player.setVelocity(0, 0);
     }
 
-    this.player.setPosition(Math.round(this.player.x), Math.round(this.player.y));
     this.player.setDepth(this.player.y);
     this.playerShadow
       ?.setPosition(
@@ -258,11 +232,25 @@ export class BackendOdysseyScene extends Phaser.Scene {
     }
   }
 
-  private setMoveTarget(worldX: number, worldY: number) {
+  private setMoveTarget(worldX: number, worldY: number, locationId: string | null = null) {
+    this.targetLocationId = locationId;
     this.currentTarget = new Phaser.Math.Vector2(
       Phaser.Math.Clamp(worldX, 0, GAME_WORLD.width),
       Phaser.Math.Clamp(worldY, 0, GAME_WORLD.height),
     );
+  }
+
+  private stopHero() {
+    this.player.setVelocity(0, 0);
+    this.currentTarget = null;
+    this.targetLocationId = null;
+    this.playHeroAnimation('idle');
+  }
+
+  private playHeroAnimation(motion: AdventurerMotion) {
+    if (this.usesAdventurerSprite) {
+      this.player.play(adventurerKey(motion, this.heroFacing), true);
+    }
   }
 
   private updateHeroFacing(velocityX: number, velocityY: number) {
@@ -275,22 +263,6 @@ export class BackendOdysseyScene extends Phaser.Scene {
     } else if (absY >= absX * axisBias) {
       this.heroFacing = velocityY >= 0 ? 'down' : 'up';
     }
-    this.applyHeroFacingTexture();
-  }
-
-  private applyHeroFacingTexture() {
-    if (!this.usesAdventurerSprite) {
-      return;
-    }
-
-    const nextTextureKey = ADVENTURER_TEXTURE_BY_FACING[this.heroFacing];
-    if (this.heroTextureKey === nextTextureKey) {
-      return;
-    }
-
-    this.heroTextureKey = nextTextureKey;
-    this.player.setTexture(nextTextureKey);
-    this.player.setFrame(ADVENTURER_STABLE_FRAME_INDEX);
   }
 
   private openCheckpoint(location: GameLocation) {
@@ -298,6 +270,11 @@ export class BackendOdysseyScene extends Phaser.Scene {
   }
 
   private updateProximityInteraction(nearest: { location: GameLocation; distance: number } | null) {
+    // While walking to a clicked building, ignore the ones passed on the way.
+    if (nearest && this.targetLocationId && nearest.location.id !== this.targetLocationId) {
+      nearest = null;
+    }
+
     if (this.activeProximityLocationId) {
       const activeLocation = this.locations.find((location) => location.id === this.activeProximityLocationId);
       if (!activeLocation) {
@@ -311,8 +288,7 @@ export class BackendOdysseyScene extends Phaser.Scene {
         );
         if (reachedDifferentLocation && nearest) {
           this.activeProximityLocationId = nearest.location.id;
-          this.player.setVelocity(0, 0);
-          this.currentTarget = null;
+          this.stopHero();
           this.openCheckpoint(nearest.location);
           return;
         }
@@ -336,8 +312,7 @@ export class BackendOdysseyScene extends Phaser.Scene {
       nearest.distance <= nearest.location.interactionRadius
     ) {
       this.activeProximityLocationId = nearest.location.id;
-      this.player.setVelocity(0, 0);
-      this.currentTarget = null;
+      this.stopHero();
       this.openCheckpoint(nearest.location);
     }
   }
@@ -409,26 +384,10 @@ export class BackendOdysseyScene extends Phaser.Scene {
       }
     }
 
-    this.drawPrototypePlaza(painter);
     this.drawPrototypeFoliage(painter);
 
     painter.refresh();
     this.add.image(0, 0, textureKey).setOrigin(0).setDepth(-60);
-  }
-
-  private drawPrototypePlaza(surface: ReturnType<typeof createTileSurface>) {
-    const square = this.locations.find((location) => location.id === 'spawn-point');
-    if (!square) {
-      return;
-    }
-
-    drawTileObject(
-      surface,
-      TILESET_GRASS_OBJECTS.townSquarePlaza,
-      square.worldX,
-      square.worldY,
-      4,
-    );
   }
 
   private getMapSubtitle(location: GameLocation) {
@@ -517,50 +476,6 @@ export class BackendOdysseyScene extends Phaser.Scene {
     }
   }
 
-  private drawPaths() {
-    const paths = this.add.graphics().setDepth(1);
-    for (const route of TOWN_PATHS) {
-      const from = this.locations.find((location) => location.id === route.from);
-      const to = this.locations.find((location) => location.id === route.to);
-      if (!from || !to) {
-        continue;
-      }
-
-      const points: MapPoint[] = [
-        { x: from.worldX, y: from.worldY },
-        ...(route.via ?? []),
-        { x: to.worldX, y: to.worldY },
-      ];
-      this.drawPath(paths, points, route.width ?? 36);
-    }
-  }
-
-  private drawPath(graphics: Phaser.GameObjects.Graphics, points: MapPoint[], width: number) {
-    if (points.length < 2) {
-      return;
-    }
-
-    this.strokePath(graphics, points, width + 8, 0x765332, 0.66);
-    this.strokePath(graphics, points, width, 0xb58a50, 1);
-    this.strokePath(graphics, points, 2, 0xe0bd7a, 0.34);
-  }
-
-  private strokePath(
-    graphics: Phaser.GameObjects.Graphics,
-    points: MapPoint[],
-    width: number,
-    color: number,
-    alpha: number,
-  ) {
-    graphics.lineStyle(width, color, alpha);
-    graphics.beginPath();
-    graphics.moveTo(points[0].x, points[0].y);
-    for (const point of points.slice(1)) {
-      graphics.lineTo(point.x, point.y);
-    }
-    graphics.strokePath();
-  }
-
   private drawTownSquare() {
     const square = this.locations.find((location) => location.id === 'spawn-point');
     if (!square) {
@@ -646,10 +561,6 @@ export class BackendOdysseyScene extends Phaser.Scene {
   }
 
   private isDecorationClear(position: MapPoint, margin: number) {
-    if (!this.isClearOfRoads(position, margin)) {
-      return false;
-    }
-
     return this.locations.every((location) => {
       const halfWidth = location.footprintWidth / 2 + margin;
       const halfHeight = location.footprintHeight / 2 + margin;
@@ -669,87 +580,17 @@ export class BackendOdysseyScene extends Phaser.Scene {
     });
   }
 
-  private buildRoadSegments() {
-    const segments: RoadSegment[] = [];
-
-    for (const route of TOWN_PATHS) {
-      const from = this.locations.find((location) => location.id === route.from);
-      const to = this.locations.find((location) => location.id === route.to);
-      if (!from || !to) {
-        continue;
-      }
-
-      const points: MapPoint[] = [
-        { x: from.worldX, y: from.worldY },
-        ...(route.via ?? []),
-        { x: to.worldX, y: to.worldY },
-      ];
-      const clearance = (route.width ?? 36) / 2 + 24;
-
-      for (let index = 0; index < points.length - 1; index += 1) {
-        segments.push({
-          start: points[index],
-          end: points[index + 1],
-          clearance,
-        });
-      }
-    }
-
-    return segments;
-  }
-
-  private isClearOfRoads(position: MapPoint, margin: number) {
-    return this.roadSegments.every((segment) => {
-      const distance = this.distanceToSegment(position, segment.start, segment.end);
-      return distance > segment.clearance + margin;
-    });
-  }
-
-  private distanceToSegment(point: MapPoint, start: MapPoint, end: MapPoint) {
-    const dx = end.x - start.x;
-    const dy = end.y - start.y;
-    if (dx === 0 && dy === 0) {
-      return Phaser.Math.Distance.Between(point.x, point.y, start.x, start.y);
-    }
-
-    const t = Phaser.Math.Clamp(
-      ((point.x - start.x) * dx + (point.y - start.y) * dy) / (dx * dx + dy * dy),
-      0,
-      1,
-    );
-    const projectionX = start.x + t * dx;
-    const projectionY = start.y + t * dy;
-    return Phaser.Math.Distance.Between(point.x, point.y, projectionX, projectionY);
-  }
-
-  private drawNpcMarkers() {
-    for (const marker of NPC_MARKERS) {
-      const npc = this.add.container(marker.x, marker.y).setDepth(marker.y);
-      npc.add(this.add.ellipse(0, 16, 22, 8, 0x000000, 0.3));
-      npc.add(this.add.circle(0, -11, 8, 0xd5b48a, 1));
-      npc.add(this.add.rectangle(0, 4, 16, 24, 0x7b5737, 1));
-      npc.add(this.add.rectangle(-5, 18, 5, 12, 0x3f3327, 1));
-      npc.add(this.add.rectangle(5, 18, 5, 12, 0x3f3327, 1));
-      const label = this.add
-        .text(0, 34, `${marker.name}\n${marker.role}`, {
-          fontFamily: '"IBM Plex Mono", monospace',
-          fontSize: '9px',
-          color: '#fff0c5',
-          align: 'center',
-          backgroundColor: '#24351fcc',
-          padding: { x: 5, y: 3 },
-        })
-        .setOrigin(0.5, 0);
-      npc.add(label);
-    }
-  }
-
   private drawLanterns() {
+    const square = this.locations.find((location) => location.id === 'spawn-point');
+    if (!square) {
+      return;
+    }
+
     const lanternPositions = [
-      [1044, 770],
-      [1356, 770],
-      [1044, 940],
-      [1356, 940],
+      [square.worldX - 156, square.worldY - 70],
+      [square.worldX + 156, square.worldY - 70],
+      [square.worldX - 156, square.worldY + 100],
+      [square.worldX + 156, square.worldY + 100],
     ] as const;
 
     lanternPositions.forEach(([x, y], index) => {
@@ -769,24 +610,9 @@ export class BackendOdysseyScene extends Phaser.Scene {
       const visualScale = location.displayScale;
       const visuals = this.add.container(0, 0).setScale(visualScale);
 
-      const body = location.kind === 'town_square'
-        ? this.add.rectangle(0, 0, 1, 1, 0xffffff, 0)
-        : this.createLocationBody(location);
-      const halo = DEBUG_PLAYER_VISUALS
-        ? this.add.ellipse(
-            0,
-            18,
-            (location.footprintWidth * 1.12) / visualScale,
-            (location.footprintHeight * 0.42) / visualScale,
-            location.accentColor,
-            location.branchOf ? 0.08 : 0.12,
-          )
-        : null;
-
-      if (halo) {
-        visuals.add(halo);
+      if (location.kind !== 'town_square') {
+        visuals.add(this.createLocationBody(location));
       }
-      visuals.add(body);
 
       container.add(visuals);
       const mapSubtitle = this.getMapSubtitle(location);
@@ -835,7 +661,7 @@ export class BackendOdysseyScene extends Phaser.Scene {
           return;
         }
 
-        this.setMoveTarget(location.worldX, location.worldY);
+        this.setMoveTarget(location.worldX, location.worldY, location.id);
       });
       zone.on('pointerover', () => {
         labelBackground.clear();
@@ -843,13 +669,6 @@ export class BackendOdysseyScene extends Phaser.Scene {
         labelBackground.fillRoundedRect(-labelWidth / 2, -labelHeight / 2, labelWidth, labelHeight, 8);
         labelBackground.lineStyle(1, LABEL_HOVER_BORDER_COLOR, 0.95);
         labelBackground.strokeRoundedRect(-labelWidth / 2, -labelHeight / 2, labelWidth, labelHeight, 8);
-        if (halo) {
-          this.tweens.add({
-            targets: halo,
-            alpha: location.branchOf ? 0.2 : 0.28,
-            duration: 120,
-          });
-        }
       });
       zone.on('pointerout', () => {
         labelBackground.clear();
@@ -857,71 +676,26 @@ export class BackendOdysseyScene extends Phaser.Scene {
         labelBackground.fillRoundedRect(-labelWidth / 2, -labelHeight / 2, labelWidth, labelHeight, 8);
         labelBackground.lineStyle(1, LABEL_BORDER_COLOR, 0.85);
         labelBackground.strokeRoundedRect(-labelWidth / 2, -labelHeight / 2, labelWidth, labelHeight, 8);
-        if (halo) {
-          this.tweens.add({
-            targets: halo,
-            alpha: location.branchOf ? 0.08 : 0.12,
-            duration: 120,
-          });
-        }
       });
-
-      this.nodes.set(location.id, { location, halo, zone });
-
-      if (halo) {
-        this.tweens.add({
-          targets: halo,
-          scaleX: 1.04,
-          scaleY: 1.04,
-          alpha: location.branchOf ? 0.05 : 0.08,
-          duration: 3000 + location.order * 30,
-          yoyo: true,
-          repeat: -1,
-          ease: 'Sine.easeInOut',
-        });
-      }
     }
   }
 
   private createLocationBody(location: GameLocation) {
-    if (location.id === 'legacy-forest') {
-      const textureKey = 'tileset-grass-old-library';
+    const displayWidth = location.footprintWidth / location.displayScale;
+    const displayHeight = location.footprintHeight / location.displayScale;
+    const tilesetBuilding = TILESET_BUILDINGS[location.kind];
+    if (tilesetBuilding) {
+      const textureKey = `tileset-grass-${location.kind}`;
       if (!this.textures.exists(textureKey)) {
-        createTileObjectTexture(this, textureKey, TILESET_GRASS_OBJECTS.oldLibraryCompound, TILESET_GRASS_TERRAIN_SCALE);
+        createTileObjectTexture(this, textureKey, tilesetBuilding, TILESET_GRASS_TERRAIN_SCALE);
       }
 
-      return this.add
-        .image(0, 0, textureKey)
-        .setDisplaySize(location.footprintWidth / location.displayScale, location.footprintHeight / location.displayScale);
-    }
-
-    if (location.id === 'integration-swamp') {
-      const textureKey = 'tileset-grass-integration-market';
-      if (!this.textures.exists(textureKey)) {
-        createTileObjectTexture(this, textureKey, TILESET_GRASS_OBJECTS.integrationMarketStalls, TILESET_GRASS_TERRAIN_SCALE);
-      }
-
-      return this.add
-        .image(0, 0, textureKey)
-        .setDisplaySize(location.footprintWidth / location.displayScale, location.footprintHeight / location.displayScale);
-    }
-
-    if (location.id === 'leadership-tower') {
-      const textureKey = 'tileset-grass-command-hall';
-      if (!this.textures.exists(textureKey)) {
-        createTileObjectTexture(this, textureKey, TILESET_GRASS_OBJECTS.commandHallFort, TILESET_GRASS_TERRAIN_SCALE);
-      }
-
-      return this.add
-        .image(0, 0, textureKey)
-        .setDisplaySize(location.footprintWidth / location.displayScale, location.footprintHeight / location.displayScale);
+      return this.add.image(0, 0, textureKey).setDisplaySize(displayWidth, displayHeight);
     }
 
     const textureKey = getBuildingTextureKey(location.id, location.kind);
     if (this.textures.exists(textureKey)) {
-      return this.add
-        .image(0, 0, textureKey)
-        .setDisplaySize(location.footprintWidth / location.displayScale, location.footprintHeight / location.displayScale);
+      return this.add.image(0, 0, textureKey).setDisplaySize(displayWidth, displayHeight);
     }
 
     const fallback = this.add.graphics();

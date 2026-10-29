@@ -561,22 +561,7 @@ const B_DEFS: Record<string, BuildingDef> = {
 };
 
 const LOCATION_TEXTURE_KEYS: Record<string, string> = {
-  'legacy-forest': 'library',
-  'backend-forge': 'forge',
-  'data-citadel': 'dataTower',
-  'integration-swamp': 'market',
-  'production-black-hole': 'pit',
-  'leadership-tower': 'hall',
-  'product-launch-gate': 'productGate',
-  'ai-workshop': 'aiLab',
-  'webrtc-signal-tower': 'signalTower',
-  'video-observatory': 'archive',
-  'policy-temple': 'temple',
-  'report-lab': 'reportLab',
-  'xml-foundry': 'workshop',
-  'calendar-gate': 'office',
-  'education-trail': 'academy',
-  'contact-portal': 'contactGate',
+  'hire-me': 'contactGate',
 };
 
 const BUILDING_SPRITES: Record<string, ParsedGrid> = Object.fromEntries(

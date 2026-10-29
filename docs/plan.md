@@ -41,11 +41,12 @@ Each case: **problem → what I did → result** (live link / screenshot).
 Current state: Phaser town renders with TilesetGrass terrain, Adventurer hero walks
 (click-to-move), panels auto-open near locations, build passes. Buildings are generated placeholders.
 
-- [ ] Re-layout the town for 6 locations (short walks, mostly visible on first screen); Hire Me is currently off-screen.
-- [ ] Video Lab (`lab` kind) has no building sprite — placeholder square.
-- [ ] Remove the leftover "Reference Keeper" NPC; rename HUD "Backend Odyssey".
+- [x] Re-layout the town: all 6 locations fit the first screen around the square.
+- [x] Buildings: TilesetGrass art for hall/library/market, generated sprites for workshop/gate.
+- [x] Remove leftover NPC, dead roads/halo code, debug panel block; one-line HUD.
+- [x] Fix hero sprite slicing (strips are 8×96px, not 12×64px) and enable idle/run animation.
+- [x] Walking to a clicked building no longer stops at every building on the way.
 - [ ] Panel per case: result first, link, screenshot.
-- [ ] Buildings: TilesetGrass objects or keep generated ones — whichever is faster.
 - [ ] Mobile timeline fallback shows the same items + contact CTA.
 
 Out of scope for launch: sound, WASD, pathfinding, Tiled pipeline, new art packs, mobile controls, 3D.
@@ -53,9 +54,9 @@ Out of scope for launch: sound, WASD, pathfinding, Tiled pipeline, new art packs
 ## Phase 3 — Homepage, contact, SEO
 
 - [x] Static landing at `/` (pitch, services, cases, contact); game moved to `/play`.
-- [ ] `/contact`: email + Telegram, what to include in the first message.
+- [x] `/contact`: email + Telegram, what to include in the first message.
 - [x] `/cv` and `/projects` follow the new content.
-- [ ] Telegram link (handle pending).
+- [x] Contacts: info@somchai.dev, Telegram @s0mchai.
 - [ ] Open Graph / Twitter card / canonical / Person structured data in `Layout.astro`; favicon, OG image.
 
 ## Phase 4 — Deploy to `ovhvps` (FR)
