@@ -50,6 +50,7 @@ export const checkpoints: Checkpoint[] = [
     side: 'left',
     position: { x: 40, y: 25 },
     links: [{ label: 'tldw.cloud', href: 'https://tldw.cloud', external: true }],
+    image: { src: '/work/tldw.webp', alt: 'tldw.cloud conversation: video chapters, an answer with timestamped citations, and the transcript' },
     pathOrder: 3,
   },
   {
@@ -66,6 +67,7 @@ export const checkpoints: Checkpoint[] = [
     side: 'right',
     position: { x: 70, y: 55 },
     links: [{ label: 'zapros.ge', href: 'https://zapros.ge', external: true }],
+    image: { src: '/work/zapros.webp', alt: 'Zapros.ge home page: request first, offers next — housing and car rental in Georgia' },
     pathOrder: 4,
   },
   {

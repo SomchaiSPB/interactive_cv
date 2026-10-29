@@ -38,6 +38,17 @@ export function CheckpointPanel({ checkpoint, variant = 'default' }: Props) {
               <p className={`mt-3 text-sm leading-7 text-slate-200 ${isHud ? 'sm:text-[0.92rem]' : ''}`}>{checkpoint.summary}</p>
             </div>
 
+            {checkpoint.image ? (
+              <img
+                src={checkpoint.image.src}
+                alt={checkpoint.image.alt}
+                width={1600}
+                height={1000}
+                loading="lazy"
+                className="aspect-[16/10] w-full rounded-2xl border border-white/10 object-cover object-top"
+              />
+            ) : null}
+
             <div className={`grid gap-4 ${isHud ? 'md:grid-cols-1 xl:grid-cols-[1.15fr_0.85fr]' : 'md:grid-cols-[1.15fr_0.85fr]'}`}>
               <section className="rounded-3xl border border-white/10 bg-slate-950/55 p-4">
                 <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Quest notes</p>

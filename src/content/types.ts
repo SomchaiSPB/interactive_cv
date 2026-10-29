@@ -4,6 +4,11 @@ export type LinkItem = {
   external?: boolean;
 };
 
+export type ImageItem = {
+  src: string;
+  alt: string;
+};
+
 export type CheckpointSide = 'left' | 'right' | 'center';
 
 export type Checkpoint = {
@@ -20,6 +25,7 @@ export type Checkpoint = {
     y: number;
   };
   links?: LinkItem[];
+  image?: ImageItem;
   connectedTo?: string[];
   interactionRadius?: number;
   unlockedByDefault?: boolean;
@@ -35,6 +41,7 @@ export type Project = {
   result: string;
   stack: string[];
   links?: LinkItem[];
+  image?: ImageItem;
   status: string;
   visibility: 'public' | 'private' | 'internal';
   checkpointId?: string;

@@ -25,6 +25,7 @@ export const projects: Project[] = [
     status: 'Live',
     visibility: 'public',
     links: [{ label: 'tldw.cloud', href: 'https://tldw.cloud', external: true }],
+    image: { src: '/work/tldw.webp', alt: 'tldw.cloud conversation: video chapters, an answer with timestamped citations, and the transcript' },
     checkpointId: 'tldw',
   },
   {
@@ -38,6 +39,7 @@ export const projects: Project[] = [
     status: 'Live',
     visibility: 'public',
     links: [{ label: 'zapros.ge', href: 'https://zapros.ge', external: true }],
+    image: { src: '/work/zapros.webp', alt: 'Zapros.ge home page: request first, offers next — housing and car rental in Georgia' },
     checkpointId: 'zapros',
   },
 ];

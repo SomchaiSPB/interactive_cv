@@ -34,7 +34,7 @@ Each case: **problem → what I did → result** (live link / screenshot).
 - [x] Rewrite `projects.ts` as the cases above — draft; SUPO merged into one financial case.
 - [x] Cut `checkpoints.ts` from 17 to 6 (About, 3 cases, How I work, Hire Me); `LAYOUTS` reduced to match.
 - [x] "What I take on" block (`profile.services`).
-- [ ] Screenshots for ai-video and Zapros in `public/`.
+- [x] Screenshots for tldw.cloud and Zapros in `public/work/` (cards + game panels).
 
 ## Phase 2 — Finish the game (target 2–3 days)
 

@@ -73,7 +73,7 @@
 - [x] Projects are content-driven
 - [x] Projects are presented as reusable cards
 - [x] Case studies: problem → what I did → result, with live links
-- [ ] Screenshots for tldw.cloud and Zapros
+- [x] Screenshots for tldw.cloud and Zapros (WebP, personal data cropped out), on cards and game panels
 
 ## Mobile
 
