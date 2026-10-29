@@ -13,13 +13,14 @@ const {
 } = Astro.props satisfies Props;
 
 const pathname = Astro.url.pathname;
-const isHome = pathname === '/';
+const isGame = pathname.startsWith('/play');
 
 const navItems = [
   { label: 'Home', href: '/' },
   { label: 'CV', href: '/cv' },
   { label: 'Projects', href: '/projects' },
   { label: 'Contact', href: '/contact' },
+  { label: 'Quest', href: '/play' },
 ];
 ---
 
@@ -33,16 +34,16 @@ const navItems = [
   </head>
   <body>
     <div class="page-shell min-h-screen">
-      {!isHome ? (
+      {!isGame ? (
         <header class="sticky top-0 z-40 border-b border-white/5 bg-slate-950/75 backdrop-blur-xl">
           <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
             <a href="/" class="group flex items-center gap-3">
               <span class="pixel-border flex h-10 w-10 items-center justify-center rounded-lg bg-slate-900/90 text-sm font-bold text-neon">
-                BG
+                DG
               </span>
               <span>
-                <span class="block text-sm font-semibold tracking-[0.24em] text-neon">BACKEND ODYSSEY</span>
-                <span class="block text-xs uppercase tracking-[0.28em] text-slate-400">{profile.name}</span>
+                <span class="block text-sm font-semibold tracking-[0.24em] text-neon">{profile.name.toUpperCase()}</span>
+                <span class="block text-xs uppercase tracking-[0.28em] text-slate-400">Software engineer for hire</span>
               </span>
             </a>
             <nav class="hidden items-center gap-2 md:flex">
@@ -66,11 +67,11 @@ const navItems = [
       <main>
         <slot />
       </main>
-      {!isHome ? (
+      {!isGame ? (
         <footer class="border-t border-white/5 bg-black/20">
           <div class="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-8 text-sm text-slate-400 sm:px-6 lg:px-8 md:flex-row md:items-center md:justify-between">
-            <p>Interactive CV skeleton for {profile.name}.</p>
-            <p class="mono uppercase tracking-[0.24em]">Fast, deployable, content-first.</p>
+            <p>© {new Date().getFullYear()} {profile.name}</p>
+            <a href={profile.links.email} class="hover:text-neon">{profile.emailAddress}</a>
           </div>
         </footer>
       ) : null}

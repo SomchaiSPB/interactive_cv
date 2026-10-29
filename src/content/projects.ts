@@ -1,69 +1,43 @@
 import type { Project } from './types';
 
+// Draft copy — final wording and numbers pending from Denis.
 export const projects: Project[] = [
   {
-    title: 'SUPO Platform',
-    summary: 'Core backend platform for operational workflows, reconciliation, and reporting at SUPO.',
-    problem: 'The platform had to keep multiple business streams consistent while handling finance-grade correctness and complex operational flows.',
+    title: 'Financial automation for an accounting group',
+    summary: 'Integrations and reconciliation across practice-management, accounting, banking and payment systems.',
+    problem: 'Staff matched bank transactions, direct-debit payments and invoices by hand across several systems.',
     whatBuilt:
-      'Go services, MSSQL-backed domain logic, background jobs, reporting models, and operational tooling for internal teams.',
-    stack: ['Go', 'MSSQL', 'PostgreSQL', 'Redis', 'RabbitMQ', 'Kafka', 'gRPC', 'REST', 'Docker', 'AWS'],
-    status: 'Active internal platform',
+      'Two-way integrations with CCH, Xero and GoCardless (Atlar next) and a reconciliation engine that links clients, payments and invoices with accounting-grade correctness. Led the engineering team as VP Engineering.',
+    result: 'A large share of manual reconciliation work automated, freeing staff time across the company.',
+    stack: ['Go', 'PostgreSQL', 'MSSQL', 'React', 'Kubernetes'],
+    status: 'In production',
     visibility: 'internal',
-    checkpointId: 'production-black-hole',
+    checkpointId: 'finance-automation',
   },
   {
-    title: 'CCH / NetSuite Integration',
-    summary: 'Complex vendor integration layer for finance and operations with heavy MSSQL domain logic.',
-    problem: 'Vendor payloads, scheduling, and business rules had to stay consistent despite legacy constraints and edge cases.',
+    title: 'tldw.cloud — ask your video anything',
+    summary: 'Turns long recordings into direct answers you can verify against exact moments in the source.',
+    problem: 'Hours of meetings and lectures are hard to search, reuse or trust a summary of.',
     whatBuilt:
-      'Integration services, XML template handling, dynamic policy checks, MSSQL queries, and workflow orchestration for CCH and NetSuite flows.',
-    stack: ['Go', 'MSSQL', 'NetSuite', 'CCH', 'XML', 'OPA/Rego', 'REST', 'RabbitMQ'],
-    status: 'Shipping / maintained',
-    visibility: 'internal',
-    checkpointId: 'integration-swamp',
-  },
-  {
-    title: 'WebRTC Messenger / File Share',
-    summary: 'Peer-to-peer messenger and file sharing prototype using Flutter and Go signaling.',
-    problem: 'The client needed lightweight P2P coordination without turning the stack into a heavy realtime framework.',
-    whatBuilt:
-      'Flutter client, Go signaling backend, connection negotiation flow, and file transfer experimentation around WebRTC.',
-    stack: ['Flutter', 'Go', 'WebRTC', 'Signaling', 'P2P'],
-    status: 'Prototype complete',
+      'Built solo end to end: video upload and link ingestion, transcription, visual analysis, chat with cited moments, accounts, plans and usage limits, landing page and production hosting.',
+    result: 'Live product, open by invite.',
+    stack: ['Go', 'PostgreSQL', 'Docker'],
+    status: 'Live',
     visibility: 'public',
-    checkpointId: 'webrtc-signal-tower',
+    links: [{ label: 'tldw.cloud', href: 'https://tldw.cloud', external: true }],
+    checkpointId: 'tldw',
   },
   {
-    title: 'Video-to-Text / Story Point Extraction',
-    summary: 'Video analysis tooling that turns recordings into text and story-level summaries.',
-    problem: 'Raw video was hard to search, reuse, or feed into product workflows without extraction and structure.',
+    title: 'Zapros.ge — rental marketplace',
+    summary: 'Reverse marketplace for renting homes and cars in Tbilisi: people post a request, owners send offers.',
+    problem: 'Renters waste days scrolling listings; owners cannot see real demand.',
     whatBuilt:
-      'Transcription, segmentation, summary generation, and retrieval-oriented analysis pipelines for video content.',
-    stack: ['Go', 'Text extraction', 'Transcription', 'Pipeline design'],
-    status: 'Experimental prototype',
-    visibility: 'private',
-    checkpointId: 'video-observatory',
-  },
-  {
-    title: 'OCR Telegram Bot',
-    summary: 'Telegram bot for OCR-oriented workflows and quick text extraction from images.',
-    problem: 'Users needed a lightweight way to extract text from screenshots and photos without switching tools.',
-    whatBuilt:
-      'Telegram bot flow, OCR integration, result formatting, and fast image-to-text handling for everyday use.',
-    stack: ['Go', 'Telegram Bot API', 'OCR', 'Docker'],
-    status: 'Shipped utility',
+      'Built solo end to end: API and web app in three languages, request and offer flows, in-app chat, Telegram and email notifications, operator admin with roles and audit log, production deployment.',
+    result: 'Live at zapros.ge.',
+    stack: ['Go', 'PostgreSQL', 'React', 'TypeScript'],
+    status: 'Live',
     visibility: 'public',
-  },
-  {
-    title: 'Infrastructure / VPN / Linux Tooling',
-    summary: 'Personal infrastructure experiments and utility tooling for Linux, networking, and deployment workflows.',
-    problem: 'Local environments and self-hosted systems needed repeatable setup, secure access, and less manual effort.',
-    whatBuilt:
-      'Scripts, VPN experiments, Linux tooling, Ansible helpers, and deployment utilities for small infrastructure tasks.',
-    stack: ['Linux', 'VPN', 'Ansible', 'Docker', 'SSH', 'Bash'],
-    status: 'Ongoing experiments',
-    visibility: 'private',
+    links: [{ label: 'zapros.ge', href: 'https://zapros.ge', external: true }],
+    checkpointId: 'zapros',
   },
 ];
-

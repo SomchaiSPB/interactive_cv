@@ -1,9 +1,52 @@
 ---
 import Layout from '../components/Layout.astro';
-import { GameShell } from '../components/game/GameShell';
+import Hero from '../components/Hero.astro';
+import ProjectCard from '../components/ProjectCard.astro';
 import { profile } from '../content/profile';
+import { projects } from '../content/projects';
 ---
 
-<Layout title={`${profile.name} | Backend Odyssey`} description={profile.pitch}>
-  <GameShell client:load />
+<Layout title={`${profile.name} | ${profile.headline}`} description={profile.pitch}>
+  <Hero />
+
+  <section class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <p class="mono text-xs uppercase tracking-[0.28em] text-neon">What I take on</p>
+    <div class="mt-5 grid gap-4 md:grid-cols-3">
+      {profile.services.map((service) => (
+        <article class="panel-surface rounded-3xl p-6">
+          <h2 class="text-lg font-semibold text-white">{service.title}</h2>
+          <p class="mt-3 text-sm leading-7 text-slate-300">{service.summary}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section id="work" class="mx-auto max-w-7xl scroll-mt-24 px-4 py-8 sm:px-6 lg:px-8">
+    <p class="mono text-xs uppercase tracking-[0.28em] text-neon">Selected work</p>
+    <div class="mt-5 grid gap-5 lg:grid-cols-3">
+      {projects.map((project) => (
+        <ProjectCard project={project} />
+      ))}
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
+    <div class="panel-surface flex flex-col gap-6 rounded-3xl p-6 sm:p-8 md:flex-row md:items-center md:justify-between">
+      <div>
+        <h2 class="text-2xl font-semibold text-white">Have something in mind?</h2>
+        <p class="mt-2 text-sm leading-7 text-slate-300">Describe the business problem in a few sentences — no spec needed.</p>
+      </div>
+      <div class="flex flex-wrap gap-3">
+        <a href={profile.links.email} class="rounded-full border border-neon/40 bg-neon/10 px-5 py-3 text-sm font-medium text-neon transition hover:bg-neon/15">
+          {profile.emailAddress}
+        </a>
+        <a href={profile.links.telegram} target="_blank" rel="noreferrer" class="rounded-full border border-neon/40 bg-neon/10 px-5 py-3 text-sm font-medium text-neon transition hover:bg-neon/15">
+          Telegram {profile.telegramHandle}
+        </a>
+        <a href="/play" class="rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-medium text-slate-200 transition hover:border-neon/30 hover:bg-white/10">
+          Or explore the quest
+        </a>
+      </div>
+    </div>
+  </section>
 </Layout>

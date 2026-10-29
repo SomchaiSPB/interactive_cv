@@ -43,8 +43,8 @@ This file defines the working rules for AI coding agents in this repository.
 
 ## Current Project Shape
 
-- Astro pages: `/`, `/cv`, `/projects`, `/contact`
-- Home page game layer: `src/components/game/GameShell.tsx`, `src/components/game/PhaserGame.tsx`, `src/game/BackendOdysseyScene.ts`
+- Astro pages: `/` (static landing), `/play` (game), `/cv`, `/projects`, `/contact`
+- `/play` game layer: `src/components/game/GameShell.tsx`, `src/components/game/PhaserGame.tsx`, `src/game/BackendOdysseyScene.ts`
 - Legacy interactive map: `src/components/RpgMap.tsx`
 - Checkpoint details: `src/components/CheckpointPanel.tsx`
 - Mobile fallback: `src/components/Timeline.astro`
@@ -52,8 +52,11 @@ This file defines the working rules for AI coding agents in this repository.
 
 ## Product Direction
 
-- The homepage is now a Phaser-powered 2D RPG quest portfolio.
+- The site sells private development services (shops, services from scratch, integrations). English only.
+- `/` is a static landing: pitch, services, case studies, contact — readable in seconds, no game required.
+- `/play` is the Phaser-powered 2D RPG quest; a memorable extra, ending at a Hire Me location.
 - `/cv`, `/projects`, and `/contact` remain classic readable static pages.
+- Do not present AI as a selling point.
 - Keep the content model separate from UI and game code.
 - Preserve the mobile fallback; do not replace it with joystick controls unless explicitly requested.
 - The quest prototype should use click-to-move, inspectable buildings/NPCs, and a town-style map.

@@ -32,7 +32,9 @@ export type Project = {
   summary: string;
   problem: string;
   whatBuilt: string;
+  result: string;
   stack: string[];
+  links?: LinkItem[];
   status: string;
   visibility: 'public' | 'private' | 'internal';
   checkpointId?: string;

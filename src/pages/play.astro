@@ -1,0 +1,9 @@
+---
+import Layout from '../components/Layout.astro';
+import { GameShell } from '../components/game/GameShell';
+import { profile } from '../content/profile';
+---
+
+<Layout title={`${profile.name} | Quest`} description={profile.pitch}>
+  <GameShell client:load />
+</Layout>

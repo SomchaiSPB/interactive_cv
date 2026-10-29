@@ -26,10 +26,6 @@ export const skills: SkillGroup[] = [
     items: ['OPA', 'Rego', 'Dynamic access control', 'Authorization', 'Policy as code'],
   },
   {
-    title: 'AI-assisted Engineering',
-    items: ['Analysis', 'Debugging', 'Task decomposition', 'Test planning', 'Documentation', 'Implementation acceleration'],
-  },
-  {
     title: 'Frontend / Mobile',
     items: ['Astro', 'React', 'TypeScript', 'TailwindCSS', 'Flutter', 'Brotli', 'Meilisearch', 'Sphinx'],
   },

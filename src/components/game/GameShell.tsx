@@ -12,7 +12,7 @@ type NavLink = {
 };
 
 const navLinks: NavLink[] = [
-  { label: 'Classic CV', href: '/cv' },
+  { label: 'Home', href: '/' },
   { label: 'Projects', href: '/projects' },
   { label: 'Contact', href: '/contact' },
 ];
@@ -83,7 +83,7 @@ export function GameShell() {
             <h1 className="mt-3 text-3xl font-semibold text-white">{profile.name}</h1>
             <p className="mt-2 text-sm uppercase tracking-[0.18em] text-slate-400">{profile.role}</p>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
-              Game mode is desktop-first. Open the classic pages below for a readable CV, projects, and contact routes.
+              The quest is desktop-only. Here is the short version — or open the pages below.
             </p>
           </div>
 

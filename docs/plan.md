@@ -1,148 +1,74 @@
-# Backend Odyssey Plan
+# Launch Plan (2026-10-29)
 
-This plan keeps the project centered on a useful portfolio first, with a Phaser-powered 2D RPG quest homepage layered on top of the static career story. The classic CV remains available as the fallback route for recruiters and clients.
+Replaces the earlier phase plan. Goal: ship `somchai.dev` as a portfolio that sells
+private development services, then stop polishing.
 
-## Phase 0: Documentation and Content Cleanup
+## Positioning
 
-Scope:
+Old framing: "Go backend engineer / VP Engineering". Language-centric, reads as a job CV.
 
-- document the project structure and working rules;
-- clarify MVP boundaries;
-- keep content ownership in `src/content/*.ts`.
+New framing (wording TBD by Denis): **you bring a business problem — a shop, a service built
+from scratch, an integration — I learn the domain and take it to a working product in production.**
 
-Deliverables:
+- Buyer: founders / small companies who need a result, not headcount.
+- Proof is shipped systems and outcomes, not a tech list. Stack is a secondary line.
+- AI is not mentioned as a selling point — it is a tool, like the IDE.
+- Language: English only (matches LinkedIn). No Russian version for launch.
+- No prices. Contacts: email + Telegram.
 
-- README and agent instructions;
-- MVP checklist;
-- phased implementation plan;
-- clearer content boundaries.
+## Proof: case studies
 
-Non-goals:
+| Case | Angle | Notes |
+|---|---|---|
+| **Financial integrations** (SUPO, work) | Complex financial integrations and business entities: CCH, Xero, GoCardless (Atlar next). Outcome: large share of manual accounting work automated, less staff time | Facts and outcome only, no internals. Final wording from Denis |
+| **SUPO platform** (work) | Engineering lead for the platform | Merge into the case above if it reads as one story |
+| **ai-video / tldw** (own product) | Solo, idea → live product: video → transcript, visual analysis, chat with evidence | Public link; what it is, what it does |
+| **Zapros.ge** (own product) | Solo reverse marketplace (housing, Tbilisi): API + web, RU/EN/KA, Telegram/email, admin; live on `zapros.ge` | Public link |
 
-- no UI redesign;
-- no game engine work;
-- no route or component refactor.
+Dropped from the site: WebRTC messenger, OCR bot, infra tooling, Go-centric checkpoints.
+Each case: **problem → what I did → result** (live link / screenshot).
 
-## Phase 1: Content Finalization
+## Phase 1 — Content
 
-Scope:
+- [x] Rewrite `profile.ts` around the new framing (English) — draft.
+- [x] Rewrite `projects.ts` as the cases above — draft; SUPO merged into one financial case.
+- [x] Cut `checkpoints.ts` from 17 to 6 (About, 3 cases, How I work, Hire Me); `LAYOUTS` reduced to match.
+- [x] "What I take on" block (`profile.services`).
+- [ ] Screenshots for ai-video and Zapros in `public/`.
 
-- replace placeholder text with Denis's final wording;
-- confirm titles, summaries, and external links;
-- refine checkpoint copy so it reads like a real career narrative.
+## Phase 2 — Finish the game (target 2–3 days)
 
-Deliverables:
+Current state: Phaser town renders with TilesetGrass terrain, Adventurer hero walks
+(click-to-move), panels auto-open near locations, build passes. Buildings are generated placeholders.
 
-- final profile copy;
-- final checkpoint copy;
-- final project summaries;
-- final education and skill wording.
+- [ ] Re-layout the town for 6 locations (short walks, mostly visible on first screen); Hire Me is currently off-screen.
+- [ ] Video Lab (`lab` kind) has no building sprite — placeholder square.
+- [ ] Remove the leftover "Reference Keeper" NPC; rename HUD "Backend Odyssey".
+- [ ] Panel per case: result first, link, screenshot.
+- [ ] Buildings: TilesetGrass objects or keep generated ones — whichever is faster.
+- [ ] Mobile timeline fallback shows the same items + contact CTA.
 
-Non-goals:
+Out of scope for launch: sound, WASD, pathfinding, Tiled pipeline, new art packs, mobile controls, 3D.
 
-- no new interaction model;
-- no backend;
-- no PDF generation unless explicitly requested later.
+## Phase 3 — Homepage, contact, SEO
 
-## Phase 2: Visual Polish
+- [x] Static landing at `/` (pitch, services, cases, contact); game moved to `/play`.
+- [ ] `/contact`: email + Telegram, what to include in the first message.
+- [x] `/cv` and `/projects` follow the new content.
+- [ ] Telegram link (handle pending).
+- [ ] Open Graph / Twitter card / canonical / Person structured data in `Layout.astro`; favicon, OG image.
 
-Scope:
+## Phase 4 — Deploy to `ovhvps` (FR)
 
-- improve spacing, hierarchy, and emphasis;
-- refine the RPG town feel while keeping it professional;
-- improve readability on both desktop and mobile.
-- stabilize the mounted Phaser scene and recomposed town so the homepage stays readable before any new gameplay is added.
-- use a tile-like generated town composition with distinct districts, paths, foliage, fences, and a central plaza.
-- complete Art Pass 1 with generated location-specific building silhouettes, warmer terrain, softer roads, and restrained town decoration.
-- remove the start gate so the desktop homepage opens directly into the map, then resolve label and road composition issues before asset integration.
+Moving off Vultr. `ovhvps` (France, 6 vCPU / 11 GiB, 84 GB free) already runs ai-video/tldw
+and Zapros behind nginx; a static site adds negligible load. `ovh-de` stays free.
 
-Deliverables:
+- [ ] Find how public traffic reaches `ovhvps` (nginx `server_name _` → likely a Cloudflare
+      tunnel/proxy) and add `somchai.dev` + `www` the same way.
+- [ ] Static nginx root, e.g. `/var/www/somchai.dev`; deploy = `npm run build` + rsync `dist/`.
+- [ ] Point DNS for `somchai.dev` to the new host; retire the Vultr site/vhost (`api.somchai.dev` — check whether still used).
+- [ ] Smoke-check: routes, desktop game, mobile fallback, OG preview.
 
-- stronger visual hierarchy;
-- better buildings, roads, panels, and map legibility;
-- tighter responsive polish.
-- generated placeholder art that reads as an old-school RPG town while the production asset pipeline remains pending.
+## Open decisions
 
-Non-goals:
-
-- no Three.js;
-- no 3D direction;
-- no motion-heavy game mechanics.
-
-## Phase 3: MVP Deployment
-
-Scope:
-
-- deploy the current site as a static portfolio;
-- keep `/` as a game-first Phaser 2D RPG quest prototype;
-- verify the build and hosting path;
-- ensure the site is useful before adding game features.
-
-Deliverables:
-
-- production deployment to `somchai.dev` / self-hosted infrastructure;
-- validated static build;
-- public access to the MVP site.
-
-Non-goals:
-
-- no runtime backend requirement;
-- no 3D / Three.js layer;
-- no asset-pipeline finalization in this phase;
-- no replacement of the classic CV route.
-
-## Phase 4: Guided Movement
-
-Scope:
-
-- refine guided travel and interaction flow beyond the current Phaser prototype;
-- preserve click-to-move and readable HUD structure;
-- auto-open checkpoint panels when the hero enters a location's interaction radius;
-- keep navigation readable and controlled.
-
-Deliverables:
-
-- optional guided movement behaviors;
-- smoother map narrative flow;
-- improved sequencing between locations and panels.
-
-Non-goals:
-
-- no 3D / Three.js;
-- no joystick/mobile controller in the default build;
-- no pathfinding-heavy traversal layer;
-- no Tiled pipeline yet; the current map remains generated and asset-free;
-- no replacement of the static CV fallback.
-
-Important:
-
-- the homepage is already game-first and playable;
-- the classic CV remains a fallback for quick review;
-- the current direction is a tile-like 2D RPG town; a full tileset and asset pipeline remain pending.
-- The player now uses the runtime Adventurer sprite strip set; final production sprites, tiles, and sound remain future work.
-- after this generated-map UX cleanup, the next visual phase is a deliberate production asset pipeline rather than more placeholder complexity.
-- TilesetGrass is a verified CC0 / Public Domain source asset for the prototype terrain layer, but the final Tiled JSON versus code-defined map decision remains open.
-- TilesetGrass is now being used only as a local prototype terrain layer while the final asset pipeline is still being chosen.
-- `/cv` remains the classic readable fallback for recruiters and clients.
-
-## Phase 5: Optional Advanced Movement
-
-Scope:
-
-- evaluate whether richer interaction, art, or sound adds real value;
-- expand movement only if it improves the quest experience;
-- improve the asset pipeline, real sprites, map art, and audio only if they increase clarity;
-- keep the existing CV experience intact.
-
-Deliverables:
-
-- optional game expansion plan;
-- better towns, buildings, NPCs, and HUD polish;
-- feature separation so the portfolio remains stable.
-
-Non-goals:
-
-- do not replace the portfolio with a game-first-only experience;
-- do not add 3D unless it is explicitly requested and justified;
-- do not make WASD the default unless it is explicitly requested and clearly beneficial;
-- do not compromise readability or recruiter usability.
+- Final wording for positioning and the SUPO case — Denis.
