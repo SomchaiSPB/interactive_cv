@@ -80,7 +80,7 @@ export function GameShell() {
         <div className="relative mx-auto flex min-h-[calc(100vh-3rem)] max-w-3xl flex-col justify-between gap-6 rounded-[2rem] border border-white/10 bg-slate-950/72 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:p-7">
           <div>
             <p className="mono text-xs uppercase tracking-[0.34em] text-neon">The quest</p>
-            <h1 className="mt-3 text-3xl font-semibold text-white">{profile.name}</h1>
+            <h1 className="pixel mt-3 text-2xl uppercase text-neon">{profile.brand}</h1>
             <p className="mt-2 text-sm uppercase tracking-[0.18em] text-slate-400">{profile.role}</p>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
               The quest is desktop-only. Here is the short version — or open the pages below.
@@ -137,7 +137,7 @@ export function GameShell() {
             <header className="pointer-events-none flex items-start justify-between gap-4 px-4 pt-4 sm:px-6 lg:px-8">
               <div className="pointer-events-auto max-w-xl rounded-2xl border border-amber-100/15 bg-[#25331f]/88 px-4 py-3 shadow-lg backdrop-blur-xl">
                 <p className="mono text-[10px] uppercase tracking-[0.34em] text-amber-200">The quest</p>
-                <p className="mt-1 text-sm font-medium text-white">{profile.name}</p>
+                <p className="pixel mt-1 text-sm uppercase text-white">{profile.brand}</p>
                 <p className="mt-1 text-xs uppercase tracking-[0.18em] text-stone-300">{profile.role}</p>
               </div>
               <nav className="pointer-events-auto flex flex-wrap justify-end gap-2">

@@ -45,7 +45,6 @@ This file defines the working rules for AI coding agents in this repository.
 
 - Astro pages: `/` (static landing), `/play` (game), `/cv`, `/projects`, `/contact`
 - `/play` game layer: `src/components/game/GameShell.tsx`, `src/components/game/PhaserGame.tsx`, `src/game/BackendOdysseyScene.ts`
-- Legacy interactive map: `src/components/RpgMap.tsx`
 - Checkpoint details: `src/components/CheckpointPanel.tsx`
 - Mobile fallback: `src/components/Timeline.astro`
 - Static content source: `src/content/*.ts`

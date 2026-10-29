@@ -44,6 +44,7 @@ Current state: Phaser town renders with TilesetGrass terrain, Adventurer hero wa
 - [x] Re-layout the town: all 6 locations fit the first screen around the square.
 - [x] Buildings: TilesetGrass art for hall/library/market, generated sprites for workshop/gate.
 - [x] Remove leftover NPC, dead roads/halo code, debug panel block; one-line HUD.
+- [x] Readable art: plaza + well, fort, dark tower (Video Lab), Guild Hall (How I work), quest board (Hire Me).
 - [x] Fix hero sprite slicing (strips are 8×96px, not 12×64px) and enable idle/run animation.
 - [x] Walking to a clicked building no longer stops at every building on the way.
 - [ ] Panel per case: result first, link, screenshot.
@@ -56,6 +57,7 @@ Out of scope for launch: sound, WASD, pathfinding, Tiled pipeline, new art packs
 ## Phase 3 — Homepage, contact, SEO
 
 - [x] Static landing at `/` (pitch, services, cases, contact); game moved to `/play`.
+- [x] Title-screen redesign: Somchai.dev brand instead of the name, PRESS START → `/play`, contacts incl. LinkedIn.
 - [x] `/contact`: email + Telegram, what to include in the first message.
 - [x] `/cv` and `/projects` follow the new content.
 - [x] Contacts: info@somchai.dev, Telegram @s0mchai.

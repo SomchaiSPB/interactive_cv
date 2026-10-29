@@ -48,12 +48,14 @@ type KeyboardBundle = {
   ESC?: Phaser.Input.Keyboard.Key;
 };
 
-// Location kinds drawn from TilesetGrass objects instead of generated pixel sprites.
-const TILESET_BUILDINGS: Partial<Record<GameLocation['kind'], TileObjectDefinition>> = {
-  library: TILESET_GRASS_OBJECTS.oldLibraryCompound,
-  market: TILESET_GRASS_OBJECTS.integrationMarketStalls,
-  hall: TILESET_GRASS_OBJECTS.commandHallFort,
+// Location kinds drawn from TilesetGrass objects. pixelScale = screen pixels per source pixel (integer keeps them crisp).
+const TILESET_BUILDINGS: Partial<Record<GameLocation['kind'], { tiles: TileObjectDefinition; pixelScale: number }>> = {
+  library: { tiles: TILESET_GRASS_OBJECTS.darkTower, pixelScale: 4 },
+  market: { tiles: TILESET_GRASS_OBJECTS.integrationMarketStalls, pixelScale: 4 },
+  hall: { tiles: TILESET_GRASS_OBJECTS.commandHallFort, pixelScale: 3 },
+  workshop: { tiles: TILESET_GRASS_OBJECTS.guildHall, pixelScale: 3 },
 };
+const TOWN_SQUARE_PIXEL_SCALE = 4;
 
 const PROXIMITY_EXIT_BUFFER = 36;
 const LOCATION_LABEL_DEPTH = 100_000;
@@ -120,8 +122,8 @@ export class BackendOdysseyScene extends Phaser.Scene {
     if (!this.textures.exists(TILESET_GRASS_KEY)) {
       this.drawFoliage();
       this.drawTownDetails();
+      this.drawTownSquare();
     }
-    this.drawTownSquare();
     this.drawLocations();
     this.drawLanterns();
 
@@ -384,10 +386,22 @@ export class BackendOdysseyScene extends Phaser.Scene {
       }
     }
 
+    this.drawPrototypePlaza(painter);
     this.drawPrototypeFoliage(painter);
 
     painter.refresh();
     this.add.image(0, 0, textureKey).setOrigin(0).setDepth(-60);
+  }
+
+  private drawPrototypePlaza(surface: ReturnType<typeof createTileSurface>) {
+    const square = this.locations.find((location) => location.id === 'spawn-point');
+    if (!square) {
+      return;
+    }
+
+    for (const tiles of [TILESET_GRASS_OBJECTS.townSquarePlaza, TILESET_GRASS_OBJECTS.townSquareWell]) {
+      drawTileObject(surface, tiles, square.worldX, square.worldY, TOWN_SQUARE_PIXEL_SCALE);
+    }
   }
 
   private getMapSubtitle(location: GameLocation) {
@@ -687,10 +701,12 @@ export class BackendOdysseyScene extends Phaser.Scene {
     if (tilesetBuilding) {
       const textureKey = `tileset-grass-${location.kind}`;
       if (!this.textures.exists(textureKey)) {
-        createTileObjectTexture(this, textureKey, tilesetBuilding, TILESET_GRASS_TERRAIN_SCALE);
+        createTileObjectTexture(this, textureKey, tilesetBuilding.tiles, TILESET_GRASS_TERRAIN_SCALE);
       }
 
-      return this.add.image(0, 0, textureKey).setDisplaySize(displayWidth, displayHeight);
+      return this.add
+        .image(0, 0, textureKey)
+        .setScale(tilesetBuilding.pixelScale / TILESET_GRASS_TERRAIN_SCALE / location.displayScale);
     }
 
     const textureKey = getBuildingTextureKey(location.id, location.kind);

@@ -3,6 +3,7 @@ import type { LinkItem } from './types';
 // Draft copy — final wording pending from Denis.
 export const profile = {
   name: 'Denis Gaivoronskii',
+  brand: 'Somchai.dev',
   role: 'Software engineer for hire · VP Engineering',
   headline: 'From business problem to working product',
   pitch:
@@ -35,9 +36,10 @@ export const profile = {
       summary: 'Take over a stuck project or a manual process and turn it into something that runs on its own.',
     },
   ],
+  // Title-screen menu; the first item is the default cursor position.
   ctaLinks: [
-    { label: 'Get in touch', href: '/contact' },
+    { label: 'Press start', href: '/play' },
+    { label: 'Hire me', href: '/contact' },
     { label: 'See the work', href: '/#work' },
-    { label: 'Play the quest', href: '/play' },
   ] satisfies LinkItem[],
 };

@@ -9,7 +9,7 @@ type Props = {
 };
 
 const {
-  title = `${profile.name} | ${profile.role}`,
+  title = `${profile.brand} | ${profile.headline}`,
   description = profile.pitch,
   noindex = false,
 } = Astro.props satisfies Props;
@@ -57,14 +57,14 @@ const navItems = [
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content={profile.name} />
+    <meta property="og:site_name" content={profile.brand} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:image" content={ogImageUrl} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={`${profile.name} — ${profile.headline}`} />
+    <meta property="og:image:alt" content={`${profile.brand} — ${profile.headline}`} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
@@ -78,11 +78,11 @@ const navItems = [
         <header class="sticky top-0 z-40 border-b border-white/5 bg-slate-950/75 backdrop-blur-xl">
           <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
             <a href="/" class="group flex items-center gap-3">
-              <span class="pixel-border flex h-10 w-10 items-center justify-center rounded-lg bg-slate-900/90 text-sm font-bold text-neon">
-                DG
+              <span class="pixel pixel-border flex h-10 w-10 items-center justify-center rounded-lg bg-slate-900/90 text-sm text-neon">
+                S
               </span>
               <span>
-                <span class="block text-sm font-semibold tracking-[0.24em] text-neon">{profile.name.toUpperCase()}</span>
+                <span class="pixel block text-xs uppercase text-neon">{profile.brand}</span>
                 <span class="block text-xs uppercase tracking-[0.28em] text-slate-400">Software engineer for hire</span>
               </span>
             </a>
@@ -110,7 +110,7 @@ const navItems = [
       {!isGame ? (
         <footer class="border-t border-white/5 bg-black/20">
           <div class="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-8 text-sm text-slate-400 sm:px-6 lg:px-8 md:flex-row md:items-center md:justify-between">
-            <p>© {new Date().getFullYear()} {profile.name}</p>
+            <p>© {new Date().getFullYear()} {profile.brand}</p>
             <a href={profile.links.email} class="hover:text-neon">{profile.emailAddress}</a>
           </div>
         </footer>

@@ -28,8 +28,6 @@ Static Astro site (React + Tailwind islands) selling private development service
 - `src/components/game/PhaserGame.tsx` lazy-imports `phaser` and the scene (keeps Phaser out of SSR) and owns the `Phaser.Game` lifecycle.
 - Scene and React communicate only via `window` `CustomEvent`s named in `src/game/types.ts` (`odyssey:ready`, `odyssey:nearest`, `odyssey:open`, `odyssey:close`). Add new interactions as new events there rather than coupling the scene to React.
 
-`src/components/RpgMap.tsx` / `FullscreenRpgMap.tsx` are the legacy (pre-Phaser) map; don't extend them for new homepage work.
-
 ## Docs
 
 `docs/plan.md`, `docs/mvp_checklist.md`, `docs/assets.md` (tileset audit; source packs live in `assets/`, runtime copies in `public/game/assets/`). Update them when scope changes.

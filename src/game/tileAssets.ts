@@ -19,15 +19,16 @@ export type TileObjectDefinition = {
 };
 
 export const TILESET_GRASS_OBJECTS = {
+  // Stone courtyard with grass beds; the well sits on the centre tile.
   townSquarePlaza: {
     widthTiles: 3,
     heightTiles: 3,
-    tiles: [17, 18, 19, 29, 30, 31, 41, 42, 43],
+    tiles: [21, 22, 23, 33, 34, 35, 45, 46, 47],
   },
-  oldLibraryCompound: {
-    widthTiles: 2,
-    heightTiles: 2,
-    tiles: [192, 193, 204, 205],
+  townSquareWell: {
+    widthTiles: 1,
+    heightTiles: 1,
+    tiles: [197],
   },
   integrationMarketStalls: {
     widthTiles: 2,
@@ -44,15 +45,31 @@ export const TILESET_GRASS_OBJECTS = {
     heightTiles: 2,
     tiles: [104, 105, 106, 107],
   },
+  // Walled fort only (columns 0-3); the cathedral to its right is guildHall.
   commandHallFort: {
-    widthTiles: 6,
+    widthTiles: 4,
     heightTiles: 4,
     tiles: [
-      144, 145, 146, 147, 148, 149,
-      156, 157, 158, 159, 160, 161,
-      168, 169, 170, 171, 172, 173,
-      180, 181, 182, 183, 184, 185,
+      144, 145, 146, 147,
+      156, 157, 158, 159,
+      168, 169, 170, 171,
+      180, 181, 182, 183,
     ],
+  },
+  guildHall: {
+    widthTiles: 3,
+    heightTiles: 4,
+    tiles: [
+      148, 149, 150,
+      160, 161, 162,
+      172, 173, 174,
+      184, 185, 186,
+    ],
+  },
+  darkTower: {
+    widthTiles: 2,
+    heightTiles: 3,
+    tiles: [163, 164, 175, 176, 187, 188],
   },
 } as const;
 

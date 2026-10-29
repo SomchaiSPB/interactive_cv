@@ -9,6 +9,7 @@
 - [x] Static production build passes
 - [x] Basic site shell and navigation exist
 - [x] Static services landing at `/`; game moved to `/play`
+- [x] Retro title-screen landing: Somchai.dev brand, PRESS START button, animated hero
 - [x] Favicon and Apple touch icon
 - [x] Custom 404 page
 
@@ -47,7 +48,8 @@
 - [x] Integrate the Adventurer runtime player sprite with directional idle/run animation (fixed 96px frame slicing)
 - [x] Town reduced to six client-facing locations, all visible on the first screen
 - [x] Hero walks past buildings to the clicked one without stopping
-- [x] Remove dead code (roads, halos, NPC marker, debug panel stats)
+- [x] Remove dead code (roads, halos, NPC marker, debug panel stats, legacy RpgMap, unused generated buildings)
+- [x] Clear building art: stone plaza with well, fort (fixed tile slice), dark tower, Guild Hall, pixel quest board for Hire Me
 - [x] Audit and stage the TilesetGrass runtime image with source and license notes
 - [x] Integrate TilesetGrass as a local prototype terrain pass
 - [x] Generate a tile index contact sheet for TilesetGrass

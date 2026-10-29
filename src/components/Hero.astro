@@ -1,52 +1,37 @@
 ---
 import { profile } from '../content/profile';
+
+const [start, ...menu] = profile.ctaLinks;
 ---
 
-<section class="mx-auto max-w-7xl px-4 pb-10 pt-10 sm:px-6 lg:px-8 lg:pt-16">
-  <div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-start">
-    <div class="space-y-6">
-      <div class="inline-flex items-center gap-2 rounded-full border border-neon/20 bg-neon/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-neon">
-        {profile.headline}
-      </div>
-      <div class="space-y-4">
-        <h1 class="max-w-4xl text-4xl font-semibold leading-tight text-white sm:text-5xl lg:text-6xl">
-          {profile.name}
-        </h1>
-        <p class="max-w-3xl text-lg leading-8 text-slate-300 sm:text-xl">
-          {profile.role}
-        </p>
-        <p class="max-w-3xl text-base leading-7 text-slate-300 sm:text-lg">
-          {profile.pitch}
-        </p>
-      </div>
-      <div class="flex flex-wrap gap-3">
-        {profile.ctaLinks.map((link, index) => (
-          <a
-            href={link.href}
-            target={link.external ? '_blank' : undefined}
-            rel={link.external ? 'noreferrer' : undefined}
-            class:list={[
-              'rounded-full border px-5 py-3 text-sm font-medium transition',
-              index === 0
-                ? 'border-neon/40 bg-neon/10 text-neon hover:bg-neon/15'
-                : 'border-white/10 bg-white/5 text-slate-200 hover:border-neon/30 hover:bg-white/10',
-            ]}
-          >
-            {link.label}
-          </a>
-        ))}
-      </div>
+<section class="crt flex min-h-[calc(100svh-4.5rem)] items-center overflow-hidden">
+  <div class="mx-auto flex w-full max-w-5xl flex-col items-center px-4 py-12 text-center sm:px-6">
+    <p class="pixel text-[10px] uppercase text-slate-400 sm:text-xs">{profile.headline}</p>
+
+    <h1 class="pixel title-logo mt-8 text-[28px] uppercase leading-tight sm:text-5xl lg:text-6xl">
+      {profile.brand}
+    </h1>
+
+    <p class="mt-8 max-w-2xl text-base leading-7 text-slate-300 sm:text-lg">{profile.pitch}</p>
+
+    <div class="mt-4 flex flex-col items-center sm:flex-row sm:gap-6">
+      <div class="hero-sprite -my-12 shrink-0 scale-75 sm:scale-100" role="img" aria-label="Pixel-art adventurer from the quest"></div>
+      <a href={start.href} class="press-start pixel text-sm uppercase sm:text-lg">
+        <span class="blink" aria-hidden="true">▶</span>
+        {start.label}
+      </a>
     </div>
 
-    <aside class="panel-surface rounded-3xl p-6">
-      <p class="text-sm leading-7 text-slate-200">{profile.summary}</p>
-      <div class="mt-5 flex flex-wrap gap-2">
-        {profile.quickFacts.map((fact) => (
-          <span class="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-xs text-slate-200">
-            {fact}
-          </span>
-        ))}
-      </div>
-    </aside>
+    <nav class="console-menu pixel mt-10 flex flex-col items-center gap-5 text-xs uppercase sm:flex-row sm:gap-12" aria-label="More">
+      {menu.map((link) => (
+        <a href={link.href} class="text-slate-300 transition-colors hover:text-white focus-visible:text-white focus-visible:outline-none">
+          {link.label}
+        </a>
+      ))}
+    </nav>
+
+    <p class="mono mt-10 text-xs uppercase tracking-[0.24em] text-slate-500">
+      Best played on desktop · click to walk
+    </p>
   </div>
 </section>

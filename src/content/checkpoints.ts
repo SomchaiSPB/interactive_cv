@@ -71,7 +71,7 @@ export const checkpoints: Checkpoint[] = [
   {
     id: 'how-i-work',
     order: 5,
-    title: 'Workshop',
+    title: 'Guild Hall',
     subtitle: 'How I work',
     summary: 'Understand the business first, ship the smallest useful version, then grow it.',
     details: [
@@ -97,6 +97,7 @@ export const checkpoints: Checkpoint[] = [
     links: [
       { label: 'Email', href: 'mailto:info@somchai.dev' },
       { label: 'Telegram', href: 'https://t.me/s0mchai', external: true },
+      { label: 'LinkedIn', href: 'https://www.linkedin.com/in/denis-gaivoronskii/', external: true },
     ],
     pathOrder: 6,
   },
