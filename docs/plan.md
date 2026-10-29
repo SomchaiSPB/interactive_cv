@@ -67,11 +67,15 @@ Out of scope for launch: sound, WASD, pathfinding, Tiled pipeline, new art packs
 Moving off Vultr. `ovhvps` (France, 6 vCPU / 11 GiB, 84 GB free) already runs ai-video/tldw
 and Zapros behind nginx; a static site adds negligible load. `ovh-de` stays free.
 
-- [ ] Find how public traffic reaches `ovhvps` (nginx `server_name _` → likely a Cloudflare
-      tunnel/proxy) and add `somchai.dev` + `www` the same way.
-- [ ] Static nginx root, e.g. `/var/www/somchai.dev`; deploy = `npm run build` + rsync `dist/`.
-- [ ] Point DNS for `somchai.dev` to the new host; retire the Vultr site/vhost (`api.somchai.dev` — check whether still used).
-- [ ] Smoke-check: routes, desktop game, mobile fallback, OG preview.
+Traffic: Cloudflare → Vultr edge (gateway for all sites) → Tailscale → `ovhvps:8003` → `/var/www/somchai.dev/current`.
+Infra lives in `vultr-infra` (`somchai-playbook.yml`, `group_vars/web.yml`, `docs/somchai-site.md`).
+
+- [x] OVH origin vhost, release dir, UFW rule; tailnet grant `tag:vps` → `tag:tldw-core` `tcp:8003`.
+- [x] Edge vhost `somchai.dev` + `www` redirect; DNS `www` record added.
+- [x] `npm run deploy`: rsync to `releases/<utc>-<sha>`, atomic `current` switch, keeps 5.
+- [x] Smoke-check: all routes 200, 404 page, cache headers, HTTPS/www redirects; neighbouring sites unaffected.
+- [ ] Check the OG preview in LinkedIn Post Inspector and Telegram.
+- [ ] Later (separate epic): move the edge gateway off Vultr to OVH.
 
 ## Open decisions
 

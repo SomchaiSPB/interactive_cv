@@ -91,9 +91,9 @@
 
 ## Deployment
 
-- [ ] Set deployment environment for `somchai.dev` (ovhvps origin behind the Vultr edge)
-- [ ] Verify static hosting configuration
-- [ ] Verify build output on target infrastructure
+- [x] Set deployment environment for `somchai.dev` (ovhvps origin behind the Vultr edge)
+- [x] Verify static hosting configuration (cache headers, 404, www → apex, HTTP → HTTPS)
+- [x] Verify build output on target infrastructure (`npm run deploy`, release dirs + atomic switch)
 - [ ] Set up preview/staging deploy flow
 
 ## Future Game Layer
