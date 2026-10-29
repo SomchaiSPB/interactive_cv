@@ -1,15 +1,15 @@
 import type { LinkItem } from './types';
 
-// Draft copy — final wording pending from Denis.
+// Tone: short and punchy, like the title screen. Facts confirmed by Denis on 2026-10-30.
 export const profile = {
   name: 'Denis Gaivoronskii',
   brand: 'Somchai.dev',
-  role: 'Software engineer for hire · VP Engineering',
+  role: 'Software engineer for hire',
   headline: 'From business problem to working product',
   pitch:
-    'Need an online shop, a service built from scratch, or an integration between the systems you already use? I learn how your business works, then build it and take it to production.',
+    'A shop, a service from scratch, or your systems finally talking to each other. I learn how your business works — then build it and ship it.',
   summary:
-    'Years of building backend-heavy products. As VP of Engineering at an accounting-services company I automate financial workflows across CCH, Xero and GoCardless. I also build and run my own products end to end.',
+    'Building software since 2018. Architected an accounting-automation platform from zero, grew it to a team of 10 and still lead it. On the side I ship my own products end to end.',
   company: 'SUPO',
   targetDomain: 'somchai.dev',
   links: {
@@ -21,19 +21,19 @@ export const profile = {
   } satisfies Record<'github' | 'linkedin' | 'email' | 'telegram' | 'website', string>,
   emailAddress: 'info@somchai.dev',
   telegramHandle: '@s0mchai',
-  quickFacts: ['Online shops & services', 'Payment & accounting integrations', 'MVP to production', 'Long-term support'],
+  quickFacts: ['Shops & services from scratch', 'Bank, payment & accounting integrations', 'Zero to production', 'Since 2018'],
   services: [
     {
-      title: 'Shops and services from scratch',
-      summary: 'An online shop, booking system, marketplace or internal tool — scoped small, launched fast, built to grow.',
+      title: 'Shops & services from scratch',
+      summary: 'Online shop, booking, marketplace, internal tool. Smallest useful version first, in production early, built to grow.',
     },
     {
       title: 'Integrations',
-      summary: 'Connect payments, banks, accounting and CRM systems so data stops being copied by hand.',
+      summary: 'Banks, payments, accounting, CRM — wired together so nobody copies data by hand. Done it with Xero, CCH and GoCardless.',
     },
     {
-      title: 'Rescue and automation',
-      summary: 'Take over a stuck project or a manual process and turn it into something that runs on its own.',
+      title: 'Rescue & automation',
+      summary: 'A stuck project or a manual process in, something that runs on its own out.',
     },
   ],
   // Title-screen menu; the first item is the default cursor position.

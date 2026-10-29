@@ -81,4 +81,5 @@ Infra lives in `vultr-infra` (`somchai-playbook.yml`, `group_vars/web.yml`, `doc
 
 ## Open decisions
 
-- Final wording for positioning and the SUPO case — Denis.
+- Naming the client group (50+ offices, UK & Ireland) and a SUPO screenshot need CEO approval.
+- Update tldw/Zapros statuses when payments go live (now: private beta / pre-launch).

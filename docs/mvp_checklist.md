@@ -22,7 +22,8 @@
 - [x] Skills data is separated from UI
 - [x] Education data is separated from UI
 - [x] Content repositioned for client-facing services (English draft)
-- [ ] Final content pass with Denis's exact wording (positioning, SUPO case numbers)
+- [x] Final content pass from Denis's facts (since 2018; zero → team of 10 → lead; up to 30% GP; reconciliation effort halved)
+- [ ] Name the client group and add a SUPO screenshot — only with CEO approval
 - [x] Replace placeholder external links with final live profiles
 
 ## RPG Map MVP
